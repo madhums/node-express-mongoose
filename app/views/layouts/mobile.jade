@@ -1,0 +1,15 @@
+doctype 5
+html
+  include ../includes/head
+  body
+    //- Customize this layout for mobile device resolutions
+    include ../includes/header
+    .container
+      .page-header
+        block main
+      .messages
+        include ../includes/messages
+      .content
+        block content
+    include ../includes/footer
+    include ../includes/foot
