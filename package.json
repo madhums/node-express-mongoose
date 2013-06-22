@@ -31,7 +31,8 @@
   "devDependencies": {
     "nodemon": "latest",
     "mocha": "latest",
-    "should": "latest"
+    "should": "latest",
+    "supertest": "latest"
   },
   "keywords": [
     "mvc",
