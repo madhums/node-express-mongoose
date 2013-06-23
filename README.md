@@ -2,6 +2,8 @@
 
 A boilerplate application for building web apps using express, mongoose and passport.
 
+Read the [wiki](https://github.com/madhums/node-express-mongoose/wiki) to understand how the application is structured.
+
 ## Usage
 
 Clone this repository
