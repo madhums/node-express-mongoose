@@ -10,7 +10,7 @@ var passportOptions = {
 }
 
 // controllers
-var home = require('home')
+var home = require('../app/controllers/home')
 
 /**
  * Expose
