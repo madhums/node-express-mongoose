@@ -16,7 +16,7 @@ mongoose.connect(config.db)
 
 // Bootstrap models
 fs.readdirSync(__dirname + '/app/models').forEach(function (file) {
-  require(__dirname + '/app/models/' + file)
+  if (~file.indexOf('.js')) require(__dirname + '/app/models/' + file)
 })
 
 // Bootstrap passport config
