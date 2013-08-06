@@ -13,6 +13,8 @@ Clone this repository
 
 Add routes (`config/routes.js`), create models (`app/models/`), views (`app/views/`) and controllers (`app/controllers/`).
 
+Checkout the [apps that are built using this approach](https://github.com/madhums/node-express-mongoose/wiki/Apps-built-using-this-approach)
+
 ## License
 
 MIT
