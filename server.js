@@ -12,7 +12,22 @@ var fs = require('fs')
 
 require('express-namespace')
 
-mongoose.connect(config.db)
+// Connect to mongodb
+var connect = function () {
+  var options = { server: { socketOptions: { keepAlive: 1 } } }
+  mongoose.connect(config.db, options)
+}
+connect()
+
+// Error handler
+mongoose.connection.on('error', function (err) {
+  console.log(err)
+})
+
+// Reconnect when closed
+mongoose.connection.on('disconnected', function () {
+  connect()
+})
 
 // Bootstrap models
 fs.readdirSync(__dirname + '/app/models').forEach(function (file) {
