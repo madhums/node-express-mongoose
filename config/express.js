@@ -1,4 +1,3 @@
-
 /*!
  * Module dependencies.
  */
@@ -18,7 +17,7 @@ module.exports = function (app, config, passport) {
   // Add basic auth for staging
   if (env === 'staging') {
     app.use(express.basicAuth(function(user, pass){
-      return 'username' == user & 'password' == pass
+      return 'username' == user && 'password' == pass
     }))
 
     app.use(function (req, res, next) {
