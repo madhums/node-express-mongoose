@@ -40,7 +40,7 @@ require('./config/passport')(passport, config)
 var app = express()
 
 // Bootstrap application settings
-require('./config/express')(app, config, passport)
+require('./config/express')(app, passport)
 
 // Bootstrap routes
 require('./config/routes')(app, passport)

@@ -21,6 +21,7 @@
     "mongoose-user": "latest",
     "passport": "latest",
     "passport-local": "latest",
+    "winston": "latest",
     "connect-mongo": "latest",
     "connect-flash": "latest",
     "view-helpers": "latest",

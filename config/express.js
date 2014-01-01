@@ -5,15 +5,17 @@
 var express = require('express')
 var mongoStore = require('connect-mongo')(express)
 var helpers = require('view-helpers')
+var winston = require('winston')
 var pkg = require('../package')
 var flash = require('connect-flash')
 var env = process.env.NODE_ENV || 'development'
+var config = require('./config')[env]
 
 /*!
  * Expose
  */
 
-module.exports = function (app, config, passport) {
+module.exports = function (app, passport) {
   // Add basic auth for staging
   if (env === 'staging') {
     app.use(express.basicAuth(function(user, pass){
@@ -34,7 +36,24 @@ module.exports = function (app, config, passport) {
   app.use(express.favicon())
 
   app.use(express.static(config.root + '/public'))
-  app.use(express.logger('dev'))
+
+  // Logging
+  // Use winston on production
+  // and default express.logger on dev
+  var log
+  if (env !== 'development') {
+    log = {
+      stream: {
+        write: function (message, encoding) {
+          winston.info(message)
+        }
+      }
+    }
+  } else {
+    log = 'dev'
+  }
+  // Don't log during tests
+  if (env !== 'test') app.use(express.logger(log))
 
   // views config
   app.set('views', config.root + '/app/views')
