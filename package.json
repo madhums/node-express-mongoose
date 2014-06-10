@@ -1,39 +1,52 @@
 {
   "name": "node-express-mongoose",
   "description": "A boilerplate application for express mongoose",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "author": {
     "name": "Madhusudhan Srinivasa",
     "email": "me@madhums.me"
   },
   "engines": {
-    "node": "0.10.x",
-    "npm": "1.2.x"
+    "node": "0.10.x"
   },
   "scripts": {
-    "start": "NODE_PATH=./app/controllers NODE_ENV=development ./node_modules/.bin/nodemon server.js",
+    "start": "NODE_PATH=./config:./app/controllers NODE_ENV=development ./node_modules/.bin/nodemon server.js",
     "test": "make test"
   },
   "dependencies": {
     "express": "latest",
-    "express-namespace": "latest",
+    "express-session": "latest",
+    "compression": "latest",
+    "cookie-parser": "latest",
+    "morgan": "latest",
+    "body-parser": "latest",
+    "method-override": "latest",
+    "csurf": "latest",
+    "serve-static": "latest",
+
     "mongoose": "latest",
-    "mongoose-user": "latest",
+    "swig": "latest",
+
     "passport": "latest",
     "passport-local": "latest",
+
     "winston": "latest",
+    "view-helpers": "latest",
+    "async": "latest",
+    "forever": "latest",
     "connect-mongo": "latest",
     "connect-flash": "latest",
-    "view-helpers": "latest",
-    "jade": "latest",
-    "async": "latest",
-    "forever": "latest"
+    "mongoose-user": "latest"
   },
   "devDependencies": {
     "nodemon": "latest",
     "mocha": "latest",
     "should": "latest",
     "supertest": "latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/madhums/node-express-mongoose.git"
   },
   "keywords": [
     "mvc",

@@ -1,30 +1,19 @@
 
-/*!
+/**
  * Module dependencies.
  */
 
-var path = require('path')
-var rootPath = path.resolve(__dirname + '../..')
-
-/**
- * Expose config
- */
+var path = require('path');
+var extend = require('util')._extend;
+var development = require('./env/development');
+var test = require('./env/test');
+var production = require('./env/production');
+var defaults = {
+  root: path.normalize(__dirname + '/..')
+};
 
 module.exports = {
-  development: {
-    root: rootPath,
-    db: 'mongodb://localhost/your_app_db_dev'
-  },
-  test: {
-    root: rootPath,
-    db: 'mongodb://localhost/your_app_db_test'
-  },
-  staging: {
-    root: rootPath,
-    db: process.env.MONGOHQ_URL
-  },
-  production: {
-    root: rootPath,
-    db: process.env.MONGOHQ_URL
-  }
-}
+  development: extend(defaults, development),
+  test: extend(defaults, test),
+  production: extend(defaults, production)
+}[process.env.NODE_ENV || 'development'];

@@ -1,1 +1,1 @@
-1. Please make sure you maintain current code style
+Please refer to [express style guide](https://github.com/expressjs/style-guide/blob/master/javascript.md)
