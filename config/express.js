@@ -79,7 +79,14 @@ module.exports = function (app, passport) {
 
   // bodyParser should be above methodOverride
   app.use(bodyParser());
-  app.use(methodOverride());
+  app.use(methodOverride(function (req, res) {
+    if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+      // look in urlencoded POST bodies and delete it
+      var method = req.body._method;
+      delete req.body._method;
+      return method;
+    }
+  }));
 
   // express/mongo session storage
   app.use(session({
@@ -109,10 +116,5 @@ module.exports = function (app, passport) {
       res.locals.csrf_token = req.csrfToken();
       next();
     });
-  }
-
-  // development env config
-  if (env == 'development') {
-    app.locals.pretty = true;
   }
 };
