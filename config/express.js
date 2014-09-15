@@ -13,7 +13,6 @@ var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var csrf = require('csurf');
 var swig = require('swig');
-var serveStatic = require('serve-static');
 
 var mongoStore = require('connect-mongo')(session);
 var flash = require('connect-flash');
