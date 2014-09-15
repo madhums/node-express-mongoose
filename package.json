@@ -18,6 +18,7 @@
     "express-session": "latest",
     "compression": "latest",
     "cookie-parser": "latest",
+    "cookie-session": "latest",
     "morgan": "latest",
     "body-parser": "latest",
     "method-override": "latest",
