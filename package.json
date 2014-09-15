@@ -23,7 +23,6 @@
     "body-parser": "latest",
     "method-override": "latest",
     "csurf": "latest",
-    "serve-static": "latest",
 
     "mongoose": "latest",
     "swig": "latest",
