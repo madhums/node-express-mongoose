@@ -14,29 +14,26 @@
     "test": "make test"
   },
   "dependencies": {
-    "express": "latest",
-    "express-session": "latest",
-    "compression": "latest",
-    "cookie-parser": "latest",
-    "cookie-session": "latest",
-    "morgan": "latest",
-    "body-parser": "latest",
-    "method-override": "latest",
-    "csurf": "latest",
-
-    "mongoose": "latest",
-    "swig": "latest",
-
-    "passport": "latest",
-    "passport-local": "latest",
-
-    "winston": "latest",
-    "view-helpers": "latest",
     "async": "latest",
-    "forever": "latest",
-    "connect-mongo": "latest",
-    "connect-flash": "latest",
-    "mongoose-user": "latest"
+    "body-parser": "^1.8.2",
+    "compression": "^1.1.0",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^0.4.1",
+    "cookie-parser": "^1.3.3",
+    "cookie-session": "^1.0.2",
+    "csurf": "^1.6.1",
+    "express": "^4.9.3",
+    "express-session": "^1.8.2",
+    "forever": "^0.11.1",
+    "method-override": "^2.2.0",
+    "mongoose": "^3.9.2",
+    "mongoose-user": "0.0.1",
+    "morgan": "^1.3.1",
+    "passport": "^0.2.1",
+    "passport-local": "^1.0.0",
+    "swig": "^1.4.2",
+    "view-helpers": "^0.1.5",
+    "winston": "^0.8.0"
   },
   "devDependencies": {
     "nodemon": "latest",
