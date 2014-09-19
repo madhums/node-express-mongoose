@@ -9,10 +9,10 @@ A boilerplate application for building web apps using express, mongoose and pass
 
 Read the [wiki](https://github.com/madhums/node-express-mongoose/wiki) to understand how the application is structured.
 
-## Usage
-
-Clone this repository
-
+## Installation and Usage
+    
+    $ git clone https://github.com/madhums/node-express-mongoose.git
+    $ cd node-express-mongoose
     $ npm install
     $ npm start
 
