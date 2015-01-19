@@ -75,7 +75,10 @@ module.exports = function (app, passport) {
   });
 
   // bodyParser should be above methodOverride
-  app.use(bodyParser());
+  app.use(bodyParser.urlencoded({
+    extended: true
+  }));
+  app.use(bodyParser.json());
   app.use(methodOverride(function (req, res) {
     if (req.body && typeof req.body === 'object' && '_method' in req.body) {
       // look in urlencoded POST bodies and delete it
@@ -90,6 +93,9 @@ module.exports = function (app, passport) {
   app.use(cookieSession({ secret: 'secret' }));
   app.use(session({
     secret: pkg.name,
+    proxy: true,
+    resave: true,
+    saveUninitialized: true,
     store: new mongoStore({
       url: config.db,
       collection : 'sessions'
