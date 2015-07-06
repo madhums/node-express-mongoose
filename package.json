@@ -7,33 +7,33 @@
     "email": "me@madhums.me"
   },
   "engines": {
-    "node": "0.10.x"
+    "node": "0.12.x"
   },
   "scripts": {
     "start": "NODE_PATH=./config:./app/controllers NODE_ENV=development ./node_modules/.bin/nodemon server.js",
     "test": "make test"
   },
   "dependencies": {
-    "async": "latest",
-    "body-parser": "^1.8.2",
-    "compression": "^1.1.0",
-    "connect-flash": "^0.1.1",
-    "connect-mongo": "^0.4.1",
-    "cookie-parser": "^1.3.3",
-    "cookie-session": "^1.0.2",
-    "csurf": "^1.6.1",
-    "express": "^4.9.3",
-    "express-session": "^1.8.2",
-    "forever": "^0.11.1",
-    "method-override": "^2.2.0",
-    "mongoose": "3.8",
-    "mongoose-user": "0.0.1",
-    "morgan": "^1.3.1",
-    "passport": "^0.2.1",
-    "passport-local": "^1.0.0",
-    "swig": "^1.4.2",
-    "view-helpers": "^0.1.5",
-    "winston": "^0.8.0"
+    "async": "1.3.0",
+    "body-parser": "1.13.2",
+    "compression": "1.5.1",
+    "connect-flash": "0.1.1",
+    "connect-mongo": "0.8.1",
+    "cookie-parser": "1.3.5",
+    "cookie-session": "1.2.0",
+    "csurf": "1.8.3",
+    "express": "4.13.1",
+    "express-session": "1.11.3",
+    "forever": "0.14.2",
+    "method-override": "2.3.3",
+    "mongoose": "4.0.6",
+    "mongoose-user": "latest",
+    "morgan": "1.6.1",
+    "passport": "0.2.2",
+    "passport-local": "1.0.0",
+    "swig": "1.4.2",
+    "view-helpers": "0.1.5",
+    "winston": "1.0.1"
   },
   "devDependencies": {
     "nodemon": "latest",
