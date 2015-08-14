@@ -5,6 +5,12 @@
 
 module.exports = {
   db: 'mongodb://localhost/your_project_development',
+  session: {
+	// if set to true will store the session data in 
+	// client-side cookie, otherwise will stick it into
+	// the mongo store
+	inCookie: false
+  },
   facebook: {
     clientID: 'APP_ID',
     clientSecret: 'SECRET',

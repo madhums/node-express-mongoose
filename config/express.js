@@ -38,9 +38,11 @@ module.exports = function (app, passport) {
   app.use(express.static(config.root + '/public'));
 
   // Use winston on production
-  var log;
+  var logFormat;
+  var logOpts;
   if (env !== 'development') {
-    log = {
+    logFormat = 'combined';
+    logOpts = {
       stream: {
         write: function (message, encoding) {
           winston.info(message);
@@ -48,12 +50,13 @@ module.exports = function (app, passport) {
       }
     };
   } else {
-    log = 'dev';
+    logFormat = 'dev';
+    logOpts = {};
   }
 
   // Don't log during tests
   // Logging middleware
-  if (env !== 'test') app.use(morgan(log));
+  if (env !== 'test') app.use(morgan(logFormat, logOpts));
 
   // Swig templating engine settings
   if (env === 'development' || env === 'test') {
@@ -90,17 +93,21 @@ module.exports = function (app, passport) {
 
   // cookieParser should be above session
   app.use(cookieParser());
-  app.use(cookieSession({ secret: 'secret' }));
-  app.use(session({
-    secret: pkg.name,
-    proxy: true,
-    resave: true,
-    saveUninitialized: true,
-    store: new mongoStore({
-      url: config.db,
-      collection : 'sessions'
-    })
-  }));
+  if(config.session.inCookie) {
+    app.use(cookieSession({ secret: 'secret' }));
+  }
+  else {
+    app.use(session({
+      secret: pkg.name,
+      proxy: true,
+      resave: true,
+      saveUninitialized: true,
+      store: new mongoStore({
+        url: config.db,
+        collection : 'sessions'
+      })
+    }));
+  }
 
   // use passport session
   app.use(passport.initialize());
