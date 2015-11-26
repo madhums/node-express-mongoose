@@ -25,6 +25,7 @@
     "express": "4.13.1",
     "express-session": "1.11.3",
     "forever": "0.14.2",
+    "jade": "^1.11.0",
     "method-override": "2.3.3",
     "mongoose": "4.0.6",
     "mongoose-user": "latest",
