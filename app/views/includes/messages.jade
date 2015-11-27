@@ -1,0 +1,27 @@
+if info && info.length
+  div(class='fade in alert alert-info')
+    button(class='close' type='button' data-dismiss='alert') ×
+    ul
+      for inf in info
+        li #{ inf }
+
+if errors && errors.length
+  div(class='fade in alert alert-danger')
+    button(class='close' type='button' data-dismiss='alert') ×
+    ul
+      for error in errors 
+        li #{ error }
+
+if success && success.length
+  div(class='fade in alert alert-success')
+    button(class ='close' type='button' data-dismiss='alert') ×
+    ul
+      for succ in success
+        li #{ succ }
+
+if warning && warning.length
+  div(class='fade in alert alert-warning')
+    button(class='close' type='button' data-dismiss='alert') ×
+    ul
+      for warn in warning
+        li #{ warn }
