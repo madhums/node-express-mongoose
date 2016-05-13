@@ -27,7 +27,7 @@
     "forever": "0.14.2",
     "jade": "^1.11.0",
     "method-override": "2.3.3",
-    "mongoose": "4.0.6",
+    "mongoose": "4.4.17",
     "mongoose-user": "latest",
     "morgan": "1.6.1",
     "passport": "0.2.2",
