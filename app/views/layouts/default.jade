@@ -1,10 +1,11 @@
-include ../includes/head.jade
-
+doctype html
+html(lang="en")
+  include ../includes/head.jade
   body
-    include ../includes/header.jade
     .container
+      include ../includes/header.jade
       .page-header
-        block main
+        block page-header
       .messages
         include ../includes/messages.jade
       .content
