@@ -1,10 +1,10 @@
+'use strict';
 
 /**
  * Module dependencies.
  */
 
-var mongoose = require('mongoose');
-var home = require('home');
+const home = require('../app/controllers/home');
 
 /**
  * Expose

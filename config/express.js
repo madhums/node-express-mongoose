@@ -17,7 +17,8 @@ var mongoStore = require('connect-mongo')(session);
 var flash = require('connect-flash');
 var winston = require('winston');
 var helpers = require('view-helpers');
-var config = require('config');
+var jade = require('jade');
+var config = require('./');
 var pkg = require('../package.json');
 
 var env = process.env.NODE_ENV || 'development';
@@ -108,7 +109,7 @@ module.exports = function (app, passport) {
     app.use(csrf());
 
     // This could be moved to view-helpers :-)
-    app.use(function(req, res, next){
+    app.use(function (req, res, next){
       res.locals.csrf_token = req.csrfToken();
       next();
     });

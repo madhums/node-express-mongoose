@@ -1,40 +1,56 @@
+'use strict';
+
+/*
+ * nodejs-express-mongoose
+ * Copyright(c) 2015 Madhusudhan Srinivasa <madhums8@gmail.com>
+ * MIT Licensed
+ */
 
 /**
  * Module dependencies
  */
 
-var fs = require('fs');
-var express = require('express');
-var mongoose = require('mongoose');
-var passport = require('passport');
-var config = require('config');
+require('dotenv').config();
 
-var app = express();
-var port = process.env.PORT || 3000;
+const fs = require('fs');
+const join = require('path').join;
+const express = require('express');
+const mongoose = require('mongoose');
+const passport = require('passport');
+const config = require('./config');
 
-// Connect to mongodb
-var connect = function () {
-  var options = { server: { socketOptions: { keepAlive: 1 } } };
-  mongoose.connect(config.db, options);
-};
-connect();
+const models = join(__dirname, 'app/models');
+const port = process.env.PORT || 3000;
+const app = express();
 
-mongoose.connection.on('error', console.log);
-mongoose.connection.on('disconnected', connect);
+/**
+ * Expose
+ */
+
+module.exports = app;
 
 // Bootstrap models
-fs.readdirSync(__dirname + '/app/models').forEach(function (file) {
-  if (~file.indexOf('.js')) require(__dirname + '/app/models/' + file);
-});
-
-// Bootstrap passport config
-require('./config/passport')(passport, config);
-
-// Bootstrap application settings
-require('./config/express')(app, passport);
+fs.readdirSync(models)
+  .filter(file => ~file.indexOf('.js'))
+  .forEach(file => require(join(models, file)));
 
 // Bootstrap routes
+require('./config/passport')(passport);
+require('./config/express')(app, passport);
 require('./config/routes')(app, passport);
 
-app.listen(port);
-console.log('Express app started on port ' + port);
+connect()
+  .on('error', console.log)
+  .on('disconnected', connect)
+  .once('open', listen);
+
+function listen () {
+  if (app.get('env') === 'test') return;
+  app.listen(port);
+  console.log('Express app started on port ' + port);
+}
+
+function connect () {
+  var options = { server: { socketOptions: { keepAlive: 1 } } };
+  return mongoose.connect(config.db, options).connection;
+}
