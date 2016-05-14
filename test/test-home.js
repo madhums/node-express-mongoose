@@ -6,7 +6,7 @@
 
 const test = require('tape');
 const request = require('supertest');
-const app = require('../server');
+const { app } = require('../server');
 
 test('Home page', t => {
   request(app)
