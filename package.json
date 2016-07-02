@@ -25,7 +25,7 @@
     "csurf": "1.9.0",
     "dotenv": "~2.0.0",
     "express": "4.14.0",
-    "express-session": "~1.13.0",
+    "express-session": "~1.14.0",
     "forever": "~0.15.1",
     "method-override": "~2.3.5",
     "mongoose": "~4.5.0",
