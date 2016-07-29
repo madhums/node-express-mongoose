@@ -43,7 +43,7 @@
     "babel-tape-runner": "~2.0.1",
     "eslint": "~3.1.0",
     "nodemon": "~1.10.0",
-    "supertest": "~1.2.0",
+    "supertest": "~2.0.0",
     "tape": "~4.6.0"
   },
   "repository": {
