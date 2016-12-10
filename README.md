@@ -23,3 +23,7 @@ Checkout the [apps that are built using this approach](https://github.com/madhum
 ## License
 
 MIT
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/madhums/node-express-mongoose/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
