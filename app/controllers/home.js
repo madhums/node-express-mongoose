@@ -34,3 +34,5 @@ const messengerSettings = {
 };
 
 const messengerBot = new MessengerBot(messengerSettings);
+
+botmaster.addBot(messengerBot)
