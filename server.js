@@ -33,8 +33,8 @@ module.exports = {
   app
 };
 
-require('./config/express')(app, passport);
-require('./config/routes')(app, passport);
+require('./config/express')(app/*, passport*/);
+require('./config/routes')(app/*, passport*/);
 /*
 connection
   .on('error', console.log)
