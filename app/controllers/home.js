@@ -2,19 +2,20 @@
 /*!
  * Module dependencies.
  */
+ /*
 exports.index = function (req, res) {
   res.render('home/index', {
     title: 'Node Express Mongoose Boilerplate'
   });
 };
 
+*/
+//let nodeSchedule = require('node-schedule');
+//let rerunner = nodeSchedule.scheduleJob('*/10 * * * * *', function(){
 
-let nodeSchedule = require('node-schedule');
-let rerunner = nodeSchedule.scheduleJob('*/10 * * * * *', function(){
+// console.log('monthly popular recorded.');
 
- console.log('monthly popular recorded.');
-
-});
+//});
 
 
 //---------------
