@@ -106,6 +106,7 @@ module.exports = function (app, passport) {
   app.use(helpers(pkg.name));
 
   // adds CSRF support
+  /*
   if (process.env.NODE_ENV !== 'test') {
     app.use(csrf());
 
@@ -115,4 +116,5 @@ module.exports = function (app, passport) {
       next();
     });
   }
+  */
 };
