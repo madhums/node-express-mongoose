@@ -23,15 +23,15 @@ const models = join(__dirname, 'app/models');
 const port = process.env.PORT || 3002;
 
 const app = express();
-const connection = connect();
-
+//const connection = connect();
+//console.log(connection);
 /**
  * Expose
  */
 
 module.exports = {
-  app,
-  connection
+  app//,
+  //connection
 };
 
 // Bootstrap models
@@ -43,20 +43,24 @@ fs.readdirSync(models)
 require('./config/passport')(passport);
 require('./config/express')(app, passport);
 require('./config/routes')(app, passport);
-
+/*
 connection
   .on('error', console.log)
   .on('disconnected', connect)
   .once('open', listen);
-
+*/
 function listen () {
   if (app.get('env') === 'test') return;
   app.listen(port);
   console.log('Express app started on port ' + port);
 }
 
+//console.log('statrted at port: ' + port);
+listen()
+/*
 function connect () {
   var options = { server: { socketOptions: { keepAlive: 1 } } };
-  //var connection = mongoose.connect(config.db, options).connection;
+  var connection = mongoose.connect(config.db, options).connection;
   return connection;
 }
+*/
