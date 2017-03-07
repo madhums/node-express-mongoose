@@ -11,6 +11,7 @@
  */
 
 require('dotenv').config();
+const Botmaster = require('botmaster')
 /*
 const fs = require('fs');
 const join = require('path').join;
@@ -41,8 +42,7 @@ function connect () {
   return connection;
 }
 */
-const Botmaster = require('botmaster')
-const botmaster = new Botmaster();
+
 
 const messengerSettings = {
   credentials: {
@@ -54,9 +54,22 @@ const messengerSettings = {
   // botmaster will mount this webhook on https://Your_Domain_Name/messenger/webhook1234
 };
 
+const botsSettings = [{
+    messenger: messengerSettings
+}];
+
+const botmasterSettings = {
+    botsSettings,
+    app
+};
+
+const botmaster = new Botmaster(botmasterSettings);
+
 const messengerBot = new Botmaster.botTypes.MessengerBot(messengerSettings);
 botmaster.addBot(messengerBot)
 
 botmaster.on('update', (bot, update) => {
   bot.reply(update, 'Hello world!');
 });
+
+console.log('ssss');
