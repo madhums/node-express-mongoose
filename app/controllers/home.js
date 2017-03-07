@@ -28,7 +28,7 @@ const messengerSettings = {
     pageToken: fbConfig.pageAccessToken,
     fbAppSecret: fbConfig.appSecret,
   },
-  webhookEndpoint: '/hookmeatthisplace',
+  webhookEndpoint: '/webhook92ywrnc7f9Rqm4qoiuthecvasdf42FG',
   // botmaster will mount this webhook on https://Your_Domain_Name/messenger/webhook1234
 };
 
