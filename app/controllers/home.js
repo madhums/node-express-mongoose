@@ -30,9 +30,14 @@ const messengerSettings = {
     pageToken: fbConfig.pageAccessToken,
     fbAppSecret: fbConfig.appSecret,
   },
-  webhookEndpoint: '/hookmeatthisplace', // botmaster will mount this webhook on https://Your_Domain_Name/messenger/webhook1234
+  webhookEndpoint: '/hookmeatthisplace',
+  // botmaster will mount this webhook on https://Your_Domain_Name/messenger/webhook1234
 };
 
 const messengerBot = new MessengerBot(messengerSettings);
 
 botmaster.addBot(messengerBot)
+
+botmaster.on('update', (bot, update) => {
+  bot.reply(update, 'Hello world!');
+});
