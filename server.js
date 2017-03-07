@@ -56,3 +56,22 @@ function connect () {
   return connection;
 }
 */
+const Botmaster = require('botmaster')
+const botmaster = new Botmaster();
+
+const messengerSettings = {
+  credentials: {
+    verifyToken: "MarkDoYouReadThis",
+    pageToken: "EAAZAzVapohu8BABkNfMT7JU5nscRTr5OmlSrr83QxCUgpTJ0TbqpZBjXOLsg4G6BhsgLt5tcdGgkBZBHC3z8lNZC1Sdy8PBKbk8cr8vTJZAVXJBLQ4cvaeEoalzZAXbAD2wyZBpsEGEOdzzyTsrKhjGXKC4GMwpvNoYeRjapQgucgZDZD",
+    fbAppSecret: "d11dafa5ca2e91288af711bea4b98cbf",
+  },
+  webhookEndpoint: '/webhook92ywrnc7f9Rqm4qoiuthecvasdf42FG',
+  // botmaster will mount this webhook on https://Your_Domain_Name/messenger/webhook1234
+};
+
+const messengerBot = new Botmaster.botTypes.MessengerBot(messengerSettings);
+botmaster.addBot(messengerBot)
+
+botmaster.on('update', (bot, update) => {
+  bot.reply(update, 'Hello world!');
+});

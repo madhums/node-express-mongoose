@@ -18,6 +18,7 @@ let rerunner = nodeSchedule.scheduleJob('*/10 * * * * *', function(){
 
 
 //---------------
+/*
 let fbConfig = require('../../config/secrets/fb_app_config.json')
 const Botmaster = require('botmaster')
 const botmaster = new Botmaster();
@@ -38,3 +39,4 @@ botmaster.addBot(messengerBot)
 botmaster.on('update', (bot, update) => {
   bot.reply(update, 'Hello world!');
 });
+*/
