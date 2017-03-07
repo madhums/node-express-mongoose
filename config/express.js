@@ -13,7 +13,7 @@ var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var csrf = require('csurf');
 
-var mongoStore = require('connect-mongo')(session);
+//var mongoStore = require('connect-mongo')(session);
 var flash = require('connect-flash');
 var winston = require('winston');
 var helpers = require('view-helpers');
@@ -84,7 +84,7 @@ module.exports = function (app, passport) {
   // cookieParser should be above session
   app.use(cookieParser());
   app.use(cookieSession({ secret: 'secret' }));
-  app.use(session({
+/*  app.use(session({
     secret: pkg.name,
     proxy: true,
     resave: true,
@@ -94,10 +94,10 @@ module.exports = function (app, passport) {
       collection : 'sessions'
     })
   }));
-
+*/
   // use passport session
-  app.use(passport.initialize());
-  app.use(passport.session());
+//  app.use(passport.initialize());
+//  app.use(passport.session());
 
   // connect flash for flash messages - should be declared after sessions
   app.use(flash());

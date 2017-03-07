@@ -2,15 +2,15 @@
 /**
  * Module dependencies.
  */
-
+/*
 var mongoose = require('mongoose');
 var LocalStrategy = require('passport-local').Strategy;
 var User = mongoose.model('User');
-
+*/
 /**
  * Expose
  */
-
+/*
 module.exports = new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'
@@ -31,3 +31,4 @@ module.exports = new LocalStrategy({
     });
   }
 );
+*/
