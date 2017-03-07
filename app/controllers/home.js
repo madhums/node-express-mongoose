@@ -22,8 +22,6 @@ let fbConfig = require('../../config/secrets/fb_app_config.json')
 const Botmaster = require('botmaster')
 const botmaster = new Botmaster();
 
-const MessengerBot = Botmaster.botTypes.MessengerBot;
-
 const messengerSettings = {
   credentials: {
     verifyToken: fbConfig.verifyToken,
@@ -34,8 +32,7 @@ const messengerSettings = {
   // botmaster will mount this webhook on https://Your_Domain_Name/messenger/webhook1234
 };
 
-const messengerBot = new MessengerBot(messengerSettings);
-
+const messengerBot = new Botmaster.botTypes.MessengerBot(messengerSettings);
 botmaster.addBot(messengerBot)
 
 botmaster.on('update', (bot, update) => {
