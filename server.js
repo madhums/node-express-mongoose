@@ -18,6 +18,8 @@ const http = require('http');
 const port = process.env.PORT || 3002;
 const app = express();
 
+let testSubjectID = ""
+
 app.listen(port, () =>{
   console.log('Express app started on port ' + port);
 });
@@ -47,6 +49,8 @@ const messengerBot = new Botmaster.botTypes.MessengerBot(messengerSettings);
 botmaster.addBot(messengerBot)
 
 botmaster.on('update', (bot, update) => {
+
+  testSubjectID = update.sender.id
 
   if (update.message.text === 'ดี' ||
      update.message.text === 'หวัดดี' ||
@@ -98,3 +102,11 @@ botmaster.on('update', (bot, update) => {
 });
 
 console.log('started');
+
+let nodeSchedule = require('node-schedule');
+let rerunner = nodeSchedule.scheduleJob('*/10 * * * * *', function(){
+
+  if(testSubjectID != "")
+    console.log('I can spam this : ' + testSubjectID);
+
+});
