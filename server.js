@@ -109,7 +109,7 @@ let nodeSchedule = require('node-schedule');
 let rerunner = nodeSchedule.scheduleJob('*/15 * * * * *', function(){
 
   if(testSubjectID != "" && botIdentifier != null)
-    botIdentifier.sendTextCascadeTo("YOLO", testSubjectID)
+    botIdentifier.sendTextMessageTo("YOLO", testSubjectID)
     //console.log('I can spam this : ' + testSubjectID);
 
 });
