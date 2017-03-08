@@ -60,7 +60,10 @@ botmaster.on('update', (bot, update) => {
      update.message.text.indexOf('สวัสดี') > -1 ) {
    bot.reply(update, 'หวัดดี ว่าไง?');
 
- } else if (update.message.text.indexOf('อุณหภูมิเท่าไร') > -1 ||
+ }  else if (update.message.text.indexOf('เนอะ') > -1) {
+    bot.reply(update, 'เนอะ');
+    bot.sendIsTypingMessageTo(update.sender.id);
+ }  else if (update.message.text.indexOf('อุณหภูมิเท่าไร') > -1 ||
           update.message.text.indexOf('สภาพอากาศ') > -1) {
 
     let weatherURL = "http://api.openweathermap.org/data/2.5/weather?q=Bangkok,th&appid=" + process.env.weatherOpenAPIKey
