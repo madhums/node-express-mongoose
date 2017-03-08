@@ -71,7 +71,8 @@ botmaster.on('update', (bot, update) => {
      update.message.text.indexOf('สวัสดี') > -1 ) {
    bot.reply(update, 'หวัดดี ว่าไง?');
 
-  } else if (update.message.text.indexOf('weather') > -1) {
+ } else if (update.message.text.indexOf('อุณหภูมิเท่าไร') > -1 ||
+          update.message.text.indexOf('สภาพอากาศ') > -1) {
 
     let weatherURL = "http://api.openweathermap.org/data/2.5/weather?q=Bangkok,th&appid=" + process.env.weatherOpenAPIKey
     var request = http.get(weatherURL, function (response) {
@@ -86,8 +87,17 @@ botmaster.on('update', (bot, update) => {
           if(err) console.log('error occured');
           console.log('got reponse (sms)');
           if(buffer) {
+
             let responseJSON = JSON.parse(buffer)
-            bot.sendTextMessageTo('sent from ' + responseJSON.name , update.sender.id);
+
+            let city = (responseJSON.name == "Bangkok") ? "กรุงเทพ" : responseJSON.name
+            let temp = parseInt(responseJSON.main.temp) - 273.15
+            let weather = ""
+            if(responseJSON.weather[0].description == "few clouds") weather = "มีเมฆเล็กน้อย"
+
+            let weatherResponse = "อากาศใน" + city + " " + weather + " อุณหภูมิอยู่ที่ " + temp + " องศา"
+
+            bot.sendTextMessageTo('sent from ' +  , update.sender.id);
           }
 
         });
