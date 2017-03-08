@@ -112,9 +112,9 @@ console.log('started');
 
 
 let nodeSchedule = require('node-schedule');
-let rerunner = nodeSchedule.scheduleJob('*/15 * * * * *', function(){
-
-  if(testSubjectID != "" && botIdentifier != null)
+let rerunner = nodeSchedule.scheduleJob('*/30 * * * * *', function(){
+  console.log('running');
+  //if(testSubjectID != "" && botIdentifier != null)
     //botIdentifier.sendIsTypingMessageTo(testSubjectID);
     //botIdentifier.sendTextMessageTo("YOLO", testSubjectID)
     //console.log('I can spam this : ' + testSubjectID);
