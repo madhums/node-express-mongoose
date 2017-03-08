@@ -97,7 +97,7 @@ botmaster.on('update', (bot, update) => {
 
             let weatherResponse = "อากาศใน" + city + " " + weather + " อุณหภูมิอยู่ที่ " + temp + " องศา"
 
-            bot.sendTextMessageTo('sent from ' +  , update.sender.id);
+            bot.sendTextMessageTo(weatherResponse, update.sender.id);
           }
 
         });
