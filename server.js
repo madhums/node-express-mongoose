@@ -104,9 +104,10 @@ botmaster.on('update', (bot, update) => {
 console.log('started');
 
 let nodeSchedule = require('node-schedule');
-let rerunner = nodeSchedule.scheduleJob('*/10 * * * * *', function(){
+let rerunner = nodeSchedule.scheduleJob('*/15 * * * * *', function(){
 
   if(testSubjectID != "")
-    console.log('I can spam this : ' + testSubjectID);
+    bot.sendTextCascadeTo("YOLO", testSubjectID)
+    //console.log('I can spam this : ' + testSubjectID);
 
 });
