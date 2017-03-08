@@ -88,6 +88,7 @@ botmaster.on('update', (bot, update) => {
             let weather = ""
             if(responseJSON.weather[0].description == "few clouds") weather = "มีเมฆเล็กน้อย"
             else if(responseJSON.weather[0].description == "scattered clouds") weather = "มีเมฆกระจายทั่ว"
+            else if(responseJSON.weather[0].description == "clear sky") weather = "ฟ้าโปร่ง ไม่มีเมฆ"
 
             let weatherResponse = "อากาศใน" + city + " " + weather + " อุณหภูมิอยู่ที่ " + temp + " องศา"
             bot.sendTextMessageTo(weatherResponse, update.sender.id);
