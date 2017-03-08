@@ -54,6 +54,7 @@ botmaster.on('update', (bot, update) => {
   botIdentifier = bot
   testSubjectID = update.sender.id
 
+
   if (update.message.text === 'ดี' ||
      update.message.text === 'หวัดดี' ||
      update.message.text === 'นี่' ||
@@ -62,7 +63,7 @@ botmaster.on('update', (bot, update) => {
 
  }  else if (update.message.text.indexOf('เนอะ') > -1) {
     bot.reply(update, 'เนอะ');
-    bot.sendIsTypingMessageTo(update.sender.id);
+
  }  else if (update.message.text.indexOf('อุณหภูมิเท่าไร') > -1 ||
           update.message.text.indexOf('สภาพอากาศ') > -1) {
 
@@ -111,7 +112,8 @@ console.log('started');
 let nodeSchedule = require('node-schedule');
 let rerunner = nodeSchedule.scheduleJob('*/15 * * * * *', function(){
 
-  //if(testSubjectID != "" && botIdentifier != null)
+  if(testSubjectID != "" && botIdentifier != null)
+    botIdentifier.sendIsTypingMessageTo(testSubjectID);
     //botIdentifier.sendTextMessageTo("YOLO", testSubjectID)
     //console.log('I can spam this : ' + testSubjectID);
 
