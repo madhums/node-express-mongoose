@@ -18,26 +18,9 @@ const http = require('http');
 const port = process.env.PORT || 3002;
 const app = express();
 
-//require('./config/express')(app/*, passport*/);
-//require('./config/routes')(app/*, passport*/);
-/*
-connection
-  .on('error', console.log)
-  .on('disconnected', connect)
-  .once('open', listen);
-*/
 app.listen(port, () =>{
   console.log('Express app started on port ' + port);
 });
-/*
-function connect () {
-  var options = { server: { socketOptions: { keepAlive: 1 } } };
-  var connection = mongoose.connect(config.db, options).connection;
-  return connection;
-}
-*/
-
-
 
 const messengerSettings = {
   credentials: {
@@ -91,13 +74,14 @@ botmaster.on('update', (bot, update) => {
             let responseJSON = JSON.parse(buffer)
 
             let city = (responseJSON.name == "Bangkok") ? "กรุงเทพ" : responseJSON.name
-            let temp = parseInt(responseJSON.main.temp) - 273.15
+            let temp = Math.ceil(parseInt(responseJSON.main.temp) - 273.15)
             let weather = ""
             if(responseJSON.weather[0].description == "few clouds") weather = "มีเมฆเล็กน้อย"
+            else if(responseJSON.weather[0].description == "scattered clouds") weather = "มีเมฆกระจายทั่ว"
 
             let weatherResponse = "อากาศใน" + city + " " + weather + " อุณหภูมิอยู่ที่ " + temp + " องศา"
-
             bot.sendTextMessageTo(weatherResponse, update.sender.id);
+
           }
 
         });
