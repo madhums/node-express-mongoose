@@ -19,6 +19,7 @@ const port = process.env.PORT || 3002;
 const app = express();
 
 let testSubjectID = ""
+let botIdentifier = null
 
 app.listen(port, () =>{
   console.log('Express app started on port ' + port);
@@ -50,6 +51,7 @@ botmaster.addBot(messengerBot)
 
 botmaster.on('update', (bot, update) => {
 
+  botIdentifier = bot
   testSubjectID = update.sender.id
 
   if (update.message.text === 'ดี' ||
@@ -106,8 +108,8 @@ console.log('started');
 let nodeSchedule = require('node-schedule');
 let rerunner = nodeSchedule.scheduleJob('*/15 * * * * *', function(){
 
-  if(testSubjectID != "")
-    bot.sendTextCascadeTo("YOLO", testSubjectID)
+  if(testSubjectID != "" && botIdentifier != null)
+    botIdentifier.sendTextCascadeTo("YOLO", testSubjectID)
     //console.log('I can spam this : ' + testSubjectID);
 
 });
