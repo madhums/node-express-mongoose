@@ -12,15 +12,9 @@
 
 require('dotenv').config();
 const Botmaster = require('botmaster')
-/*
-const fs = require('fs');
-const join = require('path').join;
-*/
 const express = require('express');
-//const mongoose = require('mongoose');
-//const passport = require('passport');
-//const config = require('./config');
-//const models = join(__dirname, 'app/models');
+const https = require('https');
+const http = require('http');
 const port = process.env.PORT || 3002;
 const app = express();
 
@@ -44,13 +38,14 @@ function connect () {
 */
 
 
+
 const messengerSettings = {
   credentials: {
-    verifyToken: "MarkDoYouReadThis",
-    pageToken: "EAAZAzVapohu8BABkNfMT7JU5nscRTr5OmlSrr83QxCUgpTJ0TbqpZBjXOLsg4G6BhsgLt5tcdGgkBZBHC3z8lNZC1Sdy8PBKbk8cr8vTJZAVXJBLQ4cvaeEoalzZAXbAD2wyZBpsEGEOdzzyTsrKhjGXKC4GMwpvNoYeRjapQgucgZDZD",
-    fbAppSecret: "d11dafa5ca2e91288af711bea4b98cbf",
+    verifyToken: process.env.vToken,
+    pageToken: process.env.pageToken,
+    fbAppSecret: process.env.appSecret,
   },
-  webhookEndpoint: '/webhook92ywrnc7f9Rqm4qoiuthecvasdf42FG',
+  webhookEndpoint: process.env.hookPlace, ///webhook92ywrnc7f9Rqm4qoiuthecvasdf42FG
   // botmaster will mount this webhook on https://Your_Domain_Name/messenger/webhook1234
 };
 
@@ -69,7 +64,43 @@ const messengerBot = new Botmaster.botTypes.MessengerBot(messengerSettings);
 botmaster.addBot(messengerBot)
 
 botmaster.on('update', (bot, update) => {
-  bot.reply(update, 'Hello world!');
+
+  if (update.message.text === 'ดี' ||
+     update.message.text === 'หวัดดี' ||
+     update.message.text === 'นี่' ||
+     update.message.text.indexOf('สวัสดี') > -1 ) {
+   bot.reply(update, 'หวัดดี ว่าไง?');
+
+  } else if (update.message.text.indexOf('weather') > -1) {
+
+    let weatherURL = "http://api.openweathermap.org/data/2.5/weather?q=Bangkok,th&appid=" + process.env.weatherOpenAPIKey
+    var request = http.get(weatherURL, function (response) {
+
+        var buffer = "";
+        response.on("data", function (chunk) {
+            buffer += chunk;
+        });
+
+        response.on("end", function (err) {
+
+          if(err) console.log('error occured');
+          console.log('got reponse (sms)');
+          if(buffer) {
+            let responseJSON = JSON.parse(buffer)
+            bot.sendTextMessageTo('sent from ' + responseJSON.name , update.sender.id);
+          }
+
+        });
+
+    });
+
+  } else {
+   const messages = ['I\'m sorry about this.',
+                     'But it seems like I couldn\'t understand your message.',
+                     'Could you try reformulating it?']
+   bot.sendTextCascadeTo(messages, update.sender.id)
+  }
+
 });
 
-console.log('ssss');
+console.log('started');
