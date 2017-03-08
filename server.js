@@ -109,11 +109,13 @@ botmaster.on('update', (bot, update) => {
 
 console.log('started');
 
+
+
 let nodeSchedule = require('node-schedule');
 let rerunner = nodeSchedule.scheduleJob('*/15 * * * * *', function(){
 
   if(testSubjectID != "" && botIdentifier != null)
-    botIdentifier.sendIsTypingMessageTo(testSubjectID);
+    //botIdentifier.sendIsTypingMessageTo(testSubjectID);
     //botIdentifier.sendTextMessageTo("YOLO", testSubjectID)
     //console.log('I can spam this : ' + testSubjectID);
 
