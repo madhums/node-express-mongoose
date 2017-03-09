@@ -54,8 +54,8 @@ function readDB() {
     console.log(`UID: ${snapshot.val().uid}`);
   })
   .catch(function(error){
-    console.log('failed to read');
-    console.log(`${JSON.stringify(snapshot)}`);
+    console.log('failed to read\n\n');
+    console.log(`${JSON.stringify(error)}`);
   })
 
 }
