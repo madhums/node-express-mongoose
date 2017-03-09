@@ -47,11 +47,19 @@ function recordNewUserID(userId) {
 
 }
 
+let runner = 0;
+
 function readDB() {
 
   database.ref('users').once('value')
   .then(function(snapshot){
-    console.log(`${JSON.stringify(snapshot.val())}`);
+    if(snapshot.val() == null){
+      runner = 0
+      console.log('found null');
+    }
+    else {
+      console.log(JSON.stringify(snapshot.val()));
+    }
     //console.log(`UID: ${snapshot.val().uid}`);
   })
   .catch(function(error){
