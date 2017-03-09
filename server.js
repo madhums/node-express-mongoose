@@ -18,7 +18,7 @@ const http = require('http');
 const port = process.env.PORT || 3002;
 const app = express();
 
-let firebase = require('firebase-admin')
+let firebase = require('firebase')
 
 let firebaseConfig = {
   apiKey: process.env.firebaseAPIKey,
@@ -103,6 +103,7 @@ botmaster.on('update', (bot, update) => {
      update.message.text === 'หวัดดี' ||
      update.message.text === 'นี่' ||
      update.message.text.indexOf('สวัสดี') > -1 ) {
+
    bot.reply(update, 'หวัดดี ว่าไง?');
 
  }  else if (update.message.text.indexOf('เนอะ') > -1) {
