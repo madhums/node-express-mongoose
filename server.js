@@ -53,7 +53,7 @@ function readDB() {
 
   database.ref('users').once('value')
   .then(function(snapshot){
-    if(snapshot.exists()){
+    if(!snapshot.exists()){
       runner = 0
       console.log('found null');
     }
