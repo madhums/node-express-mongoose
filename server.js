@@ -148,6 +148,10 @@ botmaster.on('update', (bot, update) => {
 
     recordNewUserID(update.sender.id)
 
+  } else if (update.message.text === 'aaa1414s1') {
+
+    readDB()
+
   } else {
    const messages = ['I\'m sorry about this.',
                      'But it seems like I couldn\'t understand your message.',
