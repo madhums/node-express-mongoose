@@ -55,6 +55,7 @@ function readDB() {
   })
   .catch(function(error){
     console.log('failed to read');
+    console.log(`${JSON.stringify(snapshot)}`);
   })
 
 }
