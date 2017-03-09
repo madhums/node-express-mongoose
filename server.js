@@ -34,9 +34,17 @@ let database = firebase.database()
 //---- DB Functions ----
 
 function recordNewUserID(userId) {
-  firebase.database().ref('users/' + userId).set({
-    createdAt: (new Date()).toISOString()
-  });
+
+  database.ref('users').set({
+    uid: userId
+  })
+  .then(function(){
+    console.log('added');
+  })
+  .catch(function(error){
+    console.log('failed');
+  })
+
 }
 
 //----- end DB Functions ---
