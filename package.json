@@ -29,6 +29,7 @@
     "express": "4.15.0",
     "express-session": "~1.15.1",
     "firebase": "^3.7.0",
+    "firebase-admin": "^4.1.3",
     "forever": "~0.15.1",
     "jade": "~1.11.0",
     "method-override": "~2.3.5",

@@ -18,7 +18,7 @@ const http = require('http');
 const port = process.env.PORT || 3002;
 const app = express();
 
-let firebase = require('firebase')
+let firebase = require('firebase-admin')
 
 let firebaseConfig = {
   apiKey: process.env.firebaseAPIKey,
