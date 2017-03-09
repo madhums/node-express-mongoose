@@ -51,7 +51,7 @@ function readDB() {
 
   database.ref('users').once('value')
   .then(function(snapshot){
-    console.log(`${snapshot}`);
+    console.log(`${JSON.Stringify(snapshot)}`);
     //console.log(`UID: ${snapshot.val().uid}`);
   })
   .catch(function(error){
