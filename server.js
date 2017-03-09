@@ -58,7 +58,7 @@ function readDB() {
       console.log('found null');
     }
     else {
-      console.log(JSON.stringify(snapshot.val()));
+      console.log('snap length = ' + snapshot.val().length);
     }
     //console.log(`UID: ${snapshot.val().uid}`);
   })
