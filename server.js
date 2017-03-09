@@ -51,7 +51,8 @@ function readDB() {
 
   database.ref('users').once('value')
   .then(function(snapshot){
-    console.log(`UID: ${snapshot.val().uid}`);
+    console.log(`${snapshot}`);
+    //console.log(`UID: ${snapshot.val().uid}`);
   })
   .catch(function(error){
     console.log('failed to read\n\n');
