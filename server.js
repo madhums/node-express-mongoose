@@ -18,6 +18,30 @@ const http = require('http');
 const port = process.env.PORT || 3002;
 const app = express();
 
+let firebase = require('firebase')
+
+let firebaseConfig = {
+  apiKey: process.env.firebaseAPIKey,
+  authDomain: "messengerchatbot-f6775.firebaseapp.com",
+  databaseURL: "https://messengerchatbot-f6775.firebaseio.com",
+  storageBucket: "messengerchatbot-f6775.appspot.com",
+  messagingSenderId: "524406259822"
+}
+
+firebase.initializeApp(firebaseConfig)
+let database = firebase.database()
+
+//---- DB Functions ----
+
+function recordNewUserID(userId) {
+  firebase.database().ref('users/' + userId).set({
+    createdAt: (new Date()).toISOString()
+  });
+}
+
+//----- end DB Functions ---
+
+
 let testSubjectID = ""
 let botIdentifier = null
 
@@ -89,6 +113,7 @@ botmaster.on('update', (bot, update) => {
             if(responseJSON.weather[0].description == "few clouds") weather = "มีเมฆเล็กน้อย"
             else if(responseJSON.weather[0].description == "scattered clouds") weather = "มีเมฆกระจายทั่ว"
             else if(responseJSON.weather[0].description == "clear sky") weather = "ฟ้าโปร่ง ไม่มีเมฆ"
+            else weather = responseJSON.weather[0].description
 
             let weatherResponse = "อากาศใน" + city + " " + weather + " อุณหภูมิอยู่ที่ " + temp + " องศา"
             bot.sendTextMessageTo(weatherResponse, update.sender.id);
@@ -98,6 +123,10 @@ botmaster.on('update', (bot, update) => {
         });
 
     });
+
+  } else if (update.message.text === '777778547') {
+
+    recordNewUserID(update.sender.id)
 
   } else {
    const messages = ['I\'m sorry about this.',
