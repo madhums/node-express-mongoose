@@ -53,12 +53,12 @@ function readDB() {
 
   database.ref('users').once('value')
   .then(function(snapshot){
-    if(snapshot.val() == null){
+    if(snapshot.exists()){
       runner = 0
       console.log('found null');
     }
     else {
-      console.log('snap length = ' + snapshot.val().length);
+      console.log('snap length = ' + snapshot.numChildren();
     }
     //console.log(`UID: ${snapshot.val().uid}`);
   })
