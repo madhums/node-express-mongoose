@@ -124,7 +124,7 @@ function recordNewUserID(userId) {
 }
 
 
-fuction checkDupID(uid) {
+function checkDupID(uid) {
   let dup = database.ref('users').orderByKey().equalTo(uid)
 
   console.log(`is dup: ${dup}`);
