@@ -125,10 +125,16 @@ function recordNewUserID(userId) {
 
 
 function checkDupID(uid) {
-  let dup = database.ref('users').orderByKey().equalTo(uid).once('value')
 
-  console.log(`is dup: ${dup}`);
-  return dup
+  let dup = database.ref('users').orderByKey().equalTo(uid).once('value')
+  .then(function(snapshot){
+    console.log(snapshot.val())
+    return snapshot.exists()
+  })
+  .catch(function(error){
+    console.log(`error checkdup ${error}`);
+  })
+
 }
 
 function setRunnerNumber() {
