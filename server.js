@@ -140,6 +140,18 @@ function checkDupID(uid, cb) {
 
 }
 
+function getAllID(cb) {
+
+  let dup = database.ref('users').once('value')
+  .then(function(snapshot){
+    console.log(snapshot.val());
+  })
+  .catch(function(error){
+    return cb(`error checkdup ${error}`, null)
+  })
+
+}
+
 function setRunnerNumber() {
 
   database.ref('users').once('value')
@@ -233,7 +245,10 @@ botmaster.on('update', (bot, update) => {
 
   } else if (update.message.text === 'aaa1414s1') {
 
-    readDB()
+    //readDB()
+    getAllID(function(err){
+      if(err) console.log(err);
+    })
 
   } else {
    const messages = ['บอทยังไม่เข้าใจข้อความของคุณ',
@@ -250,9 +265,15 @@ console.log('started');
 let nodeSchedule = require('node-schedule');
 let rerunner = nodeSchedule.scheduleJob('*/5 * * * *', function(){
   console.log('running');
+
+
   //if(testSubjectID != "" && botIdentifier != null)
     //botIdentifier.sendIsTypingMessageTo(testSubjectID);
     //botIdentifier.sendTextMessageTo("YOLO", testSubjectID)
     //console.log('I can spam this : ' + testSubjectID);
 
 });
+
+let weatherReporter = nodeSchedule.scheduleJob('* * 10 * * *', function(){
+
+})
