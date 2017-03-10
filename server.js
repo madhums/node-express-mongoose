@@ -107,8 +107,9 @@ function recordNewUserID(userId) {
       database.ref(`/users/${userId}`).set({
         firstName: info.first_name,
         lastName: info.last_name,
-        gender: info.gender + 'sss',
-        timezone: info.timezone
+        gender: info.gender,
+        timezone: info.timezone,
+        createdAt: (new Date()).toISOString()
       })
       .then(function(){
         console.log('added');
