@@ -252,7 +252,7 @@ botmaster.on('update', (bot, update) => {
     getAllID(function(err, list){
       if(err) console.log(err);
       else if(list) {
-        console.log('sss');
+        console.log(list);
         /*
         list.forEach(function(id){
           bot.sendTextCascadeTo('test', id)
