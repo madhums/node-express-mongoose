@@ -124,17 +124,17 @@ function recordNewUserID(userId) {
 }
 
 
-function checkDupID(uid) {
+function checkDupID(uid, cb) {
 
   let dup = database.ref('users').orderByKey().equalTo(uid).once('value')
   .then(function(snapshot){
     // console.log(snapshot.val())
     // console.log(snapshot.exists())
     console.log('check dup');
-    return snapshot.exists() //true means dup
+    return cb(null, snapshot.exists()) //true means dup
   })
   .catch(function(error){
-    console.log(`error checkdup ${error}`);
+    return cb(`error checkdup ${error}`, null)
   })
 
 }
@@ -225,14 +225,10 @@ botmaster.on('update', (bot, update) => {
   } else if (update.message.text === '777778547') {
 
     let uid = update.sender.id
-    let isDup = checkDupID(uid)
-    console.log('value of is dup = ' + isDup);
-    if(!isDup) {
-      recordNewUserID(uid)
-    }
-    else console.log('dup whoi');
-
-    console.log('ending');
+    checkDupID(uid, function(err, isDup){
+      if(!isDup) recordNewUserID(uid)
+      else console.log('dup id found');
+    })
 
   } else if (update.message.text === 'aaa1414s1') {
 
