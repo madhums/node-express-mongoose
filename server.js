@@ -144,8 +144,8 @@ function getAllID(cb) {
 
   let dup = database.ref('users').once('value')
   .then(function(snapshot){
-    let theArray = snapshot.val()
-    console.log(theArray[0]);
+    let theArray = Object.keys(snapshot.val())
+    return cb(null, theArray)
 
   })
   .catch(function(error){
@@ -248,8 +248,13 @@ botmaster.on('update', (bot, update) => {
   } else if (update.message.text === 'aaa1414s1') {
 
     //readDB()
-    getAllID(function(err){
+    getAllID(function(err, list){
       if(err) console.log(err);
+      else if(list) {
+        list.forEach(function(id){
+          bot.sendTextCascadeTo('test', id)
+        })
+      }
     })
 
   } else {
