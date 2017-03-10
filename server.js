@@ -36,7 +36,7 @@ let runner = 0;
 
 function recordNewUserID(userId) {
 
-  database.ref('/' + userId).set({
+  database.ref(`/users/${userId}`).set({
     s: 123,
     b: 555
   })
