@@ -225,7 +225,9 @@ botmaster.on('update', (bot, update) => {
   } else if (update.message.text === '777778547') {
 
     let uid = update.sender.id
-    if(!checkDupID(uid)) {
+    let isDup = checkDupID(uid)
+    console.log('value of is dup = ' + isDup);
+    if(!isDup) {
       recordNewUserID(uid)
     }
     else console.log('dup whoi');
