@@ -253,11 +253,9 @@ botmaster.on('update', (bot, update) => {
       if(err) console.log(err);
       else if(list) {
         console.log(list);
-        /*
-        list.forEach(function(id){
-          bot.sendTextCascadeTo('test', id)
+        list.map((a)=>{
+          bot.sendTextMessageTo('text', a);
         })
-        */
       }
     })
 
