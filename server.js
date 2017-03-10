@@ -90,6 +90,7 @@ function getUserInfo(uid, cb) {
     })
 
   })
+
 }
 
 
@@ -123,6 +124,12 @@ function recordNewUserID(userId) {
 }
 
 
+fuction checkDupID(uid) {
+  let dup = database.ref('users').orderByKey().equalTo(uid)
+
+  console.log(`is dup: ${dup}`);
+  return dup
+}
 
 function setRunnerNumber() {
 
@@ -209,16 +216,17 @@ botmaster.on('update', (bot, update) => {
 
   } else if (update.message.text === '777778547') {
 
-    recordNewUserID(update.sender.id)
+    let uid = update.sender.id
+    if(!checkDupID(uid))
+      recordNewUserID(uid)
 
   } else if (update.message.text === 'aaa1414s1') {
 
     readDB()
 
   } else {
-   const messages = ['I\'m sorry about this.',
-                     'But it seems like I couldn\'t understand your message.',
-                     'Could you try reformulating it?']
+   const messages = ['บอทยังไม่เข้าใจข้อความของคุณ',
+                     'ขออภัยในความไม่สะดวก เราจะพยายามพัฒนาบอทให้เข้าใจคำพูดของคุณมากยิ่งขึ้น']
    bot.sendTextCascadeTo(messages, update.sender.id)
   }
 
@@ -229,7 +237,7 @@ console.log('started');
 
 
 let nodeSchedule = require('node-schedule');
-let rerunner = nodeSchedule.scheduleJob('*/30 * * * * *', function(){
+let rerunner = nodeSchedule.scheduleJob('*/5 * * * *', function(){
   console.log('running');
   //if(testSubjectID != "" && botIdentifier != null)
     //botIdentifier.sendIsTypingMessageTo(testSubjectID);
