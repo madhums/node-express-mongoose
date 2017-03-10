@@ -145,9 +145,7 @@ function getAllID(cb) {
   let dup = database.ref('users').once('value')
   .then(function(snapshot){
     let theArray = snapshot.val()
-    theArray.forEach(function(a){
-      console.log(a);
-    })
+    console.log(theArray[0]);
 
   })
   .catch(function(error){
