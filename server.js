@@ -32,11 +32,12 @@ firebase.initializeApp(firebaseConfig)
 let database = firebase.database()
 
 //---- DB Functions ----
+let runner = 0;
 
 function recordNewUserID(userId) {
 
-  database.ref('users').set({
-    uid: userId
+  database.ref('/').set({
+    uid: ['sss', 'dddd']
   })
   .then(function(){
     console.log('added');
@@ -47,27 +48,32 @@ function recordNewUserID(userId) {
 
 }
 
-let runner = 0;
 
-function readDB() {
+
+function setRunnerNumber() {
 
   database.ref('users').once('value')
   .then(function(snapshot){
+    // no datain snapshot
     if(!snapshot.exists()){
       runner = 0
-      console.log('found null');
+      console.log('set runner to 0');
     }
+    // has some data
     else {
-      console.log('snap length = ' + snapshot.numChildren());
+      //console.log('snap length = ' + snapshot.numChildren());
+      runner = snapshot.numChildren()
+      console.log(`set runner to ${runner}`);
     }
     //console.log(`UID: ${snapshot.val().uid}`);
   })
   .catch(function(error){
-    console.log('failed to read\n\n');
+    console.log('failed to read DB for setting runner number\n\n');
     console.log(`${error}`);
   })
 
 }
+
 
 //----- end DB Functions ---
 
