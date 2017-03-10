@@ -31,14 +31,53 @@ let firebaseConfig = {
 firebase.initializeApp(firebaseConfig)
 let database = firebase.database()
 
+//------ APIs ----------
+
+function getWeather(cb) {
+
+  let weatherURL = "http://api.openweathermap.org/data/2.5/weather?q=Bangkok,th&appid=" + process.env.weatherOpenAPIKey
+  http.get(weatherURL, function (response) {
+
+      var buffer = "";
+      response.on("data", function (chunk) {
+          buffer += chunk;
+      });
+
+      response.on("end", function (err) {
+
+        if(err) return cb('request weather error: ' + err, null)
+        if(buffer) {
+
+          let responseJSON = JSON.parse(buffer)
+
+          let city = (responseJSON.name == "Bangkok") ? "กรุงเทพ" : responseJSON.name
+          let temp = Math.ceil(parseInt(responseJSON.main.temp) - 273.15)
+          let weather = ""
+          if(responseJSON.weather[0].description == "few clouds") weather = "มีเมฆเล็กน้อย"
+          else if(responseJSON.weather[0].description == "scattered clouds") weather = "มีเมฆกระจายทั่ว"
+          else if(responseJSON.weather[0].description == "clear sky") weather = "ฟ้าโปร่ง ไม่มีเมฆ"
+          else weather = responseJSON.weather[0].description
+
+          let weatherReport = "อากาศใน" + city + " " + weather + " อุณหภูมิอยู่ที่ " + temp + " องศา"
+          return cb(null, weatherReport)
+        }
+      })
+  })
+
+}
+
+
+
 //---- DB Functions ----
 let runner = 0;
 
 function recordNewUserID(userId) {
 
   database.ref(`/users/${userId}`).set({
-    s: 123,
-    b: 555
+    firstName: 123,
+    lastName: 555,
+    gender: 11,
+    timezone: 1
   })
   .then(function(){
     console.log('added');
@@ -129,38 +168,10 @@ botmaster.on('update', (bot, update) => {
  }  else if (update.message.text.indexOf('อุณหภูมิเท่าไร') > -1 ||
           update.message.text.indexOf('สภาพอากาศ') > -1) {
 
-    let weatherURL = "http://api.openweathermap.org/data/2.5/weather?q=Bangkok,th&appid=" + process.env.weatherOpenAPIKey
-    var request = http.get(weatherURL, function (response) {
-
-        var buffer = "";
-        response.on("data", function (chunk) {
-            buffer += chunk;
-        });
-
-        response.on("end", function (err) {
-
-          if(err) console.log('error occured');
-          console.log('got reponse (sms)');
-          if(buffer) {
-
-            let responseJSON = JSON.parse(buffer)
-
-            let city = (responseJSON.name == "Bangkok") ? "กรุงเทพ" : responseJSON.name
-            let temp = Math.ceil(parseInt(responseJSON.main.temp) - 273.15)
-            let weather = ""
-            if(responseJSON.weather[0].description == "few clouds") weather = "มีเมฆเล็กน้อย"
-            else if(responseJSON.weather[0].description == "scattered clouds") weather = "มีเมฆกระจายทั่ว"
-            else if(responseJSON.weather[0].description == "clear sky") weather = "ฟ้าโปร่ง ไม่มีเมฆ"
-            else weather = responseJSON.weather[0].description
-
-            let weatherResponse = "อากาศใน" + city + " " + weather + " อุณหภูมิอยู่ที่ " + temp + " องศา"
-            bot.sendTextMessageTo(weatherResponse, update.sender.id);
-
-          }
-
-        });
-
-    });
+    getWeather(function(err, result){
+      if(err) console.log(err);
+      else bot.sendTextMessageTo(result, update.sender.id);
+    })
 
   } else if (update.message.text === '777778547') {
 
