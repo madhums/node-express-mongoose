@@ -126,9 +126,10 @@ function recordNewUserID(userId) {
 
 function checkDupID(uid) {
 
-  let dup = database.ref('users').equalTo(uid).once('value')
+  let dup = database.ref('users').orderByKey().equalTo(uid).once('value')
   .then(function(snapshot){
     console.log(snapshot.val())
+    console.log(snapshot.exists())
     return snapshot.exists()
   })
   .catch(function(error){
