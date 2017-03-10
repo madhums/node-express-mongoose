@@ -36,8 +36,9 @@ let runner = 0;
 
 function recordNewUserID(userId) {
 
-  database.ref('/').set({
-    uid: ['sss', 'dddd']
+  database.ref('/' + userId).set({
+    s: 123,
+    b: 555
   })
   .then(function(){
     console.log('added');
