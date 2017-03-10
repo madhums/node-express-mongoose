@@ -145,11 +145,12 @@ function getAllID(cb) {
   let dup = database.ref('users').once('value')
   .then(function(snapshot){
     let theArray = Object.keys(snapshot.val())
+    console.log(theArray);
     return cb(null, theArray)
 
   })
   .catch(function(error){
-    return cb(`error checkdup ${error}`, null)
+    return cb(`error getAllID ${error}`, null)
   })
 
 }
