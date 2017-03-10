@@ -128,9 +128,10 @@ function checkDupID(uid) {
 
   let dup = database.ref('users').orderByKey().equalTo(uid).once('value')
   .then(function(snapshot){
-    console.log(snapshot.val())
-    console.log(snapshot.exists())
-    return snapshot.exists()
+    // console.log(snapshot.val())
+    // console.log(snapshot.exists())
+    console.log('check dup');
+    return snapshot.exists() //true means dup
   })
   .catch(function(error){
     console.log(`error checkdup ${error}`);
@@ -224,8 +225,12 @@ botmaster.on('update', (bot, update) => {
   } else if (update.message.text === '777778547') {
 
     let uid = update.sender.id
-    if(!checkDupID(uid))
+    if(!checkDupID(uid)) {
       recordNewUserID(uid)
+    }
+    else console.log('dup whoi');
+
+    console.log('ending');
 
   } else if (update.message.text === 'aaa1414s1') {
 
