@@ -93,6 +93,25 @@ function getAllID(cb) {
 
 }
 
+function getAllSubscribedID(cb) {
+
+  let dup = database.ref('users').once('value')
+  .then(function(snapshot){
+    let theArray = []
+    Object.keys(snapshot.val()).forEach((key)=>{
+      if(snapshot[key].subscribed) theArray.push(key)
+    })
+    console.log(theArray);
+    return cb(null, theArray)
+
+  })
+  .catch(function(error){
+    return cb(`error getAllID ${error}`, null)
+  })
+
+}
+
+/*
 function setRunnerNumber() {
 
   database.ref('users').once('value')
@@ -116,7 +135,7 @@ function setRunnerNumber() {
   })
 
 }
-
+*/
 
 //----- end DB Functions ---
 
@@ -134,7 +153,7 @@ const messengerSettings = {
     pageToken: process.env.pageToken,
     fbAppSecret: process.env.appSecret,
   },
-  webhookEndpoint: process.env.hookPlace, ///webhook92ywrnc7f9Rqm4qoiuthecvasdf42FG
+  webhookEndpoint: process.env.hookPlace,
   // botmaster will mount this webhook on https://Your_Domain_Name/messenger/webhook1234
 };
 
@@ -199,7 +218,7 @@ botmaster.on('update', (bot, update) => {
 
   } else {
    const messages = ['บอทยังไม่เข้าใจข้อความของคุณ',
-                     'ขออภัยในความไม่สะดวก เราจะพยายามพัฒนาบอทให้เข้าใจคำพูดของคุณมากยิ่งขึ้น']
+                     'เรากำลังพัฒนาบอทให้มีความสามารถสูงขึ้น เพื่อเข้าใจคำพูดของคุณ']
    bot.sendTextCascadeTo(messages, update.sender.id)
   }
 
@@ -222,7 +241,7 @@ let rerunner = nodeSchedule.scheduleJob('*/5 * * * *', function(){
 });
 
 //heroku server timezone is gmt+0.00
-let weatherReporter = nodeSchedule.scheduleJob('0 */30 * * * *', function(){
+let weatherReporter = nodeSchedule.scheduleJob('0 0 5,11,17,23 * * *', function(){
   getAllID(function(err, list){
     if(err) console.log(err);
     else if(list) {
@@ -241,6 +260,11 @@ let weatherReporter = nodeSchedule.scheduleJob('0 */30 * * * *', function(){
 messengerProfileAPI.getUserInfo('1432315113461939', function(err, info){
   messengerBot.sendTextMessageTo('bot started!', '1432315113461939');
   messengerBot.sendTextMessageTo(`สวัสดี ${info.first_name}`, '1432315113461939');
+})
+
+getAllSubscribedID(function(err, ids){
+  if(err) console.log(err);
+  else console.log('success');
 })
 
 /*
