@@ -195,7 +195,7 @@ botmaster.on('update', (bot, update) => {
      update.message.text.indexOf('สวัสดี') > -1 ) {
 
   let a = checkIfSubscribed(update.sender.id)
-  console.log('subbbbbb = ' + a);
+  console.log('subbbbbb = ' + JSON.stringify(a));
   if(!a) {
     bot.sendTextMessageTo('ยังไม่ subscribe บอทใช่มั้ย?', update.sender.id)
   } else console.log('yeah')
