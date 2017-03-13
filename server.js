@@ -99,14 +99,15 @@ function getAllSubscribedID(cb) {
   .then(function(snapshot){
     let theArray = []
     Object.keys(snapshot.val()).forEach((key)=>{
-      if(snapshot[key].subscribed) theArray.push(key)
+      console.log('\n\n\n' + snapshot[key]);
+      if(snapshot.val()[key].subscribed) theArray.push(key)
     })
     console.log(theArray);
     return cb(null, theArray)
 
   })
   .catch(function(error){
-    return cb(`error getAllID ${error}`, null)
+    return cb(`error getAllSubscribedID ${error}`, null)
   })
 
 }
