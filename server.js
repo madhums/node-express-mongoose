@@ -115,8 +115,8 @@ async function checkIfSubscribed(uid) {
 
   console.log('\nbefore ======================');
   return snap = await database.ref('users').orderByKey().equalTo(uid).once('value')
-  console.log(snap.val());
-  console.log('\after ======================');
+  console.log('_____' + snap.val());
+  console.log('\nafter ======================');
 
 }
 
@@ -278,6 +278,7 @@ getAllSubscribedID(function(err, ids){
 })
 
 checkIfSubscribed('1432315113461939')
+console.log('after call function');
 /*
 getAllID(function(err, list){
   if(err) console.log(err);
