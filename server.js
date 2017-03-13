@@ -1,11 +1,3 @@
-//'use strict';
-
-/*
- * nodejs-express-mongoose
- * Copyright(c) 2015 Madhusudhan Srinivasa <madhums8@gmail.com>
- * MIT Licensed
- */
-
 /**
  * Module dependencies
  */
@@ -17,6 +9,8 @@ const https = require('https');
 const http = require('http');
 const port = process.env.PORT || 3002;
 const app = express();
+
+let weatherAPI = require('app/controller/weather.controller.js')
 
 let firebase = require('firebase')
 
@@ -32,39 +26,6 @@ firebase.initializeApp(firebaseConfig)
 let database = firebase.database()
 
 //------ APIs ----------
-
-function getWeather(cb) {
-
-  let weatherURL = "http://api.openweathermap.org/data/2.5/weather?q=Bangkok,th&appid=" + process.env.weatherOpenAPIKey
-  http.get(weatherURL, function (response) {
-
-      var buffer = "";
-      response.on("data", function (chunk) {
-          buffer += chunk;
-      });
-
-      response.on("end", function (err) {
-
-        if(err) return cb('request weather error: ' + err, null)
-        if(buffer) {
-
-          let responseJSON = JSON.parse(buffer)
-
-          let city = (responseJSON.name == "Bangkok") ? "กรุงเทพ" : responseJSON.name
-          let temp = Math.ceil(parseInt(responseJSON.main.temp) - 273.15)
-          let weather = ""
-          if(responseJSON.weather[0].description == "few clouds") weather = "มีเมฆเล็กน้อย"
-          else if(responseJSON.weather[0].description == "scattered clouds") weather = "มีเมฆกระจายทั่ว"
-          else if(responseJSON.weather[0].description == "clear sky") weather = "ฟ้าโปร่ง ไม่มีเมฆ"
-          else weather = responseJSON.weather[0].description
-
-          let weatherReport = "อากาศใน" + city + " " + weather + " อุณหภูมิอยู่ที่ " + temp + " องศา"
-          return cb(null, weatherReport)
-        }
-      })
-  })
-
-}
 
 
 function getUserInfo(uid, cb) {
@@ -233,7 +194,7 @@ botmaster.on('update', (bot, update) => {
  }  else if (update.message.text.indexOf('อุณหภูมิเท่าไร') > -1 ||
           update.message.text.indexOf('สภาพอากาศ') > -1) {
 
-    getWeather(function(err, result){
+    weatherAPI.getReport(function(err, result){
       if(err) console.log(err);
       else bot.sendTextMessageTo(result, update.sender.id);
     })
@@ -291,7 +252,7 @@ let weatherReporter = nodeSchedule.scheduleJob('0 */30 * * * *', function(){
       console.log(list);
 
       list.map((a)=>{
-        getWeather(function(err, result){
+        weatherAPI.getReport(function(err, result){
           if(err) console.log(err);
           else messengerBot.sendTextMessageTo(result, a);
         })
@@ -300,7 +261,9 @@ let weatherReporter = nodeSchedule.scheduleJob('0 */30 * * * *', function(){
   })
 })
 
+messengerBot.sendTextMessageTo('bot started!', '1432315113461939');
 
+/*
 getAllID(function(err, list){
   if(err) console.log(err);
   else if(list) {
@@ -311,3 +274,4 @@ getAllID(function(err, list){
     })
   }
 })
+*/
