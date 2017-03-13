@@ -116,11 +116,11 @@ async function checkIfSubscribed(uid) {
   console.log('\nbefore ======================');
   let snap = await database.ref('users').orderByKey().equalTo(uid).once('value')
 
+  if(!snap) reject('not found')
   Object.keys(snap.val()).forEach( (key) => {
-    return snap.val()[key].subscribed
+    resolve(snap.val()[key].subscribed)
   })
 
-  console.log('\nafter ======================');
 
 }
 
