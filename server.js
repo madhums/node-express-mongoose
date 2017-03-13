@@ -283,7 +283,7 @@ let rerunner = nodeSchedule.scheduleJob('*/5 * * * *', function(){
 
 });
 
-let weatherReporter = nodeSchedule.scheduleJob('* * 10 * * *', function(){
+let weatherReporter = nodeSchedule.scheduleJob('* 10 4 * * *', function(){
   getAllID(function(err, list){
     if(err) console.log(err);
     else if(list) {
