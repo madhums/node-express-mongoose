@@ -283,7 +283,7 @@ let rerunner = nodeSchedule.scheduleJob('*/5 * * * *', function(){
 
 });
 
-let weatherReporter = nodeSchedule.scheduleJob('* 10 4 * * *', function(){
+let weatherReporter = nodeSchedule.scheduleJob('* 15 4 * * *', function(){
   getAllID(function(err, list){
     if(err) console.log(err);
     else if(list) {
@@ -292,7 +292,7 @@ let weatherReporter = nodeSchedule.scheduleJob('* 10 4 * * *', function(){
       list.map((a)=>{
         getWeather(function(err, result){
           if(err) console.log(err);
-          else bot.sendTextMessageTo(result, a);
+          else botIdentifier.sendTextMessageTo(result, a);
         })
       })
     }
