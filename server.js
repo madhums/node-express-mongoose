@@ -283,7 +283,8 @@ let rerunner = nodeSchedule.scheduleJob('*/5 * * * *', function(){
 
 });
 
-let weatherReporter = nodeSchedule.scheduleJob('0 33 4 * * *', function(){
+//heroku server timezone is gmt+0.00
+let weatherReporter = nodeSchedule.scheduleJob('0 0 */6 * * *', function(){
   getAllID(function(err, list){
     if(err) console.log(err);
     else if(list) {
@@ -297,4 +298,16 @@ let weatherReporter = nodeSchedule.scheduleJob('0 33 4 * * *', function(){
       })
     }
   })
+})
+
+
+getAllID(function(err, list){
+  if(err) console.log(err);
+  else if(list) {
+    console.log(list);
+
+    list.map((a)=>{
+      messengerBot.sendTextMessageTo('bot started!', a);
+    })
+  }
 })
