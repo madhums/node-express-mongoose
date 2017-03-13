@@ -195,8 +195,10 @@ botmaster.on('update', (bot, update) => {
      update.message.text.indexOf('สวัสดี') > -1 ) {
 
 
-  if(!checkIfSubscribed(update.sender.id))
+  if(!checkIfSubscribed(update.sender.id)) {
     bot.sendTextMessageTo('ยังไม่ subscribe บอทใช่มั้ย?', update.sender.id)
+  } else console.log('yeah')
+
 
    bot.reply(update, 'หวัดดี ว่าไง?');
 
