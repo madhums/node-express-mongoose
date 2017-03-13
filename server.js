@@ -194,9 +194,11 @@ botmaster.on('update', (bot, update) => {
      update.message.text === 'นี่' ||
      update.message.text.indexOf('สวัสดี') > -1 ) {
 
-   bot.reply(update, 'หวัดดี ว่าไง?');
-   if(!checkIfSubscribed('1432315113461939'))
+
+  if(!checkIfSubscribed(update.sender.id))
     bot.sendTextMessageTo('ยังไม่ subscribe บอทใช่มั้ย?', update.sender.id)
+
+   bot.reply(update, 'หวัดดี ว่าไง?');
 
  }  else if (update.message.text.indexOf('เนอะ') > -1) {
     bot.reply(update, 'เนอะ');
