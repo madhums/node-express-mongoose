@@ -11,6 +11,7 @@ const port = process.env.PORT || 3002;
 const app = express();
 
 let weatherAPI = require('./app/controllers/weather.controller.js')
+let messengerProfileAPI = require('./app/controllers/messenger_profile.controller.js')
 
 let firebase = require('firebase')
 
@@ -28,31 +29,7 @@ let database = firebase.database()
 //------ APIs ----------
 
 
-function getUserInfo(uid, cb) {
 
-  let apiPath = "https://graph.facebook.com/v2.6/" + uid
-                + "?fields=first_name,last_name,timezone,gender&access_token="
-                + process.env.pageToken
-
-  https.get(apiPath, function (response) {
-
-    var buffer = "";
-    response.on("data", function (chunk) {
-        buffer += chunk;
-    });
-
-    response.on("end", function (err) {
-
-      if(err) return cb('get user info err: ' + err, null)
-      if(buffer) {
-        return cb(null, JSON.parse(buffer))
-      }
-
-    })
-
-  })
-
-}
 
 
 //---- DB Functions ----
@@ -60,7 +37,7 @@ let runner = 0;
 
 function recordNewUserID(userId) {
 
-  getUserInfo(userId, function(err, info){
+  messengerProfileAPI.getUserInfo(userId, function(err, info){
 
     if(err) console.log(err);
     else if(info){
@@ -261,7 +238,10 @@ let weatherReporter = nodeSchedule.scheduleJob('0 */30 * * * *', function(){
   })
 })
 
-messengerBot.sendTextMessageTo('bot started!', '1432315113461939');
+messengerProfileAPI.getUserInfo('1432315113461939', function(err, info){
+  messengerBot.sendTextMessageTo('bot started!', '1432315113461939');
+  messengerBot.sendTextMessageTo(`สวัสดี ${info.first_name}`, '1432315113461939');
+})
 
 /*
 getAllID(function(err, list){
