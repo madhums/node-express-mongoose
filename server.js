@@ -114,12 +114,20 @@ function getAllSubscribedID(cb) {
 async function checkIfSubscribed(uid) {
 
   console.log('\nbefore ======================');
-  let snap = await database.ref('users').orderByKey().equalTo(uid).once('value')
 
-  if(!snap) reject('not found')
-  Object.keys(snap.val()).forEach( (key) => {
-    resolve(snap.val()[key].subscribed)
-  })
+  try {
+
+    let result = false
+    let snap = await database.ref('users').orderByKey().equalTo(uid).once('value')
+    Object.keys(snap.val()).forEach( (key) => {
+      result = snap.val()[key].subscribed
+    })
+    return result
+
+  } catch(error) {
+    console.log(error);
+  }
+
 
 
 }
@@ -195,7 +203,7 @@ botmaster.on('update', (bot, update) => {
      update.message.text.indexOf('สวัสดี') > -1 ) {
 
   let a = checkIfSubscribed(update.sender.id)
-  console.log('subbbbbb = ' + JSON.stringify(a));
+  console.log('subbbbbb = ' + a + ' __ ' + JSON.stringify(a));
   if(!a) {
     bot.sendTextMessageTo('ยังไม่ subscribe บอทใช่มั้ย?', update.sender.id)
   } else console.log('yeah')
