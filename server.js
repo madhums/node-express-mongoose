@@ -114,7 +114,7 @@ function getAllSubscribedID(cb) {
 async function checkIfSubscribed(uid) {
 
   console.log('\nbefore ======================');
-  return snap = await database.ref('users').orderByKey().equalTo(uid).once('value')
+  let snap = await database.ref('users').orderByKey().equalTo(uid).once('value')
   console.log('_____' + snap.val());
   console.log('\nafter ======================');
 
@@ -152,7 +152,7 @@ function setRunnerNumber() {
 let testSubjectID = ""
 let botIdentifier = null
 
-app.listen(port, () =>{
+app.listen(port, () => {
   console.log('Express app started on port ' + port);
 });
 
