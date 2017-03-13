@@ -10,7 +10,7 @@ const http = require('http');
 const port = process.env.PORT || 3002;
 const app = express();
 
-let weatherAPI = require('app/controller/weather.controller.js')
+let weatherAPI = require('./app/controller/weather.controller.js')
 
 let firebase = require('firebase')
 
