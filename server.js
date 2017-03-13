@@ -114,7 +114,7 @@ function getAllSubscribedID(cb) {
 async function checkIfSubscribed(uid) {
 
   let snap = await database.ref('users').orderByKey().equalTo(uid).once('value')
-  return snap
+  return snap.val()
 
 }
 
@@ -277,6 +277,7 @@ getAllSubscribedID(function(err, ids){
 
 console.log('==================');
 console.log(checkIfSubscribed('1432315113461939'))
+console.log('++++++++++++++++++');
 /*
 getAllID(function(err, list){
   if(err) console.log(err);
