@@ -208,6 +208,10 @@ botmaster.on('update', (bot, update) => {
     if(isSub) console.log('yeah')
     else bot.sendTextMessageTo('ยังไม่ subscribe บอทใช่มั้ย?', update.sender.id)
   })
+  let bb = ['button 1', 'button 2']
+  bot.sendDefaultButtonMessageTo(bb, update.sender.id, 'select me')
+
+
    bot.reply(update, 'หวัดดี ว่าไง?');
 
  }  else if (update.message.text.indexOf('เนอะ') > -1) {
