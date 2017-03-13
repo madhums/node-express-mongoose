@@ -189,8 +189,6 @@ botmaster.on('update', (bot, update) => {
   botIdentifier = bot
   testSubjectID = update.sender.id
 
-  database.ref('users').orderByKey().equalTo(uid).once('value')
-
   if (update.message.text === 'ดี' ||
      update.message.text === 'หวัดดี' ||
      update.message.text === 'นี่' ||
