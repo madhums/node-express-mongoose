@@ -115,7 +115,7 @@ async function checkIfSubscribed(uid) {
 
   console.log('\nbefore ======================');
   let snap = await database.ref('users').orderByKey().equalTo(uid).once('value')
-  console.log('_____' + snap.val());
+  console.log('_____' + JSON.stringify(snap.val()));
   console.log('\nafter ======================');
 
 }
