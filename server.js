@@ -197,6 +197,8 @@ botmaster.on('update', (bot, update) => {
      update.message.text.indexOf('สวัสดี') > -1 ) {
 
    bot.reply(update, 'หวัดดี ว่าไง?');
+   if(!checkIfSubscribed('1432315113461939'))
+    bot.sendTextMessageTo('ยังไม่ subscribe บอทใช่มั้ย?', update.sender.id)
 
  }  else if (update.message.text.indexOf('เนอะ') > -1) {
     bot.reply(update, 'เนอะ');
@@ -281,11 +283,7 @@ getAllSubscribedID(function(err, ids){
   else console.log('success');
 })
 
-if(checkIfSubscribed('1432315113461939')){
-  console.log(`sub laew`);
-}
-else console.log(`wanna sub?`);
-console.log('after call function');
+
 /*
 getAllID(function(err, list){
   if(err) console.log(err);
