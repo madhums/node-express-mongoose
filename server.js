@@ -198,7 +198,7 @@ botmaster.on('update', (bot, update) => {
   console.log('subbbbbb = ' + a);
   if(!a) {
     bot.sendTextMessageTo('ยังไม่ subscribe บอทใช่มั้ย?', update.sender.id)
-  } else console.log('yeah' + )
+  } else console.log('yeah')
 
 
    bot.reply(update, 'หวัดดี ว่าไง?');
