@@ -203,14 +203,12 @@ botmaster.on('update', (bot, update) => {
      update.message.text.indexOf('สวัสดี') > -1 ) {
 
   let a = Promise.resolve(checkIfSubscribed(update.sender.id))
-  console.log('subbbbbb = ' + a + ' __ ' + JSON.stringify(a));
 
   a.then(function(isSub){
     if(isSub) console.log('yeah')
     else bot.sendTextMessageTo('ยังไม่ subscribe บอทใช่มั้ย?', update.sender.id)
   })
-
-
+   bot.sendDefaultButtonMessageTo(['s', 'v'], update.sender.id)
    bot.reply(update, 'หวัดดี ว่าไง?');
 
  }  else if (update.message.text.indexOf('เนอะ') > -1) {
