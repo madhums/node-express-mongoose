@@ -98,8 +98,7 @@ function getAllSubscribedID(cb) {
   let dup = database.ref('users').once('value')
   .then(function(snapshot){
     let theArray = []
-    Object.keys(snapshot.val()).forEach((key)=>{
-      console.log('\n\n\n' + snapshot[key]);
+    Object.keys(snapshot.val()).forEach( (key) => {
       if(snapshot.val()[key].subscribed) theArray.push(key)
     })
     console.log(theArray);
@@ -109,6 +108,13 @@ function getAllSubscribedID(cb) {
   .catch(function(error){
     return cb(`error getAllSubscribedID ${error}`, null)
   })
+
+}
+
+async function checkIfSubscribed(uid) {
+
+  let snap = await database.ref('users').orderByKey().equalTo(uid).once('value')
+  console.log(snap.val());
 
 }
 
@@ -177,6 +183,7 @@ botmaster.on('update', (bot, update) => {
   botIdentifier = bot
   testSubjectID = update.sender.id
 
+  database.ref('users').orderByKey().equalTo(uid).once('value')
 
   if (update.message.text === 'ดี' ||
      update.message.text === 'หวัดดี' ||
@@ -268,6 +275,7 @@ getAllSubscribedID(function(err, ids){
   else console.log('success');
 })
 
+checkIfSubscribed('1432315113461939')
 /*
 getAllID(function(err, list){
   if(err) console.log(err);
