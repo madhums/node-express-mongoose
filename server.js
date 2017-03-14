@@ -215,7 +215,7 @@ botmaster.on('update', (bot, update) => {
   let att = {
     'type': 'image',
     'payload':{
-      'url': 'https://droidsans.com/wp-content/uploads/2017/03/levi.png'
+      'url': 'https://scontent.fbkk5-4.fna.fbcdn.net/v/t1.0-9/17202708_1431472330228157_226441462637609901_n.jpg?oh=e04905c79c2b628c4e02eb9ebaa053c4&oe=5966B395'
     }
   }
   bot.sendAttachmentTo(att, update.sender.id)
