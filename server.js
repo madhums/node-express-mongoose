@@ -194,22 +194,24 @@ botmaster.addBot(messengerBot)
 
 botmaster.on('update', (bot, update) => {
 
-  botIdentifier = bot
-  testSubjectID = update.sender.id
-
   if (update.message.text === 'ดี' ||
      update.message.text === 'หวัดดี' ||
      update.message.text === 'นี่' ||
      update.message.text.indexOf('สวัสดี') > -1 ) {
 
-  let checkSubscription = Promise.resolve(checkIfSubscribed(update.sender.id))
+  let a = Promise.resolve(checkIfSubscribed(update.sender.id))
 
-  checkSubscription.then(function(isSub){
-    if(isSub) console.log('yeah')
+  a.then(function(isSub){
+    if(isSub) bot.sendTextMessageTo('ยินดีต้อนรับกลับมา', update.sender.id)
     else bot.sendTextMessageTo('ยังไม่ subscribe บอทใช่มั้ย?', update.sender.id)
+  })
+  .catch(function(err){
+    console.log('error promise smthing');
   })
   //let bb = ['button 1', 'button 2']
   //bot.sendDefaultButtonMessageTo(bb, update.sender.id, 'select me')
+
+
   let att = {
     'type': 'image',
     'payload':{
@@ -217,7 +219,7 @@ botmaster.on('update', (bot, update) => {
     }
   }
   bot.sendAttachmentTo(att, update.sender.id)
-
+  
 
    bot.reply(update, 'หวัดดี ว่าไง?');
    //messengerBot.sendTextMessageTo(`สวัสดี ${info.first_name}`, '1432315113461939');
