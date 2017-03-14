@@ -216,6 +216,7 @@ botmaster.on('update', (bot, update) => {
       console.log(res.json());
       return res.json()
     }).then(function(json){
+      console.log('\n\n\n' + json);
       meow = json.file
     })
 
