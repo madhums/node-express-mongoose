@@ -7,6 +7,7 @@ const Botmaster = require('botmaster')
 const express = require('express');
 const https = require('https');
 const http = require('http');
+const fetch = require('node-fetch')
 const port = process.env.PORT || 3002;
 const app = express();
 
@@ -160,13 +161,10 @@ function setRunnerNumber() {
 
 //----- end DB Functions ---
 
-
-let testSubjectID = ""
-let botIdentifier = null
-
 app.listen(port, () => {
   console.log('Express app started on port ' + port);
 });
+
 
 const messengerSettings = {
   credentials: {
@@ -210,12 +208,22 @@ botmaster.on('update', (bot, update) => {
   })
   //let bb = ['button 1', 'button 2']
   //bot.sendDefaultButtonMessageTo(bb, update.sender.id, 'select me')
+//http://random.cat/meow
+
+  let meow = ''
+  fetch('http://random.cat/meow')
+    .then(function(res){
+      console.log(res.json());
+      return res.json()
+    }).then(function(json){
+      meow = json.file
+    })
 
   console.log('b4 send att');
   let att = {
     'type': 'image',
     'payload':{
-      'url': 'https://scontent.fbkk5-4.fna.fbcdn.net/v/t1.0-9/17202708_1431472330228157_226441462637609901_n.jpg?oh=e04905c79c2b628c4e02eb9ebaa053c4&oe=5966B395'
+      'url': meow
     }
   }
   bot.sendAttachmentTo(att, update.sender.id)
