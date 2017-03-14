@@ -221,6 +221,8 @@ botmaster.on('update', (bot, update) => {
 
       console.log('\n\n\n' + JSON.stringify(json))
       meow = json.file
+      console.log('\n\n\n' + meow)
+      return meow
 
     }).catch(function(err){
 
