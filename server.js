@@ -211,7 +211,7 @@ botmaster.on('update', (bot, update) => {
   //let bb = ['button 1', 'button 2']
   //bot.sendDefaultButtonMessageTo(bb, update.sender.id, 'select me')
 
-
+  console.log('b4 send att');
   let att = {
     'type': 'image',
     'payload':{
@@ -219,7 +219,7 @@ botmaster.on('update', (bot, update) => {
     }
   }
   bot.sendAttachmentTo(att, update.sender.id)
-  
+  console.log('aft send att');
 
    bot.reply(update, 'หวัดดี ว่าไง?');
    //messengerBot.sendTextMessageTo(`สวัสดี ${info.first_name}`, '1432315113461939');
