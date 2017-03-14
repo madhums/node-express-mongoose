@@ -200,8 +200,38 @@ botmaster.on('update', (bot, update) => {
   let a = Promise.resolve(checkIfSubscribed(update.sender.id))
 
   a.then(function(isSub){
-    if(isSub) bot.sendTextMessageTo('ยินดีต้อนรับกลับมา', update.sender.id)
-    else bot.sendTextMessageTo('ยังไม่ subscribe บอทใช่มั้ย?', update.sender.id)
+    if(isSub) {
+      //bot.sendTextMessageTo('', update.sender.id)
+
+      fetch('http://random.cat/meow')
+        .then(function(res){
+
+          //console.log(JSON.stringify(res))
+          return res.json()
+
+        }).then(function(json){
+
+          let att = {
+            'type': 'image',
+            'payload':{
+              'url': json.file
+            }
+          }
+          bot.sendAttachmentTo(att, update.sender.id)
+
+        }).catch(function(err){
+
+          console.log(err)
+
+        })
+
+    }
+    else {
+      bot.sendTextMessageTo('คุณยังไม่ได้ subscribe บอท', update.sender.id)
+
+      let bb = ['ต้องการ Subscribe', 'ไม่ต้องการ Subscribe']
+      bot.sendDefaultButtonMessageTo(bb, update.sender.id, 'สนใจ subscribe เลยมั้ย?')
+    }
   })
   .catch(function(err){
     console.log('error promise smthing');
@@ -211,27 +241,7 @@ botmaster.on('update', (bot, update) => {
 //http://random.cat/meow
 
 
-  fetch('http://random.cat/meow')
-    .then(function(res){
 
-      //console.log(JSON.stringify(res))
-      return res.json()
-
-    }).then(function(json){
-
-      let att = {
-        'type': 'image',
-        'payload':{
-          'url': json.file
-        }
-      }
-      bot.sendAttachmentTo(att, update.sender.id)
-
-    }).catch(function(err){
-
-      console.log(err)
-
-    })
 
   //console.log('b4 send att');
   //console.log('meow: ' + meow);
@@ -246,6 +256,15 @@ botmaster.on('update', (bot, update) => {
 
    bot.reply(update, 'หวัดดี ว่าไง?');
    //messengerBot.sendTextMessageTo(`สวัสดี ${info.first_name}`, '1432315113461939');
+
+ } else if (update.message.text == 'ต้องการ Subscribe' || pdate.message.text == 'ไม่ต้องการ Subscribe') {
+
+   if(update.message.text == 'ต้องการ Subscribe') {
+     // change subsribe to true
+     bot.reply(update, 'จัดไป');
+   } else {
+     bot.reply(update, 'สนใจก็บอกมานะ');
+   }
 
  }  else if (update.message.text.indexOf('เนอะ') > -1) {
     bot.reply(update, 'เนอะ');
