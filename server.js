@@ -214,7 +214,7 @@ botmaster.on('update', (bot, update) => {
   fetch('http://random.cat/meow')
     .then(function(res){
 
-      console.log(res.json())
+      console.log(JSON.stringify(res))
       return res.json()
 
     }).then(function(json){
@@ -223,7 +223,7 @@ botmaster.on('update', (bot, update) => {
       meow = json.file
 
     }).catch(function(err){
-      
+
       console.log(err)
 
     })
