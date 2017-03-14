@@ -213,11 +213,19 @@ botmaster.on('update', (bot, update) => {
   let meow = ''
   fetch('http://random.cat/meow')
     .then(function(res){
-      console.log(res.json());
+
+      console.log(res.json())
       return res.json()
+
     }).then(function(json){
-      console.log('\n\n\n' + json);
+
+      console.log('\n\n\n' + json)
       meow = json.file
+
+    }).catch(function(err){
+      
+      console.log(err)
+
     })
 
   console.log('b4 send att');
