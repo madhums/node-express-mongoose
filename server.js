@@ -210,7 +210,7 @@ botmaster.on('update', (bot, update) => {
   //bot.sendDefaultButtonMessageTo(bb, update.sender.id, 'select me')
 //http://random.cat/meow
 
-  let meow = ''
+
   fetch('http://random.cat/meow')
     .then(function(res){
 
@@ -219,9 +219,13 @@ botmaster.on('update', (bot, update) => {
 
     }).then(function(json){
 
-      console.log('\n\n\n' + JSON.stringify(json))
-      meow = json.file
-      console.log('\n\n\n' + meow)
+      let att = {
+        'type': 'image',
+        'payload':{
+          'url': json.file
+        }
+      }
+      bot.sendAttachmentTo(att, update.sender.id)
 
     }).catch(function(err){
 
@@ -229,15 +233,15 @@ botmaster.on('update', (bot, update) => {
 
     })
 
-  console.log('b4 send att');
-  console.log('meow: ' + meow);
-  let att = {
-    'type': 'image',
-    'payload':{
-      'url': meow
-    }
-  }
-  bot.sendAttachmentTo(att, update.sender.id)
+  //console.log('b4 send att');
+  //console.log('meow: ' + meow);
+  // let att = {
+  //   'type': 'image',
+  //   'payload':{
+  //     'url': meow
+  //   }
+  // }
+  // bot.sendAttachmentTo(att, update.sender.id)
   console.log('aft send att');
 
    bot.reply(update, 'หวัดดี ว่าไง?');
