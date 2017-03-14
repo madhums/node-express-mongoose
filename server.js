@@ -202,17 +202,25 @@ botmaster.on('update', (bot, update) => {
      update.message.text === 'นี่' ||
      update.message.text.indexOf('สวัสดี') > -1 ) {
 
-  let a = Promise.resolve(checkIfSubscribed(update.sender.id))
+  let checkSubscription = Promise.resolve(checkIfSubscribed(update.sender.id))
 
-  a.then(function(isSub){
+  checkSubscription.then(function(isSub){
     if(isSub) console.log('yeah')
     else bot.sendTextMessageTo('ยังไม่ subscribe บอทใช่มั้ย?', update.sender.id)
   })
-  let bb = ['button 1', 'button 2']
-  bot.sendDefaultButtonMessageTo(bb, update.sender.id, 'select me')
+  //let bb = ['button 1', 'button 2']
+  //bot.sendDefaultButtonMessageTo(bb, update.sender.id, 'select me')
+  let att = {
+    'type': 'image',
+    'payload':{
+      'url': 'https://droidsans.com/wp-content/uploads/2017/03/levi.png'
+    }
+  }
+  bot.sendAttachmentTo(att, update.sender.id)
 
 
    bot.reply(update, 'หวัดดี ว่าไง?');
+   //messengerBot.sendTextMessageTo(`สวัสดี ${info.first_name}`, '1432315113461939');
 
  }  else if (update.message.text.indexOf('เนอะ') > -1) {
     bot.reply(update, 'เนอะ');
@@ -287,10 +295,12 @@ let weatherReporter = nodeSchedule.scheduleJob('0 0 5,11,17,23 * * *', function(
   })
 })
 
+/*
 messengerProfileAPI.getUserInfo('1432315113461939', function(err, info){
   messengerBot.sendTextMessageTo('bot started!', '1432315113461939');
   messengerBot.sendTextMessageTo(`สวัสดี ${info.first_name}`, '1432315113461939');
 })
+*/
 
 getAllSubscribedID(function(err, ids){
   if(err) console.log(err);
