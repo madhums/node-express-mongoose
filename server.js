@@ -201,9 +201,10 @@ getAllSubscribedID((err, ids) => {
   else {
 
     ids.forEach((id) => {
-      onMemStatus[id].subscription = true
+      //onMemStatus[id].subscription = true
+      console.log(id);
     })
-    
+
   }
 })
 
