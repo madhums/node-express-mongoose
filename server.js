@@ -199,10 +199,8 @@ let onMemStatus = []
 getAllSubscribedID((err, ids) => {
   if(err) console.log(err);
   else {
-
     ids.forEach((id) => {
-      //onMemStatus[id].subscription = true
-      console.log(id);
+      onMemStatus[id] = { 'subscription': true }
     })
 
   }
