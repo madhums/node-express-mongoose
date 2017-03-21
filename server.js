@@ -261,11 +261,12 @@ botmaster.on('update', (bot, update) => {
    }
 
  }  else if (update.message.text.indexOf('เนอะ') > -1) {
+   console.log('neor!');
     bot.reply(update, 'เนอะ');
 
  }  else if (update.message.text.indexOf('อุณหภูมิเท่าไร') > -1 ||
           update.message.text.indexOf('สภาพอากาศ') > -1) {
-
+    console.log('weather reporting!');
     weatherAPI.getReport(function(err, result){
       if(err) console.log(err);
       else bot.sendTextMessageTo(result, update.sender.id);
