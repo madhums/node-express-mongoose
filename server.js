@@ -261,10 +261,7 @@ botmaster.on('update', (bot, update) => {
 
     } else console.log('not sub hahahaha you won\'t get these kitties~');
 
-  })
-  .catch(function(err){
-    console.log('error promise smthing');
-  })
+  }
 
   // console.log('b4 send att');
   // console.log('meow: ' + meow);
@@ -275,9 +272,6 @@ botmaster.on('update', (bot, update) => {
   //   }
   // }
   // bot.sendAttachmentTo(att, update.sender.id)
-  console.log('aft send att');
-
-   bot.reply(update, 'หวัดดี ว่าไง?');
    //messengerBot.sendTextMessageTo(`สวัสดี ${info.first_name}`, '1432315113461939');
 
  } else if (update.message.text == 'ต้องการ Subscribe' || update.message.text == 'ไม่ต้องการ Subscribe') {
