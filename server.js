@@ -48,7 +48,8 @@ function recordNewUserID(userId) {
         lastName: info.last_name,
         gender: info.gender,
         timezone: info.timezone,
-        createdAt: (new Date()).toISOString()
+        createdAt: (new Date()).toISOString(),
+        subscription: true
       })
       .then(function(){
         console.log('added');
@@ -64,18 +65,33 @@ function recordNewUserID(userId) {
 }
 
 
-function checkDupID(uid, cb) {
+function setSubscription(userId, value) {
+
+  database.ref(`/users/${userId}`).set({
+    subscription: value
+  })
+  .then(function(){
+    console.log('set subscription to ' + value);
+  })
+  .catch(function(error){
+    console.log('failed');
+  })
+
+}
+
+
+function checkDupID(uid) {
 
   let dup = database.ref('users').orderByKey().equalTo(uid).once('value')
   .then(function(snapshot){
     // console.log(snapshot.val())
     // console.log(snapshot.exists())
     console.log('check dup');
-    return cb(null, snapshot.exists()) //true means dup
+    return snapshot.exists() //true means dup
   })
   .catch(function(error){
     console.log('check dup error');
-    return cb(`error checkdup ${error}`, null)
+    return true
   })
 
 }
@@ -296,7 +312,14 @@ botmaster.on('update', (bot, update) => {
 
    if(update.message.text == 'ต้องการ Subscribe') {
      // change subsribe to true
+     if(!checkDupID(update.sender.id)) {
+       recordNewUserID(update.sender.id)
+     } else {
+       setSubscription(update.sender.id, true)
+     }
+
      bot.reply(update, 'จัดไป');
+     
    } else {
      bot.reply(update, 'สนใจก็บอกมานะ');
    }
@@ -316,10 +339,10 @@ botmaster.on('update', (bot, update) => {
   } else if (update.message.text === '777778547') {
 
     let uid = update.sender.id
-    checkDupID(uid, function(err, isDup){
-      if(!isDup) recordNewUserID(uid)
-      else console.log('dup id found');
-    })
+    // checkDupID(uid, function(err, isDup){
+    //   if(!isDup) recordNewUserID(uid)
+    //   else console.log('dup id found');
+    // })
 
   } else if (update.message.text === 'aaa1414s1') {
 
