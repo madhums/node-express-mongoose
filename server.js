@@ -227,8 +227,8 @@ botmaster.on('update', (bot, update) => {
         //bot.sendTextMessageTo('', update.sender.id)
         onMemStatus[update.sender.id] = { 'subscription': false }
 
-        let answer = ['ต้องการ Subscribe', 'ไม่ต้องการ Subscribe']
         bot.sendTextMessageTo('คุณยังไม่ได้ subscribe บอท', update.sender.id)
+        let answer = ['ต้องการ Subscribe', 'ไม่ต้องการ Subscribe']
         bot.sendDefaultButtonMessageTo(answer, update.sender.id, 'Subscribe บอทของเราเพื่อใช้งานฟีเจอร์เพิ่มเติม')
 
       }
