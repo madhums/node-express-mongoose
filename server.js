@@ -321,8 +321,11 @@ botmaster.on('update', (bot, update) => {
      }
 
      console.log(`status: ${onMemStatus[update.sender.id].subscription}`);
+     bot.sendTextMessageTo('กรุณารอสักครู่ เรากำลังบันทึกข้อมูลของคุณ :D', update.sender.id);
 
-     bot.reply(update, 'จัดไป');
+     setTimeout( () => {
+       bot.reply(update, 'จัดไป');
+     }, 500)
 
    } else {
      bot.reply(update, 'สนใจก็บอกมานะ');
