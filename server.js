@@ -115,28 +115,28 @@ function getAllSubscribedID(cb) {
 
 }
 
-// async function checkIfSubscribed(uid) {
-//
-//   console.log('\nbefore ======================');
-//
-//   try {
-//
-//     let result = false
-//     let snap = await database.ref('users').orderByKey().equalTo(uid).once('value')
-//     Object.keys(snap.val()).forEach( (key) => {
-//       result = snap.val()[key].subscribed
-//     })
-//     console.log('try check if sub b4 return');
-//     return result
-//
-//   } catch(error) {
-//     console.log('in this');
-//     console.log(error);
-//   }
-//
-//
-//
-// }
+async function checkIfSubscribed(uid) {
+
+  console.log('\nbefore ======================');
+
+  try {
+
+    let result = false
+    let snap = await database.ref('users').orderByKey().equalTo(uid).once('value')
+    Object.keys(snap.val()).forEach( (key) => {
+      result = snap.val()[key].subscribed
+    })
+    console.log('try check if sub b4 return');
+    return result
+
+  } catch(error) {
+    console.log('in this');
+    console.log(error);
+  }
+
+
+
+}
 
 /*
 function setRunnerNumber() {
@@ -191,56 +191,72 @@ const botmasterSettings = {
 };
 
 const botmaster = new Botmaster(botmasterSettings);
-
 const messengerBot = new Botmaster.botTypes.MessengerBot(messengerSettings);
 botmaster.addBot(messengerBot)
 
-botmaster.on('update', (bot, update, error) => {
+let onMemStatus = []
+
+botmaster.on('update', (bot, update) => {
+
+  let subscriptionChecker = Promise.resolve(checkIfSubscribed(update.sender.id))
+  subscriptionChecker.then(function(isSub){
+    if(!isSub) {
+      //bot.sendTextMessageTo('', update.sender.id)
+      onMemStatus[update.sender.id].subscription = false
+
+      let answer = ['ต้องการ Subscribe', 'ไม่ต้องการ Subscribe']
+      bot.sendTextMessageTo('คุณยังไม่ได้ subscribe บอท', update.sender.id)
+      bot.sendDefaultButtonMessageTo(answer, update.sender.id, 'Subscribe บอทของเราเพื่อใช้งานฟีเจอร์เพิ่มเติม และสิทธิ์ในการร่วมเล่นกิจกรรมของเรา')
+
+    }
+    else {
+      onMemStatus[update.sender.id].subscription = true
+      messengerProfileAPI.getUserInfo(update.sender.id, (err, info) => {
+        bot.sendTextMessageTo(`สวัสดีคุณ ${info.first_name}`, update.sender.id)
+      })
+    }
+
+  })
+  .catch(function(err){
+    console.log('error promise checking subscription');
+  })
+
+  //---------------------------------------------
 
   if (update.message.text === 'ดี' ||
      update.message.text === 'หวัดดี' ||
      update.message.text === 'นี่' ||
-     update.message.text.indexOf('สวัสดี') > -1 ) {
+     update.message.text.indexOf('สวัสดี') > -1 )
+  {
 
-  // let a = Promise.resolve(checkIfSubscribed(update.sender.id))
-  //
-  // a.then(function(isSub){
-  //   if(isSub) {
-  //     //bot.sendTextMessageTo('', update.sender.id)
-  //
-  //     fetch('http://random.cat/meow')
-  //       .then(function(res){
-  //
-  //         //console.log(JSON.stringify(res))
-  //         return res.json()
-  //
-  //       }).then(function(json){
-  //
-  //         let att = {
-  //           'type': 'image',
-  //           'payload':{
-  //             'url': json.file
-  //           }
-  //         }
-  //         bot.sendAttachmentTo(att, update.sender.id)
-  //
-  //       }).catch(function(err){
-  //         console.log('fetch error');
-  //         console.log(err)
-  //
-  //       })
-  //
-  //   }
-  //   else {
-  //     bot.sendTextMessageTo('คุณยังไม่ได้ subscribe บอท', update.sender.id)
-  //
-  //     let bb = ['ต้องการ Subscribe', 'ไม่ต้องการ Subscribe']
-  //     bot.sendDefaultButtonMessageTo(bb, update.sender.id, 'Subscribe บอทของเราเพื่อร่วมเล่นกิจกรรมชิงรางวัล')
-  //   }
-  // })
-  // .catch(function(err){
-  //   console.log('error promise smthing');
-  // })
+    let a = Promise.resolve(checkIfSubscribed(update.sender.id))
+
+    if(onMemStatus[update.sender.id].subscription){
+
+      fetch('http://random.cat/meow')
+      .then( (res) => { return res.json() })
+      .then(function(json){
+
+        let att = {
+          'type': 'image',
+          'payload':{
+            'url': json.file
+          }
+        }
+
+        bot.sendAttachmentTo(att, update.sender.id)
+
+      }).catch(function(err){
+        console.log('fetch error');
+        console.log(err)
+      })
+
+    } else console.log('not sub hahahaha you won\'t get these kitties~');
+
+  })
+  .catch(function(err){
+    console.log('error promise smthing');
+  })
 
   // console.log('b4 send att');
   // console.log('meow: ' + meow);
@@ -256,7 +272,7 @@ botmaster.on('update', (bot, update, error) => {
    bot.reply(update, 'หวัดดี ว่าไง?');
    //messengerBot.sendTextMessageTo(`สวัสดี ${info.first_name}`, '1432315113461939');
 
- } else if (update.message.text == 'ต้องการ Subscribe' || pdate.message.text == 'ไม่ต้องการ Subscribe') {
+ } else if (update.message.text == 'ต้องการ Subscribe' || update.message.text == 'ไม่ต้องการ Subscribe') {
 
    if(update.message.text == 'ต้องการ Subscribe') {
      // change subsribe to true
