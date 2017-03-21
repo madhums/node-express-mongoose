@@ -317,6 +317,7 @@ botmaster.on('update', (bot, update) => {
        onMemStatus[update.sender.id].subscription = true
      } else {
        setSubscription(update.sender.id, true)
+       onMemStatus[update.sender.id].subscription = true
      }
 
      bot.reply(update, 'จัดไป');
