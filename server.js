@@ -49,7 +49,7 @@ function recordNewUserID(userId) {
         gender: info.gender,
         timezone: info.timezone,
         createdAt: (new Date()).toISOString(),
-        subscription: true
+        subscribed: true
       })
       .then(function(){
         console.log('added');
