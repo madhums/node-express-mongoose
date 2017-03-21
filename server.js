@@ -214,21 +214,26 @@ botmaster.on('update', (bot, update) => {
   console.log('onmem: ' + JSON.stringify(user));
 
   if(!user || user == null) {
+    onMemStatus[update.sender.id] = { 'subscription': false }
+    user = onMemStatus[update.sender.id]
+  }
+
+  if(!user.subscription) {
     console.log('no sub info recorded');
 
     let a = Promise.resolve(checkIfSubscribed(update.sender.id))
     a.then(function(isSub){
       if(!isSub) {
         //bot.sendTextMessageTo('', update.sender.id)
-        user = { 'subscription': false }
+        onMemStatus[update.sender.id] = { 'subscription': false }
 
         let answer = ['ต้องการ Subscribe', 'ไม่ต้องการ Subscribe']
         bot.sendTextMessageTo('คุณยังไม่ได้ subscribe บอท', update.sender.id)
-        bot.sendDefaultButtonMessageTo(answer, update.sender.id, 'Subscribe บอทของเราเพื่อใช้งานฟีเจอร์เพิ่มเติม และสิทธิ์ในการร่วมเล่นกิจกรรมของเรา')
+        bot.sendDefaultButtonMessageTo(answer, update.sender.id, 'Subscribe บอทของเราเพื่อใช้งานฟีเจอร์เพิ่มเติม')
 
       }
       else {
-        user = { 'subscription': true }
+        onMemStatus[update.sender.id] = { 'subscription': true }
         messengerProfileAPI.getUserInfo(update.sender.id, (err, info) => {
           bot.sendTextMessageTo(`สวัสดีคุณ ${info.first_name}`, update.sender.id)
         })
