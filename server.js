@@ -197,9 +197,14 @@ botmaster.addBot(messengerBot)
 let onMemStatus = []
 
 getAllSubscribedID((err, ids) => {
-  ids.forEach((id) => {
-    onMemStatus[id].subscription = true
-  })
+  if(err) console.log(err);
+  else {
+
+    ids.forEach((id) => {
+      onMemStatus[id].subscription = true
+    })
+    
+  }
 })
 
 botmaster.on('update', (bot, update) => {
