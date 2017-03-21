@@ -195,7 +195,7 @@ const botmaster = new Botmaster(botmasterSettings);
 const messengerBot = new Botmaster.botTypes.MessengerBot(messengerSettings);
 botmaster.addBot(messengerBot)
 
-botmaster.on('update', (bot, update) => {
+botmaster.on('update', (bot, update, error) => {
 
   if (update.message.text === 'ดี' ||
      update.message.text === 'หวัดดี' ||
