@@ -242,15 +242,15 @@ botmaster.on('update', (bot, update) => {
   //   console.log('error promise smthing');
   // })
 
-  console.log('b4 send att');
-  console.log('meow: ' + meow);
-  let att = {
-    'type': 'image',
-    'payload':{
-      'url': meow
-    }
-  }
-  bot.sendAttachmentTo(att, update.sender.id)
+  // console.log('b4 send att');
+  // console.log('meow: ' + meow);
+  // let att = {
+  //   'type': 'image',
+  //   'payload':{
+  //     'url': meow
+  //   }
+  // }
+  // bot.sendAttachmentTo(att, update.sender.id)
   console.log('aft send att');
 
    bot.reply(update, 'หวัดดี ว่าไง?');
