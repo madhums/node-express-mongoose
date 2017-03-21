@@ -74,6 +74,7 @@ function checkDupID(uid, cb) {
     return cb(null, snapshot.exists()) //true means dup
   })
   .catch(function(error){
+    console.log('check dup error');
     return cb(`error checkdup ${error}`, null)
   })
 
@@ -89,6 +90,7 @@ function getAllID(cb) {
 
   })
   .catch(function(error){
+    console.log('get all id error');
     return cb(`error getAllID ${error}`, null)
   })
 
@@ -107,6 +109,7 @@ function getAllSubscribedID(cb) {
 
   })
   .catch(function(error){
+    console.log('get all sub is error');
     return cb(`error getAllSubscribedID ${error}`, null)
   })
 
@@ -123,6 +126,7 @@ async function checkIfSubscribed(uid) {
     Object.keys(snap.val()).forEach( (key) => {
       result = snap.val()[key].subscribed
     })
+    console.log('try check if sub b4 return');
     return result
 
   } catch(error) {
