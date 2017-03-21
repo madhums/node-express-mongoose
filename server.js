@@ -230,7 +230,7 @@ botmaster.on('update', (bot, update) => {
       bot.sendTextMessageTo('คุณยังไม่ได้ subscribe บอท', update.sender.id)
 
       let bb = ['ต้องการ Subscribe', 'ไม่ต้องการ Subscribe']
-      bot.sendDefaultButtonMessageTo(bb, update.sender.id, 'สนใจ subscribe เลยมั้ย?')
+      bot.sendDefaultButtonMessageTo(bb, update.sender.id, 'Subscribe บอทของเราเพื่อร่วมเล่นกิจกรรมชิงรางวัล')
     }
   })
   .catch(function(err){

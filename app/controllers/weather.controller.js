@@ -12,7 +12,7 @@ exports.getReport = function(cb) {
       });
 
       response.on("end", function (err) {
-
+        console.log('is there error : ' + err);
         if(err) return cb('request weather error: ' + err, null)
         if(buffer) {
 
