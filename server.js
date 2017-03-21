@@ -197,8 +197,11 @@ botmaster.addBot(messengerBot)
 let onMemStatus = []
 
 botmaster.on('update', (bot, update) => {
+  console.log('enter update event');
+  console.log('onmem: ' + onMemStatus.length);
 
   let user = onMemStatus[update.sender.id]
+  console.log('onmem: ' + onMemStatus.length);
 
   if(!user.subscription || user.subscription == null) {
     console.log('no sub info recorded');
