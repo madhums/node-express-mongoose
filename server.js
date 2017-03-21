@@ -240,8 +240,6 @@ botmaster.on('update', (bot, update) => {
      update.message.text.indexOf('สวัสดี') > -1 )
   {
 
-    let a = Promise.resolve(checkIfSubscribed(update.sender.id))
-
     if(onMemStatus[update.sender.id].subscription){
 
       fetch('http://random.cat/meow')
