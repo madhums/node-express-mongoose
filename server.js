@@ -314,7 +314,7 @@ botmaster.on('update', (bot, update) => {
      // change subsribe to true
      if(!checkDupID(update.sender.id)) {
        recordNewUserID(update.sender.id)
-       onMemStatus[update.sender.id] = { 'subscription': true }
+       onMemStatus[update.sender.id].subscription = true
      } else {
        setSubscription(update.sender.id, true)
      }
