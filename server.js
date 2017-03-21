@@ -198,28 +198,36 @@ let onMemStatus = []
 
 botmaster.on('update', (bot, update) => {
 
-  let subscriptionChecker = Promise.resolve(checkIfSubscribed(update.sender.id))
-  subscriptionChecker.then(function(isSub){
-    if(!isSub) {
-      //bot.sendTextMessageTo('', update.sender.id)
-      onMemStatus[update.sender.id].subscription = false
+  let user = onMemStatus[update.sender.id]
 
-      let answer = ['ต้องการ Subscribe', 'ไม่ต้องการ Subscribe']
-      bot.sendTextMessageTo('คุณยังไม่ได้ subscribe บอท', update.sender.id)
-      bot.sendDefaultButtonMessageTo(answer, update.sender.id, 'Subscribe บอทของเราเพื่อใช้งานฟีเจอร์เพิ่มเติม และสิทธิ์ในการร่วมเล่นกิจกรรมของเรา')
+  if(!user.subscription || user.subscription == null) {
+    console.log('no sub info recorded');
 
-    }
-    else {
-      onMemStatus[update.sender.id].subscription = true
-      messengerProfileAPI.getUserInfo(update.sender.id, (err, info) => {
-        bot.sendTextMessageTo(`สวัสดีคุณ ${info.first_name}`, update.sender.id)
-      })
-    }
+    let subscriptionChecker = Promise.resolve(checkIfSubscribed(update.sender.id))
+    subscriptionChecker.then(function(isSub){
+      if(!isSub) {
+        //bot.sendTextMessageTo('', update.sender.id)
+        onMemStatus[update.sender.id].subscription = false
 
-  })
-  .catch(function(err){
-    console.log('error promise checking subscription');
-  })
+        let answer = ['ต้องการ Subscribe', 'ไม่ต้องการ Subscribe']
+        bot.sendTextMessageTo('คุณยังไม่ได้ subscribe บอท', update.sender.id)
+        bot.sendDefaultButtonMessageTo(answer, update.sender.id, 'Subscribe บอทของเราเพื่อใช้งานฟีเจอร์เพิ่มเติม และสิทธิ์ในการร่วมเล่นกิจกรรมของเรา')
+
+      }
+      else {
+        onMemStatus[update.sender.id].subscription = true
+        messengerProfileAPI.getUserInfo(update.sender.id, (err, info) => {
+          bot.sendTextMessageTo(`สวัสดีคุณ ${info.first_name}`, update.sender.id)
+        })
+      }
+
+    })
+    .catch(function(err){
+      console.log('error promise checking subscription');
+    })
+
+  } else console.log('sub status of ' + update.sender.id + ' is ' + user.subscription);
+
 
   //---------------------------------------------
 
