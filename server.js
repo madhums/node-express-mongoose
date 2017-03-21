@@ -68,7 +68,7 @@ function recordNewUserID(userId) {
 function setSubscription(userId, value) {
 
   database.ref(`/users/${userId}`).set({
-    subscription: value
+    subscribed: value
   })
   .then(function(){
     console.log('set subscription to ' + value);
@@ -321,11 +321,7 @@ botmaster.on('update', (bot, update) => {
      }
 
      console.log(`status: ${onMemStatus[update.sender.id].subscription}`);
-     bot.sendTextMessageTo('กรุณารอสักครู่ เรากำลังบันทึกข้อมูลของคุณ :D', update.sender.id);
-
-     setTimeout( () => {
-       bot.reply(update, 'จัดไป');
-     }, 500)
+     bot.reply(update, 'จัดไป ;)');
 
    } else {
      bot.reply(update, 'สนใจก็บอกมานะ');
