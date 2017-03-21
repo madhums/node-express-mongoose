@@ -332,7 +332,7 @@ botmaster.on('update', (bot, update) => {
       }
     })
 
-  } else {
+  } else if(user.subscription) {
    const messages = ['บอทยังไม่เข้าใจข้อความของคุณ',
                      'เรากำลังพัฒนาบอทให้มีความสามารถสูงขึ้น เพื่อเข้าใจคำพูดของคุณ']
    bot.sendTextCascadeTo(messages, update.sender.id)
