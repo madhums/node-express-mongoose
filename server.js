@@ -213,7 +213,7 @@ botmaster.on('update', (bot, update) => {
   let user = onMemStatus[update.sender.id]
   console.log('onmem: ' + JSON.stringify(user));
 
-  if(!user.subscription || user.subscription == null) {
+  if(!user || user == null) {
     console.log('no sub info recorded');
 
     let a = Promise.resolve(checkIfSubscribed(update.sender.id))
