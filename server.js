@@ -220,7 +220,7 @@ botmaster.on('update', (bot, update) => {
     a.then(function(isSub){
       if(!isSub) {
         //bot.sendTextMessageTo('', update.sender.id)
-        onMemStatus[update.sender.id].subscription = false
+        user = { 'subscription': false }
 
         let answer = ['ต้องการ Subscribe', 'ไม่ต้องการ Subscribe']
         bot.sendTextMessageTo('คุณยังไม่ได้ subscribe บอท', update.sender.id)
@@ -228,7 +228,7 @@ botmaster.on('update', (bot, update) => {
 
       }
       else {
-        onMemStatus[update.sender.id].subscription = true
+        user = { 'subscription': true }
         messengerProfileAPI.getUserInfo(update.sender.id, (err, info) => {
           bot.sendTextMessageTo(`สวัสดีคุณ ${info.first_name}`, update.sender.id)
         })
@@ -236,7 +236,7 @@ botmaster.on('update', (bot, update) => {
 
     })
     .catch(function(err){
-      console.log('error promise checking subscription');
+      console.log('error promise checking subscription ' + err);
     })
 
   } else console.log('sub status of ' + update.sender.id + ' is ' + user.subscription);
