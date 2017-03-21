@@ -196,18 +196,24 @@ botmaster.addBot(messengerBot)
 
 let onMemStatus = []
 
+getAllSubscribedID((err, ids) => {
+  ids.forEach((id) => {
+    onMemStatus[id].subscription = true
+  })
+})
+
 botmaster.on('update', (bot, update) => {
   console.log('enter update event');
   console.log('onmem: ' + onMemStatus.length);
 
   let user = onMemStatus[update.sender.id]
-  console.log('onmem: ' + onMemStatus.length);
+  console.log('onmem: ' + JSON.stringify(user));
 
   if(!user.subscription || user.subscription == null) {
     console.log('no sub info recorded');
 
-    let subscriptionChecker = Promise.resolve(checkIfSubscribed(update.sender.id))
-    subscriptionChecker.then(function(isSub){
+    let a = Promise.resolve(checkIfSubscribed(update.sender.id))
+    a.then(function(isSub){
       if(!isSub) {
         //bot.sendTextMessageTo('', update.sender.id)
         onMemStatus[update.sender.id].subscription = false
