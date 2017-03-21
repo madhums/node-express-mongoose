@@ -320,6 +320,8 @@ botmaster.on('update', (bot, update) => {
        onMemStatus[update.sender.id].subscription = true
      }
 
+     console.log(`status: ${onMemStatus[update.sender.id].subscription}`);
+
      bot.reply(update, 'จัดไป');
 
    } else {
