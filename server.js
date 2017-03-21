@@ -115,28 +115,28 @@ function getAllSubscribedID(cb) {
 
 }
 
-async function checkIfSubscribed(uid) {
-
-  console.log('\nbefore ======================');
-
-  try {
-
-    let result = false
-    let snap = await database.ref('users').orderByKey().equalTo(uid).once('value')
-    Object.keys(snap.val()).forEach( (key) => {
-      result = snap.val()[key].subscribed
-    })
-    console.log('try check if sub b4 return');
-    return result
-
-  } catch(error) {
-    console.log('in this');
-    console.log(error);
-  }
-
-
-
-}
+// async function checkIfSubscribed(uid) {
+//
+//   console.log('\nbefore ======================');
+//
+//   try {
+//
+//     let result = false
+//     let snap = await database.ref('users').orderByKey().equalTo(uid).once('value')
+//     Object.keys(snap.val()).forEach( (key) => {
+//       result = snap.val()[key].subscribed
+//     })
+//     console.log('try check if sub b4 return');
+//     return result
+//
+//   } catch(error) {
+//     console.log('in this');
+//     console.log(error);
+//   }
+//
+//
+//
+// }
 
 /*
 function setRunnerNumber() {
@@ -202,45 +202,45 @@ botmaster.on('update', (bot, update) => {
      update.message.text === 'นี่' ||
      update.message.text.indexOf('สวัสดี') > -1 ) {
 
-  let a = Promise.resolve(checkIfSubscribed(update.sender.id))
-
-  a.then(function(isSub){
-    if(isSub) {
-      //bot.sendTextMessageTo('', update.sender.id)
-
-      fetch('http://random.cat/meow')
-        .then(function(res){
-
-          //console.log(JSON.stringify(res))
-          return res.json()
-
-        }).then(function(json){
-
-          let att = {
-            'type': 'image',
-            'payload':{
-              'url': json.file
-            }
-          }
-          bot.sendAttachmentTo(att, update.sender.id)
-
-        }).catch(function(err){
-
-          console.log(err)
-
-        })
-
-    }
-    else {
-      bot.sendTextMessageTo('คุณยังไม่ได้ subscribe บอท', update.sender.id)
-
-      let bb = ['ต้องการ Subscribe', 'ไม่ต้องการ Subscribe']
-      bot.sendDefaultButtonMessageTo(bb, update.sender.id, 'Subscribe บอทของเราเพื่อร่วมเล่นกิจกรรมชิงรางวัล')
-    }
-  })
-  .catch(function(err){
-    console.log('error promise smthing');
-  })
+  // let a = Promise.resolve(checkIfSubscribed(update.sender.id))
+  //
+  // a.then(function(isSub){
+  //   if(isSub) {
+  //     //bot.sendTextMessageTo('', update.sender.id)
+  //
+  //     fetch('http://random.cat/meow')
+  //       .then(function(res){
+  //
+  //         //console.log(JSON.stringify(res))
+  //         return res.json()
+  //
+  //       }).then(function(json){
+  //
+  //         let att = {
+  //           'type': 'image',
+  //           'payload':{
+  //             'url': json.file
+  //           }
+  //         }
+  //         bot.sendAttachmentTo(att, update.sender.id)
+  //
+  //       }).catch(function(err){
+  //         console.log('fetch error');
+  //         console.log(err)
+  //
+  //       })
+  //
+  //   }
+  //   else {
+  //     bot.sendTextMessageTo('คุณยังไม่ได้ subscribe บอท', update.sender.id)
+  //
+  //     let bb = ['ต้องการ Subscribe', 'ไม่ต้องการ Subscribe']
+  //     bot.sendDefaultButtonMessageTo(bb, update.sender.id, 'Subscribe บอทของเราเพื่อร่วมเล่นกิจกรรมชิงรางวัล')
+  //   }
+  // })
+  // .catch(function(err){
+  //   console.log('error promise smthing');
+  // })
 
   console.log('b4 send att');
   console.log('meow: ' + meow);
