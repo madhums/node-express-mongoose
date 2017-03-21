@@ -229,7 +229,9 @@ botmaster.on('update', (bot, update) => {
 
         bot.sendTextMessageTo('คุณยังไม่ได้ subscribe บอท', update.sender.id)
         let answer = ['ต้องการ Subscribe', 'ไม่ต้องการ Subscribe']
-        bot.sendDefaultButtonMessageTo(answer, update.sender.id, 'Subscribe บอทของเราเพื่อใช้งานฟีเจอร์เพิ่มเติม')
+        setTimeout( () => {
+          bot.sendDefaultButtonMessageTo(answer, update.sender.id, 'Subscribe บอทของเราเพื่อใช้งานฟีเจอร์เพิ่มเติม')
+        }, 100)
 
       }
       else {
