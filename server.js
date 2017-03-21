@@ -362,7 +362,7 @@ botmaster.on('update', (bot, update) => {
       }
     })
 
-  } else if(user.subscription) {
+  } else if(user.subscription && !(update.message.text == 'ต้องการ Subscribe' || update.message.text == 'ไม่ต้องการ Subscribe')) {
    const messages = ['บอทยังไม่เข้าใจข้อความของคุณ',
                      'เรากำลังพัฒนาบอทให้มีความสามารถสูงขึ้น เพื่อเข้าใจคำพูดของคุณ']
    bot.sendTextCascadeTo(messages, update.sender.id)
