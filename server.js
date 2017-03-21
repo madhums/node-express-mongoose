@@ -256,7 +256,7 @@ botmaster.on('update', (bot, update) => {
    bot.reply(update, 'หวัดดี ว่าไง?');
    //messengerBot.sendTextMessageTo(`สวัสดี ${info.first_name}`, '1432315113461939');
 
- } else if (update.message.text == 'ต้องการ Subscribe' || update.message.text == 'ไม่ต้องการ Subscribe') {
+ } else if (update.message.text == 'ต้องการ Subscribe' || pdate.message.text == 'ไม่ต้องการ Subscribe') {
 
    if(update.message.text == 'ต้องการ Subscribe') {
      // change subsribe to true
