@@ -261,7 +261,7 @@ botmaster.on('update', (bot, update) => {
 
     } else console.log('not sub hahahaha you won\'t get these kitties~');
 
-  }
+
 
   // console.log('b4 send att');
   // console.log('meow: ' + meow);
