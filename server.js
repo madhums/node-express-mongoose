@@ -218,7 +218,7 @@ getAllSubscribedID((err, ids) => {
     ids.forEach((id) => {
       onMemStatus[id] = { 'subscription': true }
     })
-
+    console.log('onMem size: ' + Object.keys(onMemStatus).length);
   }
 })
 
@@ -248,7 +248,7 @@ _users.on('child_changed', (childSnapshot, prevChildKey) => {
   }
 
   console.log('onmem @ id = ' + onMemStatus[childSnapshot.key].subscription);
-  console.log('onmem size = ' + onMemStatus.length);
+  console.log('onmem size = ' + Object.keys(onMemStatus).length);
 
 })
 
