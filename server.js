@@ -227,8 +227,25 @@ let _users = database.ref('users')
 
 _users.on('child_changed', (childSnapshot, prevChildKey) => {
   console.log('child changed!');
-  console.log(childSnapshot.key);
-  console.log(prevChildKey);
+
+  console.log(childSnapshot.subscription);
+
+  if(onMemStatus[childSnapshot.key]) {
+
+    console.log('found onemem index');
+    if(!onMemStatus[childSnapshot.key].snapshot) {
+      console.log('onmem index has bool');
+      onMemStatus[childSnapshot.key].snapshot = true
+    }
+    else {
+      console.log('onemem index has no bool');
+      onMemStatus[childSnapshot.key] = { 'subscription': true }
+    }
+
+  } else {
+    onMemStatus[childSnapshot.key] = { 'subscription': true }
+  }
+
 
 })
 
