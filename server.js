@@ -224,33 +224,32 @@ getAllSubscribedID((err, ids) => {
 
 console.log('onmem size: ' + onMemStatus.length);
 
-let _users = database.ref('users')
-
-_users.on('child_changed', (childSnapshot, prevChildKey) => {
-  console.log('child changed!');
-  console.log(childSnapshot.val());
-
-  //let newSubscription = JSON.parse(childSnapshot).subscription
-
-  if(onMemStatus[childSnapshot.key]) {
-
-    console.log('found onemem index');
-    if(!onMemStatus[childSnapshot.key].subscription) {
-      console.log('onmem index has bool');
-      onMemStatus[childSnapshot.key].subscription = true
-    }
-    else {
-      console.log('onemem index has no bool');
-      onMemStatus[childSnapshot.key] = { 'subscription': true }
-    }
-
-  } else {
-    console.log('no onmem index found');
-    onMemStatus[childSnapshot.key] = { 'subscription': true }
-  }
-
-
-})
+// let _users = database.ref('users')
+// _users.on('child_changed', (childSnapshot, prevChildKey) => {
+//
+//   console.log('child changed!');
+//   let newSubscription = childSnapshot.val().subscription
+//
+//   if(onMemStatus[childSnapshot.key]) {
+//
+//     console.log('found onemem index');
+//
+//     if(!onMemStatus[childSnapshot.key].subscription) {
+//       console.log('onmem index has bool');
+//       onMemStatus[childSnapshot.key].subscription = newSubscription
+//     }
+//     else {
+//       console.log('onemem index has no bool');
+//       onMemStatus[childSnapshot.key] = { 'subscription': newSubscription }
+//     }
+//
+//   } else {
+//     console.log('no onmem index found');
+//     onMemStatus[childSnapshot.key] = { 'subscription': newSubscription }
+//   }
+//
+//
+// })
 
 
 
