@@ -120,13 +120,13 @@ function getAllSubscribedID(cb) {
     Object.keys(snapshot.val()).forEach( (key) => {
       if(snapshot.val()[key].subscribed) theArray.push(key)
     })
-    console.log(theArray);
-    return cb(null, theArray)
+    //console.log(theArray);
+    cb(null, theArray)
 
   })
   .catch(function(error){
     console.log('get all sub is error');
-    return cb(`error getAllSubscribedID ${error}`, null)
+    cb(`error getAllSubscribedID ${error}`, null)
   })
 
 }
@@ -227,7 +227,7 @@ getAllSubscribedID((err, ids) => {
 // _users.on('child_changed', (childSnapshot, prevChildKey) => {
 //
 //   console.log('child changed!');
-//   let newSubscription = childSnapshot.val().subscription
+//   let newSubscription = childSnapshot.val().subscribed
 //
 //   if(onMemStatus[childSnapshot.key]) {
 //
