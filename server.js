@@ -222,6 +222,31 @@ getAllSubscribedID((err, ids) => {
   }
 })
 
+
+let _users = database.ref('users')
+
+_users.on('child_changed', () => {
+  console.log('child changed!');
+})
+
+
+
+
+database.ref('users').once('value')
+.then(function(snapshot){
+  let theArray = []
+  Object.keys(snapshot.val()).forEach( (key) => {
+    if(snapshot.val()[key].subscribed) theArray.push(key)
+  })
+  console.log(theArray);
+  return cb(null, theArray)
+
+})
+.catch(function(error){
+  console.log('get all sub is error');
+  return cb(`error getAllSubscribedID ${error}`, null)
+})
+
 botmaster.on('update', (bot, update) => {
   console.log('enter update event');
   console.log('onmem: ' + onMemStatus.length);
