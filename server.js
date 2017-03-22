@@ -255,10 +255,9 @@ _users.on('child_changed', (childSnapshot, prevChildKey) => {
 
 botmaster.on('update', (bot, update) => {
   console.log('enter update event');
-  console.log('onmem: ' + onMemStatus.length);
+  console.log('onmem users: ' + Object.keys(onMemStatus).length);
 
   let user = onMemStatus[update.sender.id]
-  console.log('onmem: ' + JSON.stringify(user));
 
   if(!user || user == null) {
     onMemStatus[update.sender.id] = { 'subscription': false }
