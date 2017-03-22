@@ -248,6 +248,7 @@ _users.on('child_changed', (childSnapshot, prevChildKey) => {
   }
 
   console.log('onmem @ id = ' + onMemStatus[childSnapshot.key].subscription);
+  console.log('onmem size = ' + onMemStatus.length);
 
 })
 
