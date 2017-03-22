@@ -222,7 +222,6 @@ getAllSubscribedID((err, ids) => {
   }
 })
 
-console.log('onmem size: ' + onMemStatus.length);
 
 // let _users = database.ref('users')
 // _users.on('child_changed', (childSnapshot, prevChildKey) => {
