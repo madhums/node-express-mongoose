@@ -125,7 +125,7 @@ function getAllSubscribedID(cb) {
 
   })
   .catch(function(error){
-    console.log('get all sub is error --- ' + error);
+    console.log('get all sub is error : ' + error);
     return cb(`error getAllSubscribedID ${error}`, null)
   })
 
@@ -223,50 +223,33 @@ getAllSubscribedID((err, ids) => {
 })
 
 
-// let _users = database.ref('users')
-// _users.on('child_changed', (childSnapshot, prevChildKey) => {
-//
-//   console.log('child changed!');
-//   let newSubscription = childSnapshot.val().subscribed
-//
-//   if(onMemStatus[childSnapshot.key]) {
-//
-//     console.log('found onemem index');
-//
-//     if(!onMemStatus[childSnapshot.key].subscription) {
-//       console.log('onmem index has bool');
-//       onMemStatus[childSnapshot.key].subscription = newSubscription
-//     }
-//     else {
-//       console.log('onemem index has no bool');
-//       onMemStatus[childSnapshot.key] = { 'subscription': newSubscription }
-//     }
-//
-//   } else {
-//     console.log('no onmem index found');
-//     onMemStatus[childSnapshot.key] = { 'subscription': newSubscription }
-//   }
-//
-//
-// })
+let _users = database.ref('users')
+_users.on('child_changed', (childSnapshot, prevChildKey) => {
 
+  console.log('child changed!');
+  let newSubscription = childSnapshot.val().subscribed
 
+  if(onMemStatus[childSnapshot.key]) {
 
+    console.log('found onemem index');
 
-database.ref('users').once('value')
-.then(function(snapshot){
-  let theArray = []
-  Object.keys(snapshot.val()).forEach( (key) => {
-    if(snapshot.val()[key].subscribed) theArray.push(key)
-  })
-  console.log(theArray);
-  return cb(null, theArray)
+    if(!onMemStatus[childSnapshot.key].subscription) {
+      console.log('onmem index has bool');
+      onMemStatus[childSnapshot.key].subscription = newSubscription
+    }
+    else {
+      console.log('onemem index has no bool');
+      onMemStatus[childSnapshot.key] = { 'subscription': newSubscription }
+    }
+
+  } else {
+    console.log('no onmem index found');
+    onMemStatus[childSnapshot.key] = { 'subscription': newSubscription }
+  }
+
 
 })
-.catch(function(error){
-  console.log('get all sub is error');
-  return cb(`error getAllSubscribedID ${error}`, null)
-})
+
 
 botmaster.on('update', (bot, update) => {
   console.log('enter update event');
