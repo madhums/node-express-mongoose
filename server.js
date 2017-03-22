@@ -121,12 +121,12 @@ function getAllSubscribedID(cb) {
       if(snapshot.val()[key].subscribed) theArray.push(key)
     })
     //console.log(theArray);
-    cb(null, theArray)
+    return cb(null, theArray)
 
   })
   .catch(function(error){
-    console.log('get all sub is error');
-    cb(`error getAllSubscribedID ${error}`, null)
+    console.log('get all sub is error --- ' + error);
+    return cb(`error getAllSubscribedID ${error}`, null)
   })
 
 }
