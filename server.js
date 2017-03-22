@@ -228,7 +228,8 @@ let _users = database.ref('users')
 
 _users.on('child_changed', (childSnapshot, prevChildKey) => {
   console.log('child changed!');
-  console.log(JSON.parse(childSnapshot));
+  console.log(childSnapshot);
+  console.log(JSON.stringify(childSnapshot));
 
   //let newSubscription = JSON.parse(childSnapshot).subscription
 
