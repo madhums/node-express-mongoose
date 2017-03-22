@@ -247,6 +247,7 @@ _users.on('child_changed', (childSnapshot, prevChildKey) => {
     onMemStatus[childSnapshot.key] = { 'subscription': newSubscription }
   }
 
+  console.log('onmem @ id = ' + onMemStatus[childSnapshot.key].subscription);
 
 })
 
