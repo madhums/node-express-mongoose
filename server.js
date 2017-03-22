@@ -227,7 +227,7 @@ let _users = database.ref('users')
 
 _users.on('child_changed', (childSnapshot, prevChildKey) => {
   console.log('child changed!');
-  console.log(JSON.stringify(childSnapshot));
+  console.log(childSnapshot.key);
   console.log(prevChildKey);
 
 })
