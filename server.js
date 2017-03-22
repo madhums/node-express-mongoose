@@ -225,8 +225,11 @@ getAllSubscribedID((err, ids) => {
 
 let _users = database.ref('users')
 
-_users.on('child_changed', () => {
+_users.on('child_changed', (childSnapshot, prevChildKey) => {
   console.log('child changed!');
+  console.log(JSON.stringify(childSnapshot));
+  console.log(prevChildKey);
+
 })
 
 
