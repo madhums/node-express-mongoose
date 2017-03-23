@@ -1,6 +1,10 @@
 require('dotenv').config();
 let http = require('http');
 
+exports.aaa = function() {
+  console.log('pppp');
+}
+
 exports.getReport = function(cb) {
 
   let weatherURL = "http://api.openweathermap.org/data/2.5/weather?q=Bangkok,th&appid=" + process.env.weatherOpenAPIKey

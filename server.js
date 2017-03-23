@@ -61,10 +61,7 @@ let onMemStatus = []
 console.log('abcdefg');
 
 console.log('weather reporting!');
-weatherAPI.getReport(function(err, result){
-  if(err) console.log(err);
-  else console.log(result);
-})
+weatherAPI.aaa()
 
 usersManagement.testLog()
 usersManagement.testCBLog((a) => {
