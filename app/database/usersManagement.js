@@ -79,11 +79,11 @@ exports.checkDupID = function(uid) {
 
 }
 
-exports.testLog() {
+exports.testLog = function() {
   console.log('___________');
 }
 
-exports.testCBLog(cb) {
+exports.testCBLog = function(cb) {
   cb('123456')
 }
 
