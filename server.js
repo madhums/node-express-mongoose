@@ -14,9 +14,9 @@ const app = express();
 let weatherAPI = require('./app/apis/weather.api.js')
 let messengerProfileAPI = require('./app/apis/messenger_profile.api.js')
 let userMgt = require('./app/controllers/userManagement.controller.js')
-
-let firebase = require('firebase')
 let database = userMgt.database
+//let firebase = require('firebase')
+
 /*
 let firebaseConfig = {
   apiKey: process.env.firebaseAPIKey,
@@ -121,27 +121,7 @@ botmaster.on('update', (bot, update) => {
     user = onMemStatus[update.sender.id]
   }
 
-  if (update.message.text == 'ต้องการ Subscribe' || update.message.text == 'ไม่ต้องการ Subscribe') {
-
-    if(update.message.text == 'ต้องการ Subscribe') {
-      // change subsribe to true
-      if(!userMgt.checkDupID(update.sender.id)) {
-        userMgt.recordNewUserID(update.sender.id)
-        onMemStatus[update.sender.id].subscription = true
-      } else {
-        userMgt.setSubscription(update.sender.id, true)
-        onMemStatus[update.sender.id].subscription = true
-      }
-
-      console.log(`status: ${onMemStatus[update.sender.id].subscription}`);
-      bot.reply(update, 'จัดไป ;)');
-
-    } else {
-      bot.reply(update, 'สนใจก็บอกมานะ');
-    }
-
-  }
-
+  //---------------- check subscription status -------------------
   if(!user.subscription) {
     console.log('no sub info recorded');
 
@@ -171,6 +151,31 @@ botmaster.on('update', (bot, update) => {
     })
 
   } else console.log('sub status of ' + update.sender.id + ' is ' + user.subscription);
+
+  //------------------- end checking ---------------
+
+  if (update.message.text == 'ต้องการ Subscribe' || update.message.text == 'ไม่ต้องการ Subscribe') {
+
+    if(update.message.text == 'ต้องการ Subscribe') {
+      // change subsribe to true
+      if(!userMgt.checkDupID(update.sender.id)) {
+        userMgt.recordNewUserID(update.sender.id)
+        onMemStatus[update.sender.id].subscription = true
+      } else {
+        userMgt.setSubscription(update.sender.id, true)
+        onMemStatus[update.sender.id].subscription = true
+      }
+
+      console.log(`status: ${onMemStatus[update.sender.id].subscription}`);
+      bot.reply(update, 'จัดไป ;)');
+
+    } else {
+      bot.reply(update, 'สนใจก็บอกมานะ');
+    }
+
+  }
+
+
 
 
   //---------------------------------------------
