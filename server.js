@@ -61,6 +61,9 @@ let onMemStatus = []
 console.log('abcdefg');
 
 usersManagement.testLog()
+usersManagement.testCBLog((a) => {
+  console.log(a);
+})
 
 usersManagement.getAllSubscribedID((err, ids) => {
   if(err) console.log(err);
