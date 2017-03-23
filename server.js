@@ -11,7 +11,8 @@ const fetch = require('node-fetch')
 const port = process.env.PORT || 3002;
 const app = express();
 
-let weatherAPI = require('./app/apis/weather.api.js')
+//let weatherAPI = require('./app/apis/weather.api.js')
+let weatherAPI = require('./app/controllers/weather.api.js')
 let messengerProfileAPI = require('./app/apis/messenger_profile.api.js')
 let usersManagement = require('./app/controllers/usersManagement.js')
 
