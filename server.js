@@ -16,7 +16,7 @@ let messengerProfileAPI = require('./app/apis/messenger_profile.api.js')
 let usersManagement = require('./app/controllers/usersManagement.js')
 
 let firebase = require('firebase')
-
+/*
 let firebaseConfig = {
   apiKey: process.env.firebaseAPIKey,
   authDomain: "messengerchatbot-f6775.firebaseapp.com",
@@ -27,34 +27,7 @@ let firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig)
 let database = firebase.database()
-
-/*
-function setRunnerNumber() {
-
-  database.ref('users').once('value')
-  .then(function(snapshot){
-    // no datain snapshot
-    if(!snapshot.exists()){
-      runner = 0
-      console.log('set runner to 0');
-    }
-    // has some data
-    else {
-      //console.log('snap length = ' + snapshot.numChildren());
-      runner = snapshot.numChildren()
-      console.log(`set runner to ${runner}`);
-    }
-    //console.log(`UID: ${snapshot.val().uid}`);
-  })
-  .catch(function(error){
-    console.log('failed to read DB for setting runner number\n\n');
-    console.log(`${error}`);
-  })
-
-}
 */
-
-//----- end DB Functions ---
 
 app.listen(port, () => {
   console.log('Express app started on port ' + port);

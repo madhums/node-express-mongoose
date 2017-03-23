@@ -13,6 +13,9 @@ let firebaseConfig = {
 firebase.initializeApp(firebaseConfig)
 let database = firebase.database()
 
+module.exports  = {
+  database: database
+}
 
 //---- DB Functions ----
 
@@ -93,7 +96,7 @@ exports.getAllID = function(cb) {
 }
 
 exports.getAllSubscribedID = function(cb) {
-
+  console.log('get all sub ids');
   let dup = database.ref('users').once('value')
   .then(function(snapshot){
     let theArray = []
