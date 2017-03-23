@@ -58,6 +58,15 @@ const messengerBot = new Botmaster.botTypes.MessengerBot(messengerSettings);
 botmaster.addBot(messengerBot)
 
 let onMemStatus = []
+console.log('abcdefg');
+
+console.log('weather reporting!');
+weatherAPI.aaa()
+
+userMgt.testLog()
+userMgt.testCBLog((a) => {
+  console.log(a);
+})
 
 userMgt.getAllSubscribedID((err, ids) => {
   if(err) console.log(err);
