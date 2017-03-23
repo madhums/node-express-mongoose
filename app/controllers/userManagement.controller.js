@@ -19,6 +19,7 @@ let database = firebase.database()
 // }
 
 //---- DB Functions ----
+exports.database = database
 
 exports.recordNewUserID = function(userId) {
 
