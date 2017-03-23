@@ -79,6 +79,14 @@ exports.checkDupID = function(uid) {
 
 }
 
+exports.testLog() {
+  console.log('___________');
+}
+
+exports.testCBLog(cb) {
+  cb('123456')
+}
+
 exports.getAllID = function(cb) {
 
   let dup = database.ref('users').once('value')

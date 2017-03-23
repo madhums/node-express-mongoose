@@ -60,6 +60,8 @@ botmaster.addBot(messengerBot)
 let onMemStatus = []
 console.log('abcdefg');
 
+usersManagement.testLog()
+
 usersManagement.getAllSubscribedID((err, ids) => {
   if(err) console.log(err);
   else {
