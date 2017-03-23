@@ -10,15 +10,13 @@ let firebaseConfig = {
   messagingSenderId: "524406259822"
 }
 
-console.log(process.env.firebaseAPIKey);
-console.log('yoho');
 
 firebase.initializeApp(firebaseConfig)
 let database = firebase.database()
 
-// module.exports  = {
-//   database: database
-// }
+module.exports  = {
+  database: database
+}
 
 //---- DB Functions ----
 
@@ -80,14 +78,6 @@ exports.checkDupID = function(uid) {
     return true
   })
 
-}
-
-exports.testLog = function() {
-  console.log('___________');
-}
-
-exports.testCBLog = function(cb) {
-  cb('123456')
 }
 
 exports.getAllID = function(cb) {
