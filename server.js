@@ -16,6 +16,7 @@ let messengerProfileAPI = require('./app/apis/messenger_profile.api.js')
 let userMgt = require('./app/controllers/userManagement.controller.js')
 
 let firebase = require('firebase')
+let database = userMgt.database
 /*
 let firebaseConfig = {
   apiKey: process.env.firebaseAPIKey,
