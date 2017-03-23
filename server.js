@@ -60,6 +60,12 @@ botmaster.addBot(messengerBot)
 let onMemStatus = []
 console.log('abcdefg');
 
+console.log('weather reporting!');
+weatherAPI.getReport(function(err, result){
+  if(err) console.log(err);
+  else console.log(result);
+})
+
 usersManagement.testLog()
 usersManagement.testCBLog((a) => {
   console.log(a);
