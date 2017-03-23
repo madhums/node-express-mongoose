@@ -14,9 +14,9 @@ let firebaseConfig = {
 firebase.initializeApp(firebaseConfig)
 let database = firebase.database()
 
-module.exports  = {
-  database: database
-}
+// module.exports  = {
+//   database: database
+// }
 
 //---- DB Functions ----
 
