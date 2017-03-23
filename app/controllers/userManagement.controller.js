@@ -1,6 +1,6 @@
 let https = require('https');
 let firebase = require('firebase')
-let messengerProfileAPI = require('./app/apis/messenger_profile.api.js')
+let messengerProfileAPI = require('../apis/messenger_profile.api.js')
 
 let firebaseConfig = {
   apiKey: process.env.firebaseAPIKey,
