@@ -28,128 +28,6 @@ let firebaseConfig = {
 firebase.initializeApp(firebaseConfig)
 let database = firebase.database()
 
-
-//---- DB Functions ----
-/*
-function recordNewUserID(userId) {
-
-  messengerProfileAPI.getUserInfo(userId, function(err, info){
-
-    if(err) console.log(err);
-    else if(info){
-
-      database.ref(`/users/${userId}`).set({
-        firstName: info.first_name,
-        lastName: info.last_name,
-        gender: info.gender,
-        timezone: info.timezone,
-        createdAt: (new Date()).toISOString(),
-        subscribed: true
-      })
-      .then(function(){
-        console.log('added');
-      })
-      .catch(function(error){
-        console.log('failed');
-      })
-
-    }
-
-  })
-
-}
-
-
-function setSubscription(userId, value) {
-
-  database.ref(`/users/${userId}`).set({
-    subscribed: value
-  })
-  .then(function(){
-    console.log('set subscription to ' + value);
-  })
-  .catch(function(error){
-    console.log('failed');
-  })
-
-}
-
-
-function checkDupID(uid) {
-
-  let dup = database.ref('users').orderByKey().equalTo(uid).once('value')
-  .then(function(snapshot){
-    // console.log(snapshot.val())
-    // console.log(snapshot.exists())
-    console.log('check dup');
-    return snapshot.exists() //true means dup
-  })
-  .catch(function(error){
-    console.log('check dup error');
-    return true
-  })
-
-}
-
-function getAllID(cb) {
-
-  let dup = database.ref('users').once('value')
-  .then(function(snapshot){
-    let theArray = Object.keys(snapshot.val())
-    console.log(theArray);
-    return cb(null, theArray)
-
-  })
-  .catch(function(error){
-    console.log('get all id error');
-    return cb(`error getAllID ${error}`, null)
-  })
-
-}
-
-function getAllSubscribedID(cb) {
-
-  let dup = database.ref('users').once('value')
-  .then(function(snapshot){
-    let theArray = []
-    Object.keys(snapshot.val()).forEach( (key) => {
-      if(snapshot.val()[key].subscribed) theArray.push(key)
-    })
-    //console.log(theArray);
-    return cb(null, theArray)
-
-  })
-  .catch(function(error){
-    console.log('get all sub is error : ' + error);
-    return cb(`error getAllSubscribedID ${error}`, null)
-  })
-
-}
-
-async function checkIfSubscribed(uid) {
-
-  console.log('\nbefore ======================');
-
-  try {
-
-    let result = false
-    let snap = await database.ref('users').orderByKey().equalTo(uid).once('value')
-    Object.keys(snap.val()).forEach( (key) => {
-      result = snap.val()[key].subscribed
-    })
-    console.log('try check if sub b4 return');
-    return result
-
-  } catch(error) {
-    console.log('in this');
-    console.log(error);
-  }
-
-
-
-}
-*/
-
 /*
 function setRunnerNumber() {
 
@@ -207,6 +85,7 @@ const messengerBot = new Botmaster.botTypes.MessengerBot(messengerSettings);
 botmaster.addBot(messengerBot)
 
 let onMemStatus = []
+console.log('abcdefg');
 
 usersManagement.getAllSubscribedID((err, ids) => {
   if(err) console.log(err);
