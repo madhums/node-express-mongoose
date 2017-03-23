@@ -11,10 +11,9 @@ const fetch = require('node-fetch')
 const port = process.env.PORT || 3002;
 const app = express();
 
-//let weatherAPI = require('./app/apis/weather.api.js')
-let weatherAPI = require('./app/controllers/weather.api.js')
+let weatherAPI = require('./app/apis/weather.api.js')
 let messengerProfileAPI = require('./app/apis/messenger_profile.api.js')
-let usersManagement = require('./app/controllers/usersManagement.js')
+let userMgt = require('./app/controllers/userManagement.controller.js')
 
 let firebase = require('firebase')
 /*
@@ -64,12 +63,12 @@ console.log('abcdefg');
 console.log('weather reporting!');
 weatherAPI.aaa()
 
-usersManagement.testLog()
-usersManagement.testCBLog((a) => {
+userMgt.testLog()
+userMgt.testCBLog((a) => {
   console.log(a);
 })
 
-usersManagement.getAllSubscribedID((err, ids) => {
+userMgt.getAllSubscribedID((err, ids) => {
   if(err) console.log(err);
   else {
     ids.forEach((id) => {
@@ -125,11 +124,11 @@ botmaster.on('update', (bot, update) => {
 
     if(update.message.text == 'ต้องการ Subscribe') {
       // change subsribe to true
-      if(!usersManagement.checkDupID(update.sender.id)) {
-        usersManagement.recordNewUserID(update.sender.id)
+      if(!userMgt.checkDupID(update.sender.id)) {
+        userMgt.recordNewUserID(update.sender.id)
         onMemStatus[update.sender.id].subscription = true
       } else {
-        usersManagement.setSubscription(update.sender.id, true)
+        userMgt.setSubscription(update.sender.id, true)
         onMemStatus[update.sender.id].subscription = true
       }
 
@@ -145,7 +144,7 @@ botmaster.on('update', (bot, update) => {
   if(!user.subscription) {
     console.log('no sub info recorded');
 
-    let a = Promise.resolve(usersManagement.checkIfSubscribed(update.sender.id))
+    let a = Promise.resolve(userMgt.checkIfSubscribed(update.sender.id))
     a.then(function(isSub){
       if(!isSub) {
         //bot.sendTextMessageTo('', update.sender.id)
@@ -239,7 +238,7 @@ botmaster.on('update', (bot, update) => {
   } else if (update.message.text === 'aaa1414s1') {
 
     //readDB()
-    usersManagement.getAllID(function(err, list){
+    userMgt.getAllID(function(err, list){
       if(err) console.log(err);
       else if(list) {
         console.log(list);
@@ -275,7 +274,7 @@ let rerunner = nodeSchedule.scheduleJob('*/5 * * * *', function(){
 
 //heroku server timezone is gmt+0.00
 let weatherReporter = nodeSchedule.scheduleJob('0 0 5,11,17,23 * * *', function(){
-  usersManagement.getAllID(function(err, list){
+  userMgt.getAllID(function(err, list){
     if(err) console.log(err);
     else if(list) {
       console.log(list);
@@ -297,7 +296,7 @@ messengerProfileAPI.getUserInfo('1432315113461939', function(err, info){
 })
 */
 
-usersManagement.getAllSubscribedID(function(err, ids){
+userMgt.getAllSubscribedID(function(err, ids){
   if(err) console.log(err);
   else console.log('success');
 })
