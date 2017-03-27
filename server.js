@@ -170,14 +170,15 @@ botmaster.on('update', (bot, update) => {
 
       console.log(`status: ${onMemStatus[update.sender.id].subscription}`);
       bot.sendTextMessageTo('จัดไป ;)', update.sender.id);
-      
       bot.sendTextMessageTo(`การ Subscribe เสร็จสิ้นแล้ว`, update.sender.id)
-      bot.sendTextMessageTo(`คุณสามารถใช้งานบอทได้หลากหลายรูปแบบ เช่น`, update.sender.id)
-      bot.sendTextMessageTo(` - ทักทายด้วยคำว่า "ดี", "หวัดดี", "สวัสดี"`, update.sender.id)
-      bot.sendTextMessageTo(` - สอบถามสภาพอากาศด้วยคำว่า "สภาพอากาศ", "อุณหภูมิเท่าไร"`, update.sender.id)
-      bot.sendTextMessageTo(`และสามารถร่วมเล่นกิจกรรมตอบคำถามกับเราได้ทุกเวลา 16.30 วันพฤหัส ทุกสัปดาห์ เพื่อลุ้นรับรางวัลพิเศษของทางเพจ`, update.sender.id)
-      bot.sendTextMessageTo(`โดยบอทจะทักคุณไปเมื่อมีการถามคำถามเกิดขึ้น และคุณสามารถตอบคำถามผ่านช่องแชทนี้แล้วได้ :D`, update.sender.id)
+      for(let i = 0; i < 100000; i++) {}
+      let completeSubscribeMessages = [`คุณสามารถใช้งานบอทได้หลากหลายรูปแบบ เช่น`,
+                                    ` - ทักทายด้วยคำว่า "ดี", "หวัดดี", "สวัสดี"`,
+                                    ` - สอบถามสภาพอากาศด้วยคำว่า "สภาพอากาศ", "อุณหภูมิเท่าไร"`,
+                                    `และสามารถร่วมเล่นกิจกรรมตอบคำถามกับเราได้ทุกเวลา 16.30 วันพฤหัส ทุกสัปดาห์ เพื่อลุ้นรับรางวัลพิเศษของทางเพจ`,
+                                    `โดยบอทจะทักคุณไปเมื่อมีการถามคำถามเกิดขึ้น และคุณสามารถตอบคำถามผ่านช่องแชทนี้แล้วได้ :D`]
 
+      bot.sendTextCascadeTo(completeSubscribeMessages, update.sender.id)
 
     } else {
       bot.reply(update, 'สนใจก็บอกมานะ');
