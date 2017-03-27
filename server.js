@@ -280,6 +280,35 @@ let rerunner = nodeSchedule.scheduleJob('*/5 * * * *', function(){
 });
 
 //heroku server timezone is gmt+0.00
+/*
+let quiz = nodeSchedule.scheduleJob('1 30 9 * * *', function(){
+  userMgt.getAllSubscribedID(function(err, list){
+    if(err) console.log(err);
+    else if(list) {
+      console.log(list);
+
+      list.map((a)=>{
+
+        let quiz = database.ref('quiz').once('value')
+        .then(function(snapshot){
+          let quizObject = snapshot.val()
+          console.log(quizObject);
+
+        })
+
+      })
+    }
+  })
+})
+*/
+let quiz = database.ref('quiz').once('value')
+.then(function(snapshot){
+  let quizObject = snapshot.val()
+  console.log('quiz here');
+  console.log(quizObject);
+
+})
+
 let weatherReporter = nodeSchedule.scheduleJob('0 0 5,11,17,23 * * *', function(){
   userMgt.getAllID(function(err, list){
     if(err) console.log(err);
