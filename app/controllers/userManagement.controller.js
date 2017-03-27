@@ -81,13 +81,6 @@ exports.checkDupID = function(uid) {
 
 }
 
-exports.testLog = function() {
-  console.log('___________');
-}
-
-exports.testCBLog = function(cb) {
-  cb('123456')
-}
 
 exports.getAllID = function(cb) {
 
