@@ -172,7 +172,7 @@ botmaster.on('update', (bot, update) => {
       bot.sendTextMessageTo('จัดไป ;)', update.sender.id);
       for(let i = 0; i < 100000; i++) {}
       bot.sendTextMessageTo(`การ Subscribe เสร็จสิ้นแล้ว`, update.sender.id)
-      bot.sendTextMessageTo(`คุณ ${info.first_name} สามารถใช้งานบอทได้หลากหลายรูปแบบ เช่น`, update.sender.id)
+      bot.sendTextMessageTo(`คุณสามารถใช้งานบอทได้หลากหลายรูปแบบ เช่น`, update.sender.id)
       for(let i = 0; i < 10000; i++) {}
       bot.sendTextMessageTo(` - ทักทายด้วยคำว่า "ดี", "หวัดดี", "สวัสดี"`, update.sender.id)
       bot.sendTextMessageTo(` - สอบถามสภาพอากาศด้วยคำว่า "สภาพอากาศ", "อุณหภูมิเท่าไร"`, update.sender.id)
