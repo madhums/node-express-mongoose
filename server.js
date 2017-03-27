@@ -122,7 +122,8 @@ botmaster.on('update', (bot, update) => {
   }
 
   //---------------- check subscription status -------------------
-  if(!user.subscription && update.message.text != 'ไม่ต้องการ Subscribe' ) {
+  if(!user.subscription &&
+    update.message.text != 'ไม่ต้องการ Subscribe' && update.message.text != 'ต้องการ Subscribe' ) {
     console.log('no sub info recorded');
 
     let a = Promise.resolve(userMgt.checkIfSubscribed(update.sender.id))
