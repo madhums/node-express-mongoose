@@ -122,7 +122,7 @@ botmaster.on('update', (bot, update) => {
   }
 
   //---------------- check subscription status -------------------
-  if(!user.subscription) {
+  if(!user.subscription && update.message.text != 'ไม่ต้องการ Subscribe' ) {
     console.log('no sub info recorded');
 
     let a = Promise.resolve(userMgt.checkIfSubscribed(update.sender.id))
@@ -154,7 +154,8 @@ botmaster.on('update', (bot, update) => {
 
   //------------------- end checking ---------------
 
-  if (update.message.text == 'ต้องการ Subscribe' || update.message.text == 'ไม่ต้องการ Subscribe') {
+  if (!user.subscription &&
+        (update.message.text == 'ต้องการ Subscribe' || update.message.text == 'ไม่ต้องการ Subscribe') ) {
 
     if(update.message.text == 'ต้องการ Subscribe') {
       // change subsribe to true
@@ -209,17 +210,6 @@ botmaster.on('update', (bot, update) => {
     } else console.log('not sub hahahaha you won\'t get these kitties~');
 
 
-
-  // console.log('b4 send att');
-  // console.log('meow: ' + meow);
-  // let att = {
-  //   'type': 'image',
-  //   'payload':{
-  //     'url': meow
-  //   }
-  // }
-  // bot.sendAttachmentTo(att, update.sender.id)
-   //messengerBot.sendTextMessageTo(`สวัสดี ${info.first_name}`, '1432315113461939');
 
  } else if (update.message.text.indexOf('เนอะ') > -1) {
    console.log('neor!');
