@@ -180,75 +180,83 @@ botmaster.on('update', (bot, update) => {
 
 
   //---------------------------------------------
+  // subscribed features
 
-  if (update.message.text === 'ดี' ||
-     update.message.text === 'หวัดดี' ||
-     update.message.text === 'นี่' ||
-     update.message.text.indexOf('สวัสดี') > -1 )
-  {
+  if(onMemStatus[update.sender.id].subscription){
 
-    if(onMemStatus[update.sender.id].subscription){
+    //---- greeting with kitties
 
-      fetch('http://random.cat/meow')
-      .then( (res) => { return res.json() })
-      .then(function(json){
+    if (update.message.text === 'ดี' ||
+       update.message.text === 'หวัดดี' ||
+       update.message.text === 'นี่' ||
+       update.message.text.indexOf('สวัสดี') > -1 )
+    {
 
-        let att = {
-          'type': 'image',
-          'payload':{
-            'url': json.file
+        fetch('http://random.cat/meow')
+        .then( (res) => { return res.json() })
+        .then(function(json){
+
+          let att = {
+            'type': 'image',
+            'payload':{
+              'url': json.file
+            }
           }
-        }
 
-        bot.sendAttachmentTo(att, update.sender.id)
+          bot.sendAttachmentTo(att, update.sender.id)
 
-      }).catch(function(err){
-        console.log('fetch error');
-        console.log(err)
-      })
-
-    } else console.log('not sub hahahaha you won\'t get these kitties~');
-
-
-
- } else if (update.message.text.indexOf('เนอะ') > -1) {
-   console.log('neor!');
-    bot.reply(update, 'เนอะ');
-
- }  else if (update.message.text.indexOf('อุณหภูมิเท่าไร') > -1 ||
-          update.message.text.indexOf('สภาพอากาศ') > -1) {
-    console.log('weather reporting!');
-    weatherAPI.getReport(function(err, result){
-      if(err) console.log(err);
-      else bot.sendTextMessageTo(result, update.sender.id);
-    })
-
-  } else if (update.message.text === '777778547') {
-
-    let uid = update.sender.id
-    // checkDupID(uid, function(err, isDup){
-    //   if(!isDup) recordNewUserID(uid)
-    //   else console.log('dup id found');
-    // })
-
-  } else if (update.message.text === 'aaa1414s1') {
-
-    //readDB()
-    userMgt.getAllID(function(err, list){
-      if(err) console.log(err);
-      else if(list) {
-        console.log(list);
-        list.map((a)=>{
-          bot.sendTextMessageTo('text', a);
+        }).catch(function(err){
+          console.log('fetch error');
+          console.log(err)
         })
-      }
-    })
 
-  } else if(user.subscription && !(update.message.text == 'ต้องการ Subscribe' || update.message.text == 'ไม่ต้องการ Subscribe')) {
-   const messages = ['บอทยังไม่เข้าใจข้อความของคุณ',
-                     'เรากำลังพัฒนาบอทให้มีความสามารถสูงขึ้น เพื่อเข้าใจคำพูดของคุณ']
-   bot.sendTextCascadeTo(messages, update.sender.id)
+   }
+
+   // weather report
+   else if (update.message.text.indexOf('อุณหภูมิเท่าไร') > -1 ||
+           update.message.text.indexOf('สภาพอากาศ') > -1) {
+     console.log('weather reporting!');
+     weatherAPI.getReport(function(err, result){
+       if(err) console.log(err);
+       else bot.sendTextMessageTo(result, update.sender.id);
+     })
+
+   }
+
+   else if (update.message.text === '777778547') {
+
+     let uid = update.sender.id
+     // checkDupID(uid, function(err, isDup){
+     //   if(!isDup) recordNewUserID(uid)
+     //   else console.log('dup id found');
+     // })
+
+   }
+
+   else if (update.message.text === 'aaa1414s1') {
+
+     //readDB()
+     userMgt.getAllID(function(err, list){
+       if(err) console.log(err);
+       else if(list) {
+         console.log(list);
+         list.map((a)=>{
+           bot.sendTextMessageTo('text', a);
+         })
+       }
+     })
+
+   }
+
+   else if(user.subscription && !(update.message.text == 'ต้องการ Subscribe' || update.message.text == 'ไม่ต้องการ Subscribe')) {
+    const messages = ['บอทยังไม่เข้าใจข้อความของคุณ',
+                      'เรากำลังพัฒนาบอทให้มีความสามารถสูงขึ้น เพื่อเข้าใจคำพูดของคุณ']
+    bot.sendTextCascadeTo(messages, update.sender.id)
+   }
+
+
   }
+
 
 });
 
