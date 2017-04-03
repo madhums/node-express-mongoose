@@ -155,23 +155,27 @@ async function prepareQuiz() {
 }
 
 
-function startQuizTime(quiz) {
+function startQuizTime(quiz, ids) {
   isQuizOnline = true
   console.log('start quiz length ' + quiz.length);
   let quizLength = quiz.length
-  shootTheQuestion(quiz, 0, quizLength)
+  shootTheQuestion(quiz, ids, 0, quizLength)
 
 }
 
-function shootTheQuestion(quiz, currentQuiz, totalQuiz) {
+function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   //bot.sendTextMessageTo(quiz[currentQuiz].q, update.sender.id);
   console.log('enter shooting');
+
   let buttons = [quiz[currentQuiz][0], quiz[currentQuiz][1]]
-  messengerBot.sendDefaultButtonMessageTo(buttons, update.sender.id, quiz[currentQuiz].q);
+
+  ids.map((id)=>{
+    messengerBot.sendDefaultButtonMessageTo(buttons, id, quiz[currentQuiz].q);
+  })
 
   if(currentQuiz < totalQuiz) {
     setTimeout(function() {
-      shootTheQuestion(quiz, currentQuiz++, totalQuiz)
+      shootTheQuestion(quiz, ids, currentQuiz++, totalQuiz)
     }, 20000)
   }
   else console.log('end quiz');
@@ -213,7 +217,14 @@ userMgt.getAllSubscribedID(function(err, ids){
 let quizPromise = Promise.resolve(prepareQuiz())
 
 quizPromise.then((quiz) => {
-  startQuizTime(quiz)
+
+  getAllID(function(err, list){
+    if(err) console.log(err);
+    else if(list) {
+      startQuizTime(quiz, list)
+    }
+  })
+
 })
 
 
