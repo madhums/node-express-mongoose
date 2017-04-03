@@ -16,6 +16,7 @@ let messengerProfileAPI = require('./app/apis/messenger_profile.api.js')
 let userMgt = require('./app/controllers/userManagement.controller.js')
 let database = userMgt.database
 //let firebase = require('firebase')
+let isQuizOnline = false
 
 app.listen(port, () => {
   console.log('Express app started on port ' + port);
@@ -47,7 +48,7 @@ botmaster.addBot(messengerBot)
 
 
 botmaster.on('update', (bot, update) => {
-
+/*
     if (update.message.text === 'ดี' ||
        update.message.text === 'หวัดดี' ||
        update.message.text === 'นี่' ||
@@ -91,7 +92,15 @@ botmaster.on('update', (bot, update) => {
                       'เรากำลังพัฒนาบอทให้มีความสามารถสูงขึ้น เพื่อเข้าใจคำพูดของคุณ']
     bot.sendTextCascadeTo(messages, update.sender.id)
    }
-
+*/
+  if(isQuizOnline) {
+    console.log('quiz on');
+    bot.sendTextMessageTo('it is quiz time!', update.sender.id);
+  }
+  else {
+    console.log('quiz off');
+    bot.sendTextMessageTo('quiz not available', update.sender.id);
+  }
 
 });
 
@@ -145,10 +154,29 @@ async function prepareQuiz() {
 
 }
 
+
 function startQuizTime(quiz) {
+  isQuizOnline = true
   console.log('start quiz length ' + quiz.length);
+  let quizLength = quiz.length
+  shootTheQuestion(quiz, 0, quizLength)
+
 }
 
+function shootTheQuestion(quiz, currentQuiz, totalQuiz) {
+  //bot.sendTextMessageTo(quiz[currentQuiz].q, update.sender.id);
+
+  let buttons = [quiz[currentQuiz][0], quiz[currentQuiz][1]]
+  bot.sendDefaultButtonMessageTo(buttons, update.sender.id, quiz[currentQuiz].q);
+
+  if(currentQuiz < totalQuiz) {
+    setTimeout(() = > {
+      shootTheQuestion(quiz, currentQuiz++, totalQuiz)
+    }, 20000)
+  }
+  else console.log('end quiz');
+
+}
 
 //console.log(quiz.length);
 
