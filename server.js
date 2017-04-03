@@ -148,10 +148,13 @@ database.ref('quiz').once('value')
 
 })
 
+
+//console.log(quiz.length);
+while(!quiz) {
+  console.log('waiting for quiz');
+}
+
 console.log('after quiz request');
-
-
-console.log(quiz.length);
 
 let weatherReporter = nodeSchedule.scheduleJob('0 0 5,11,17,23 * * *', function(){
   userMgt.getAllID(function(err, list){
