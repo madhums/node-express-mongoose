@@ -132,9 +132,12 @@ let quiz = nodeSchedule.scheduleJob('1 30 9 * * *', function(){
 //               |------ quiz no. increment <-----------
 //
 
-let quiz = database.ref('quiz').once('value')
+let quiz = null
+
+database.ref('quiz').once('value')
 .then(function(snapshot){
   let quizObject = snapshot.val()
+  quiz = quizObject
   console.log('quiz here');
   console.log(quizObject);
   console.log(quizObject.length);
@@ -148,7 +151,7 @@ let quiz = database.ref('quiz').once('value')
 console.log('after quiz request');
 
 
-console.log(quizObject.length);
+console.log(quiz.length);
 
 let weatherReporter = nodeSchedule.scheduleJob('0 0 5,11,17,23 * * *', function(){
   userMgt.getAllID(function(err, list){
