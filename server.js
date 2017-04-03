@@ -158,9 +158,10 @@ async function prepareQuiz() {
 
 
 function startQuizTime(quiz, ids) {
+
   isQuizOnline = true
   console.log('start quiz length ' + quiz.length);
-  let quizLength = quiz.length
+  let quizLength = quiz.length - 1
   ttq = quiz
   console.log('ttq' + ttq.length);
   shootTheQuestion(quiz, ids, 0, quizLength)
@@ -180,11 +181,11 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
 
   if(currentQuiz < totalQuiz) {
     console.log('current : ' + currentQuiz + ' , total: ' + totalQuiz);
-    let nextQuiz = currentQuiz+1
+    let nextQuiz = currentQuiz + 1
     setTimeout( function() {
       console.log('in settimeout');
       shootTheQuestion(quiz, ids, nextQuiz, totalQuiz)
-    }, 20000)
+    }, 30000)
   }
   else console.log('end quiz');
 
