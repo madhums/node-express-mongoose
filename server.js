@@ -145,6 +145,9 @@ async function prepareQuiz() {
 
 }
 
+function startQuizTime(quiz) {
+  console.log('start quiz length ' + quiz.length);
+}
 
 
 //console.log(quiz.length);
@@ -173,25 +176,18 @@ messengerProfileAPI.getUserInfo('1432315113461939', function(err, info){
   messengerBot.sendTextMessageTo(`สวัสดี ${info.first_name}`, '1432315113461939');
 })
 */
-
+/*
 userMgt.getAllSubscribedID(function(err, ids){
   if(err) console.log(err);
   else console.log('success');
 })
-
+*/
 let quizPromise = Promise.resolve(prepareQuiz())
 
-console.log(quizPromise);
-console.log(JSON.stringify(quizPromise));
-let tempq
 quizPromise.then((quiz) => {
-  tempq = quiz
-  console.log('chekc size');
-  console.log(quiz);
+  startQuizTime(quiz)
 })
 
-console.log('tempq');
-console.log(tempq);
 
 /*
 getAllID(function(err, list){
