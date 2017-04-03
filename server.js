@@ -195,7 +195,7 @@ userMgt.getAllSubscribedID(function(err, ids){
 
 let quizPromise = Promise.resolve(prepareQuiz())
 
-quizPromise.then((quiz){
+quizPromise.then((quiz) => {
   console.log(quiz.length);
 })
 
