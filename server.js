@@ -164,6 +164,7 @@ function startQuizTime(quiz, ids) {
   ttq = quiz
   console.log('ttq' + ttq.length);
   shootTheQuestion(quiz, ids, 0, quizLength)
+  console.log('end start quiz');
 
 }
 
@@ -178,6 +179,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   })
 
   if(currentQuiz < totalQuiz) {
+    console.log('current : ' + currentQuiz + ' , total: ' + totalQuiz);
     let nextQuiz = currentQuiz++
     //setTimeout( function() {
     //  console.log('in settimeout');
