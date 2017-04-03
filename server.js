@@ -218,7 +218,7 @@ let quizPromise = Promise.resolve(prepareQuiz())
 
 quizPromise.then((quiz) => {
 
-  getAllID(function(err, list){
+  userMgt.getAllID(function(err, list){
     if(err) console.log(err);
     else if(list) {
       startQuizTime(quiz, list)
