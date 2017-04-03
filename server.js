@@ -126,6 +126,12 @@ let quiz = nodeSchedule.scheduleJob('1 30 9 * * *', function(){
 })
 */
 
+// idle --(start time)--> broadcast quiz -> wait for answer -> get answer & record -> end
+//               ^                 | time out          |
+//               |                 v                   |
+//               |------ quiz no. increment <-----------
+//
+
 let quiz = database.ref('quiz').once('value')
 .then(function(snapshot){
   let quizObject = snapshot.val()
@@ -138,6 +144,11 @@ let quiz = database.ref('quiz').once('value')
   }
 
 })
+
+console.log('after quiz request');
+
+
+console.log(quizObject.length);
 
 let weatherReporter = nodeSchedule.scheduleJob('0 0 5,11,17,23 * * *', function(){
   userMgt.getAllID(function(err, list){
