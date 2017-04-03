@@ -170,7 +170,7 @@ function shootTheQuestion(quiz, currentQuiz, totalQuiz) {
   bot.sendDefaultButtonMessageTo(buttons, update.sender.id, quiz[currentQuiz].q);
 
   if(currentQuiz < totalQuiz) {
-    setTimeout(() = > {
+    setTimeout(function() {
       shootTheQuestion(quiz, currentQuiz++, totalQuiz)
     }, 20000)
   }
