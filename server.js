@@ -165,7 +165,7 @@ function startQuizTime(quiz) {
 
 function shootTheQuestion(quiz, currentQuiz, totalQuiz) {
   //bot.sendTextMessageTo(quiz[currentQuiz].q, update.sender.id);
-
+  console.log('enter shooting');
   let buttons = [quiz[currentQuiz][0], quiz[currentQuiz][1]]
   bot.sendDefaultButtonMessageTo(buttons, update.sender.id, quiz[currentQuiz].q);
 
