@@ -181,11 +181,10 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   if(currentQuiz < totalQuiz) {
     console.log('current : ' + currentQuiz + ' , total: ' + totalQuiz);
     let nextQuiz = currentQuiz+1
-    console.log('next = ' + nextQuiz);
-    //setTimeout( function() {
-    //  console.log('in settimeout');
+    setTimeout( function() {
+      console.log('in settimeout');
       shootTheQuestion(quiz, ids, nextQuiz, totalQuiz)
-    //}, 20000)
+    }, 20000)
   }
   else console.log('end quiz');
 
