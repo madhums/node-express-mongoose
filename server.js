@@ -132,21 +132,24 @@ let quiz = nodeSchedule.scheduleJob('1 30 9 * * *', function(){
 //               |------ quiz no. increment <-----------
 //
 
-let quiz = null
+function prepareQuiz() {
 
-database.ref('quiz').once('value')
-.then(function(snapshot){
-  let quizObject = snapshot.val()
-  quiz = quizObject
-  console.log('quiz here');
-  console.log(quizObject);
-  console.log(quizObject.length);
-  for(let i = 0; i < quizObject.length; i++) {
-    console.log(quizObject[i].q);
-    console.log(`choices: ${quizObject[i][0]}, ${quizObject[i][1]}`);
-  }
+  database.ref('quiz').once('value')
+  .then(function(snapshot){
+    let quizObject = snapshot.val()
+    console.log('quiz here');
+    console.log(quizObject);
+    console.log(quizObject.length);
+    for(let i = 0; i < quizObject.length; i++) {
+      console.log(quizObject[i].q);
+      console.log(`choices: ${quizObject[i][0]}, ${quizObject[i][1]}`);
+    }
 
-})
+    return quizObject
+  })
+
+}
+
 
 
 //console.log(quiz.length);
@@ -181,6 +184,9 @@ userMgt.getAllSubscribedID(function(err, ids){
   else console.log('success');
 })
 
+let quiz = prepareQuiz()
+
+console.log(quiz.length);
 
 /*
 getAllID(function(err, list){
