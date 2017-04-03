@@ -180,7 +180,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
 
   if(currentQuiz < totalQuiz) {
     console.log('current : ' + currentQuiz + ' , total: ' + totalQuiz);
-    let nextQuiz = currentQuiz++
+    let nextQuiz = currentQuiz+1
     console.log('next = ' + nextQuiz);
     //setTimeout( function() {
     //  console.log('in settimeout');
