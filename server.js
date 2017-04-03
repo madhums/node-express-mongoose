@@ -184,7 +184,7 @@ userMgt.getAllSubscribedID(function(err, ids){
   else console.log('success');
 })
 
-let quiz = await prepareQuiz()
+let quiz = prepareQuiz()
 
 console.log(quiz.length);
 
