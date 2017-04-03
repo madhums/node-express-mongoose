@@ -97,7 +97,10 @@ botmaster.on('update', (bot, update) => {
 */
   if(isQuizOnline) {
     console.log('quiz on');
-    bot.sendTextMessageTo('it is quiz time!', update.sender.id);
+    //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
+    if(update.message.text == ttq[quizNO].a)
+      bot.sendTextMessageTo('correct!', update.sender.id);
+    else bot.sendTextMessageTo('wronggg!', update.sender.id);
   }
   else {
     console.log('quiz off');
@@ -172,6 +175,7 @@ function startQuizTime(quiz, ids) {
 function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   //bot.sendTextMessageTo(quiz[currentQuiz].q, update.sender.id);
   console.log('enter shooting : ' + currentQuiz);
+  quizNO = currentQuiz
 
   let buttons = [quiz[currentQuiz][0], quiz[currentQuiz][1]]
 
@@ -227,7 +231,7 @@ userMgt.getAllSubscribedID(function(err, ids){
 let quizPromise = Promise.resolve(prepareQuiz())
 
 quizPromise.then((quiz) => {
-
+  ttq = quiz
   userMgt.getAllID(function(err, list){
     if(err) console.log(err);
     else if(list) {
