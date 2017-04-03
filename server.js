@@ -196,6 +196,7 @@ userMgt.getAllSubscribedID(function(err, ids){
 let quizPromise = Promise.resolve(prepareQuiz())
 
 quizPromise.then((quiz) => {
+  console.log('chekc size');
   console.log(quiz.length);
 })
 
