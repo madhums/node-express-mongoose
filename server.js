@@ -46,6 +46,8 @@ const botmaster = new Botmaster(botmasterSettings);
 const messengerBot = new Botmaster.botTypes.MessengerBot(messengerSettings);
 botmaster.addBot(messengerBot)
 
+let quizNO = 0
+let ttq = null
 
 botmaster.on('update', (bot, update) => {
 /*
@@ -159,13 +161,15 @@ function startQuizTime(quiz, ids) {
   isQuizOnline = true
   console.log('start quiz length ' + quiz.length);
   let quizLength = quiz.length
+  ttq = quiz
+  console.log('ttq' + ttq.length);
   shootTheQuestion(quiz, ids, 0, quizLength)
 
 }
 
 function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   //bot.sendTextMessageTo(quiz[currentQuiz].q, update.sender.id);
-  console.log('enter shooting');
+  console.log('enter shooting : ' + currentQuiz);
 
   let buttons = [quiz[currentQuiz][0], quiz[currentQuiz][1]]
 
@@ -175,7 +179,8 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
 
   if(currentQuiz < totalQuiz) {
     setTimeout(function() {
-      shootTheQuestion(quiz, ids, currentQuiz++, totalQuiz)
+      let nextQuiz = currentQuiz++
+      shootTheQuestion(quiz, ids, nextQuiz, totalQuiz)
     }, 20000)
   }
   else console.log('end quiz');
