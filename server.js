@@ -178,6 +178,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   quizNO = currentQuiz
 
   let buttons = [quiz[currentQuiz][0], quiz[currentQuiz][1]]
+  console.log('***check answer size = ' + quiz[currentQuiz].length);
 
   ids.map((id)=>{
     messengerBot.sendDefaultButtonMessageTo(buttons, id, quiz[currentQuiz].q);
