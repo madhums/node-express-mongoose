@@ -150,8 +150,6 @@ database.ref('quiz').once('value')
 
 
 //console.log(quiz.length);
-while(!quiz) {
-}
 
 console.log('after quiz request');
 
