@@ -136,7 +136,7 @@ async function prepareQuiz() {
 
   try {
 
-    return await database.ref('quiz').once('value')/*.then(function(snapshot){
+    let a = await database.ref('quiz').once('value')/*.then(function(snapshot){
       let quizObject = snapshot.val()
       console.log('quiz here');
       console.log(quizObject);
@@ -149,7 +149,7 @@ async function prepareQuiz() {
       return quizObject
     })
     */
-
+    return a.val()
   }
   catch(error) {
     console.log('get quiz error');
@@ -197,7 +197,7 @@ let quizPromise = Promise.resolve(prepareQuiz())
 
 quizPromise.then((quiz) => {
   console.log('chekc size');
-  console.log(quiz.length);
+  console.log(quiz);
 })
 
 
