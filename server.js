@@ -181,6 +181,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   if(currentQuiz < totalQuiz) {
     console.log('current : ' + currentQuiz + ' , total: ' + totalQuiz);
     let nextQuiz = currentQuiz++
+    console.log('next = ' + nextQuiz);
     //setTimeout( function() {
     //  console.log('in settimeout');
       shootTheQuestion(quiz, ids, nextQuiz, totalQuiz)
@@ -200,12 +201,13 @@ let weatherReporter = nodeSchedule.scheduleJob('0 0 5,11,17,23 * * *', function(
     else if(list) {
       console.log(list);
 
-      list.map((a)=>{
+      list.map((a) => {
         weatherAPI.getReport(function(err, result){
           if(err) console.log(err);
           else messengerBot.sendTextMessageTo(result, a);
         })
       })
+
     }
   })
 })
