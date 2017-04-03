@@ -48,12 +48,6 @@ botmaster.addBot(messengerBot)
 
 botmaster.on('update', (bot, update) => {
 
-
-  //---------------------------------------------
-  // subscribed features
-
-    //---- greeting with kitties
-
     if (update.message.text === 'ดี' ||
        update.message.text === 'หวัดดี' ||
        update.message.text === 'นี่' ||
@@ -92,7 +86,7 @@ botmaster.on('update', (bot, update) => {
 
    }
 
-   else if(user.subscription && !(update.message.text == 'ต้องการ Subscribe' || update.message.text == 'ไม่ต้องการ Subscribe')) {
+   else {
     const messages = ['บอทยังไม่เข้าใจข้อความของคุณ',
                       'เรากำลังพัฒนาบอทให้มีความสามารถสูงขึ้น เพื่อเข้าใจคำพูดของคุณ']
     bot.sendTextCascadeTo(messages, update.sender.id)
