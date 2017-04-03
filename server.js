@@ -183,13 +183,15 @@ let quizPromise = Promise.resolve(prepareQuiz())
 
 console.log(quizPromise);
 console.log(JSON.stringify(quizPromise));
-
+let tempq
 quizPromise.then((quiz) => {
+  tempq = quiz
   console.log('chekc size');
   console.log(quiz);
 })
 
-
+console.log('tempq');
+console.log(tempq);
 
 /*
 getAllID(function(err, list){
