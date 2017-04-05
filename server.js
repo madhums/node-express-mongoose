@@ -232,16 +232,19 @@ userMgt.getAllSubscribedID(function(err, ids){
 */
 let quizPromise = Promise.resolve(prepareQuiz())
 
-quizPromise.then((quiz) => {
-  ttq = quiz
-  userMgt.getAllID(function(err, list){
-    if(err) console.log(err);
-    else if(list) {
-      startQuizTime(quiz, list)
-    }
-  })
 
+let quiz = nodeSchedule.scheduleJob('0 30 9 * * *', function(){
+  quizPromise.then((quiz) => {
+    ttq = quiz
+    userMgt.getAllID(function(err, list){
+      if(err) console.log(err);
+      else if(list) {
+        startQuizTime(quiz, list)
+      }
+    })
+  })
 })
+
 
 
 /*
