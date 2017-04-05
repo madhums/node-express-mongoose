@@ -98,8 +98,10 @@ botmaster.on('update', (bot, update) => {
   if(isQuizOnline) {
     console.log('quiz on');
     //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
-    if(update.message.text == ttq[quizNO].a)
+    if(update.message.text == ttq[quizNO].a) {
       bot.sendTextMessageTo('correct!', update.sender.id);
+
+    }
     else bot.sendTextMessageTo('wronggg!', update.sender.id);
   }
   else {
@@ -233,7 +235,7 @@ userMgt.getAllSubscribedID(function(err, ids){
 let quizPromise = Promise.resolve(prepareQuiz())
 
 
-let quiz = nodeSchedule.scheduleJob('0 30 9 * * *', function(){
+//let quiz = nodeSchedule.scheduleJob('0 30 9 * * *', function(){
   quizPromise.then((quiz) => {
     ttq = quiz
     userMgt.getAllID(function(err, list){
@@ -243,7 +245,7 @@ let quiz = nodeSchedule.scheduleJob('0 30 9 * * *', function(){
       }
     })
   })
-})
+//})
 
 
 
