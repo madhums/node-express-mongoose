@@ -52,6 +52,7 @@ let ttq = null
 botmaster.on('update', (bot, update) => {
 
   userMgt.checkDupID(update.sender.id, (isDup) => {
+    console.log('aaa');
     if(!isDup) {
       console.log(`should not dup ${isDup}`);
       userMgt.recordNewUserID(update.sender.id, () => {})
