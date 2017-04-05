@@ -50,6 +50,13 @@ let quizNO = 0
 let ttq = null
 
 botmaster.on('update', (bot, update) => {
+
+  userMgt.checkDupID(update.sender.id, (isDup) => {
+    if(!isDup) {
+      userMgt.recordNewUserID(update.sender.id, () => {})
+    } else console.log('id duplicated');
+  })
+
 /*
     if (update.message.text === 'ดี' ||
        update.message.text === 'หวัดดี' ||
