@@ -140,12 +140,6 @@ let quiz = nodeSchedule.scheduleJob('1 30 9 * * *', function(){
 })
 */
 
-// idle --(start time)--> broadcast quiz -> wait for answer -> get answer & record -> end
-//               ^                 | time out          |
-//               |                 v                   |
-//               |------ quiz no. increment <-----------
-//
-
 async function prepareQuiz() {
 
   try {
@@ -194,7 +188,10 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
       shootTheQuestion(quiz, ids, nextQuiz, totalQuiz)
     }, 30000)
   }
-  else console.log('end quiz');
+  else {
+    console.log('end quiz');
+    isQuizOnline = false
+  }
 
 }
 
