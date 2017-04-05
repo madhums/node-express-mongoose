@@ -68,7 +68,6 @@ exports.checkDupID = function(uid) {
     // console.log(snapshot.val())
     // console.log(snapshot.exists())
     console.log('check dup');
-    console.log(snapshot.exists());
     return snapshot.exists() //true means dup
   })
   .catch(function(error){

@@ -51,13 +51,12 @@ let ttq = null
 
 botmaster.on('update', (bot, update) => {
 
-  userMgt.checkDupID(update.sender.id, (isDup) => {
-    console.log('aaa');
-    if(!isDup) {
-      console.log(`should not dup ${isDup}`);
-      userMgt.recordNewUserID(update.sender.id, () => {})
-    } else console.log('id duplicated');
-  })
+  let isDup = userMgt.checkDupID(update.sender.id)
+  console.log('aaa = ' + isDup);
+  if(!isDup) {
+    console.log(`should not dup ${isDup}`);
+    userMgt.recordNewUserID(update.sender.id)
+  } else console.log('id duplicated');
 
 /*
     if (update.message.text === 'ดี' ||
