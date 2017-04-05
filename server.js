@@ -53,6 +53,7 @@ botmaster.on('update', (bot, update) => {
 
   userMgt.checkDupID(update.sender.id, (isDup) => {
     if(!isDup) {
+      console.log(`should not dup ${isDup}`);
       userMgt.recordNewUserID(update.sender.id, () => {})
     } else console.log('id duplicated');
   })
