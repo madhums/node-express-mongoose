@@ -56,7 +56,7 @@ botmaster.on('update', (bot, update) => {
 
     console.log(`should not dup ${isDup}`);
     userMgt.recordNewUserID(update.sender.id)
-
+/*
     if(userMgt.checkDupID(update.sender.id)) {
       console.log('enter secret area');
       let buttons = []
@@ -65,7 +65,7 @@ botmaster.on('update', (bot, update) => {
       })
       messengerBot.sendDefaultButtonMessageTo(buttons, update.sender.id, ttq[quizNO].q);
     } else { console.log('too early'); }
-
+*/
   } else {
 
     console.log('already have this id');
