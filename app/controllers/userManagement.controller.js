@@ -82,9 +82,13 @@ exports.getAllID = function(cb) {
 
   let dup = database.ref('users').once('value')
   .then(function(snapshot){
-    let theArray = Object.keys(snapshot.val())
-    console.log(theArray);
-    return cb(null, theArray)
+
+    if(snapshot.val()) {
+      let theArray = Object.keys(snapshot.val())
+      console.log(theArray);
+      return cb(null, theArray)
+    }
+    else return cb(null, [])
 
   })
   .catch(function(error){
