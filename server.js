@@ -46,17 +46,45 @@ const botmaster = new Botmaster(botmasterSettings);
 const messengerBot = new Botmaster.botTypes.MessengerBot(messengerSettings);
 botmaster.addBot(messengerBot)
 
+let participatedIDs = []
 let quizNO = 0
 let ttq = null
 
 botmaster.on('update', (bot, update) => {
 
-  let isDup = userMgt.checkDupID(update.sender.id)
-  console.log('aaa = ' + isDup);
-  if(!isDup) {
+  if(!userMgt.checkDupID(update.sender.id)) {
+
     console.log(`should not dup ${isDup}`);
     userMgt.recordNewUserID(update.sender.id)
-  } else console.log('id duplicated');
+
+    if(userMgt.checkDupID(update.sender.id)) {
+      let buttons = []
+      ttq[quizNO].choices.forEach((choice) => {
+        buttons.push(choice)
+      })
+      messengerBot.sendDefaultButtonMessageTo(buttons, update.sender.id, ttq[quizNO].q);
+    }
+
+  } else {
+
+    console.log('already have this id');
+
+    if(isQuizOnline) {
+
+      console.log('quiz on');
+      //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
+      if(update.message.text == ttq[quizNO].a) {
+        bot.sendTextMessageTo('correct!', update.sender.id);
+
+      }
+      else bot.sendTextMessageTo('wronggg!', update.sender.id);
+    }
+    else {
+      console.log('quiz off');
+      bot.sendTextMessageTo('quiz not available', update.sender.id);
+    }
+
+  }
 
 /*
     if (update.message.text === 'ดี' ||
@@ -103,19 +131,7 @@ botmaster.on('update', (bot, update) => {
     bot.sendTextCascadeTo(messages, update.sender.id)
    }
 */
-  if(isQuizOnline) {
-    console.log('quiz on');
-    //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
-    if(update.message.text == ttq[quizNO].a) {
-      bot.sendTextMessageTo('correct!', update.sender.id);
 
-    }
-    else bot.sendTextMessageTo('wronggg!', update.sender.id);
-  }
-  else {
-    console.log('quiz off');
-    bot.sendTextMessageTo('quiz not available', update.sender.id);
-  }
 
 });
 
@@ -240,18 +256,23 @@ userMgt.getAllSubscribedID(function(err, ids){
   else console.log('success');
 })
 */
+
+userMgt.getAllID(function(err, list){
+  participatedIDs = list
+})
+
 let quizPromise = Promise.resolve(prepareQuiz())
 
 
 //let quiz = nodeSchedule.scheduleJob('0 30 9 * * *', function(){
   quizPromise.then((quiz) => {
     ttq = quiz
-    userMgt.getAllID(function(err, list){
-      if(err) console.log(err);
-      else if(list) {
-        startQuizTime(quiz, list)
+    //userMgt.getAllID(function(err, list){
+    //  if(err) console.log(err);
+    /*  else */if(participatedIDs) {
+        startQuizTime(quiz, participatedIDs)
       }
-    })
+    //})
   })
 //})
 
