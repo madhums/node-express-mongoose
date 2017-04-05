@@ -56,8 +56,9 @@ botmaster.on('update', (bot, update) => {
 
     console.log(`should not dup ${isDup}`);
     userMgt.recordNewUserID(update.sender.id)
-/*
+
     if(userMgt.checkDupID(update.sender.id)) {
+      participatedIDs.push(update.sender.id)
       console.log('enter secret area');
       let buttons = []
       ttq[quizNO].choices.forEach((choice) => {
@@ -65,7 +66,7 @@ botmaster.on('update', (bot, update) => {
       })
       messengerBot.sendDefaultButtonMessageTo(buttons, update.sender.id, ttq[quizNO].q);
     } else { console.log('too early'); }
-*/
+
   } else {
 
     console.log('already have this id');
@@ -257,23 +258,19 @@ userMgt.getAllSubscribedID(function(err, ids){
   else console.log('success');
 })
 */
-
-userMgt.getAllID(function(err, list){
-  participatedIDs = list
-})
-
 let quizPromise = Promise.resolve(prepareQuiz())
 
 
 //let quiz = nodeSchedule.scheduleJob('0 30 9 * * *', function(){
   quizPromise.then((quiz) => {
     ttq = quiz
-    //userMgt.getAllID(function(err, list){
-    //  if(err) console.log(err);
-    /*  else */if(participatedIDs) {
+    userMgt.getAllID(function(err, list){
+      if(err) console.log(err);
+      else if(list) {
+        participatedIDs = list
         startQuizTime(quiz, participatedIDs)
       }
-    //})
+    })
   })
 //})
 
