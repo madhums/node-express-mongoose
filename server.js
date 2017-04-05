@@ -58,12 +58,13 @@ botmaster.on('update', (bot, update) => {
     userMgt.recordNewUserID(update.sender.id)
 
     if(userMgt.checkDupID(update.sender.id)) {
+      console.log('enter secret area');
       let buttons = []
       ttq[quizNO].choices.forEach((choice) => {
         buttons.push(choice)
       })
       messengerBot.sendDefaultButtonMessageTo(buttons, update.sender.id, ttq[quizNO].q);
-    }
+    } else { console.log('too early'); }
 
   } else {
 
