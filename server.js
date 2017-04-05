@@ -268,6 +268,7 @@ let quizPromise = Promise.resolve(prepareQuiz())
       if(err) console.log(err);
       else if(list) {
         participatedIDs = list
+        console.log('parti : ' + participatedIDs);
         startQuizTime(quiz, participatedIDs)
       }
     })
