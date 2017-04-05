@@ -189,8 +189,10 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
     }, 30000)
   }
   else {
-    console.log('end quiz');
-    isQuizOnline = false
+    setTimeout( function() {
+      console.log('end quiz');
+      isQuizOnline = false
+    }, 30000)
   }
 
 }
