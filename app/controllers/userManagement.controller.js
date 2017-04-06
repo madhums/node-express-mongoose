@@ -67,11 +67,11 @@ exports.checkDupID = function(uid) {
     console.log('check dup : ' + snapshot.exists());
     return snapshot.exists() //true means dup
   })
-  .catch(function(error){
+/*  .catch(function(error){
     console.log('check dup error');
     return true
   })
-
+*/
 }
 
 
