@@ -66,6 +66,7 @@ exports.checkDupID = function(uid) {
   //let dup =
   database.ref('users').equalTo(uid).once('value')
   .then(function(snapshot){
+    
     console.log('check dup : ' + snapshot.exists());
     return snapshot.exists() //true means dup
   })
