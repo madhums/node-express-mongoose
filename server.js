@@ -52,6 +52,7 @@ let ttq = null
 
 async function a(id){
   let c = await userMgt.checkDupID(id)
+  console.log('c is : ' +c);
   return c
 }
 
