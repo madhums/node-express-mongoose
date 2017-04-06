@@ -21,8 +21,8 @@ exports.recordNewUserID = function(userId) {
 
   messengerProfileAPI.getUserInfo(userId, function(err, info){
 
-    if(err) console.log(err);
-    else if(info){
+    if(err) console.log(`get messenger profile error: ${err}`);
+    else if(info) {
 
       database.ref(`/users/${userId}`).set({
         firstName: info.first_name,
@@ -62,12 +62,9 @@ exports.setSubscription = function(userId, value) {
 
 
 exports.checkDupID = function(uid) {
-console.log('b4 query : ' + database.ref('users').equalTo(uid) );
+  
   let dup = database.ref('users').orderByKey().equalTo(uid).once('value')
   .then(function(snapshot){
-    // console.log(snapshot.val())
-    // console.log(snapshot.exists())
-    console.log(snapshot.val());
     console.log('check dup : ' + snapshot.exists());
     return snapshot.exists() //true means dup
   })
