@@ -66,7 +66,10 @@ botmaster.on('update', (bot, update) => {
   justTesting(20).then(function(val) {
   // you access the value from the promise here
     console.log('server: '+val);
-  });
+  })
+  .catch((err)=>{
+    console.log('perror: ' + err);
+  })
 
 /*  .then((isDup)=>{
     console.log('what is ddup: ' + isDup);
