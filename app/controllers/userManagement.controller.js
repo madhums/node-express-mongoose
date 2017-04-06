@@ -24,7 +24,7 @@ exports.recordNewUserID = function(userId) {
     if(err) console.log(`get messenger profile error: ${err}`);
     else if(info) {
 
-      return database.ref(`/users/${userId}`).set({
+      database.ref(`/users/${userId}`).set({
         firstName: info.first_name,
         lastName: info.last_name,
         gender: info.gender,
@@ -33,11 +33,9 @@ exports.recordNewUserID = function(userId) {
       })
       .then(function(){
         console.log('added');
-        return true
       })
       .catch(function(error){
         console.log('failed');
-        return false
       })
 
     }
