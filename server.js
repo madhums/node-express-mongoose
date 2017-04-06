@@ -65,7 +65,7 @@ botmaster.on('update', (bot, update) => {
   console.log('onj');
 
   try {
-    userMgt.checkDupID(id).then((isDup)=>{
+    userMgt.checkDupID(update.sender.id).then((isDup)=>{
       console.log('THEDUP: '+isDup);
     })
   }
