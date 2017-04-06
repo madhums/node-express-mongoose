@@ -71,7 +71,7 @@ botmaster.on('update', (bot, update) => {
     })
 
   }
-  catch(err)=>{
+  catch(err){
     console.log('s error: '+err);
   }
 
