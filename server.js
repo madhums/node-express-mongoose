@@ -56,6 +56,9 @@ botmaster.on('update', (bot, update) => {
   .then((isDup)=>{
     console.log('what is ddup: ' + isDup);
   })
+  .catch((err)=>{
+    console.log('has error: '+err);
+  })
 
 
 
