@@ -52,7 +52,7 @@ let ttq = null
 
 botmaster.on('update', (bot, update) => {
 
-  //if(!userMgt.checkDupID(update.sender.id)) {
+  if(!userMgt.checkDupID(update.sender.id)) {
 
     //console.log(`should not dup ${isDup}`);
     console.log('ssss');
@@ -68,7 +68,7 @@ botmaster.on('update', (bot, update) => {
       messengerBot.sendDefaultButtonMessageTo(buttons, update.sender.id, ttq[quizNO].q);
     } else { console.log('too early'); }
 */
-  //} else {
+  } else {
 
     console.log('already have this id');
 
@@ -87,7 +87,7 @@ botmaster.on('update', (bot, update) => {
       bot.sendTextMessageTo('quiz not available', update.sender.id);
     }
 
-  //}
+  }
 
 /*
     if (update.message.text === 'ดี' ||
