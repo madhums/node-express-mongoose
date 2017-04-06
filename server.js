@@ -65,7 +65,7 @@ botmaster.on('update', (bot, update) => {
   console.log('onj');
 
   try {
-    justTesting(20).then(function(val) {
+    userMgt.justTesting(20).then(function(val) {
     // you access the value from the promise here
       console.log('server: '+val);
     })
