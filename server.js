@@ -50,14 +50,10 @@ let participatedIDs = []
 let quizNO = 0
 let ttq = null
 
-async function a(id){
-  let c = await userMgt.checkDupID(id)
-  console.log('c is : ' +c);
-  return c
-}
-
 botmaster.on('update', (bot, update) => {
 
+  //userMgt.checkDupID(id)
+/*
   let b = Promise.resolve(a(update.sender.id))
   b.then((isDup)=>{
     console.log('dadup: '+isDup);
@@ -65,6 +61,12 @@ botmaster.on('update', (bot, update) => {
   .catch((err)=>{
     console.log('terror '+err);
   })
+*/
+  console.log('onj');
+  justTesting(20).then(function(val) {
+  // you access the value from the promise here
+    console.log('server: '+val);
+  });
 
 /*  .then((isDup)=>{
     console.log('what is ddup: ' + isDup);

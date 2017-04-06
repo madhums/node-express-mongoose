@@ -59,8 +59,22 @@ exports.setSubscription = function(userId, value) {
 
 }
 
+exports.delay = function(t) {
+  return new Promise(function(resolve) {
+    console.log('delay: '+t);
+    resolve(t+9)
+  });
+}
+
+exports.justTesting = function(input) {
+  return delay(input).then(function(c) {
+    console.log('just: '+c);
+    return c + 10;
+  });
+}
 
 exports.checkDupID = function(uid) {
+
 
   database.ref('users').equalTo(uid).once('value')
   .then(function(snapshot){
