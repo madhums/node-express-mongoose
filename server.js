@@ -58,8 +58,10 @@ botmaster.on('update', (bot, update) => {
     console.log('THEDUP: '+isDup);
     if(!isDup) {
       userMgt.recordNewUserID(update.sender.id)
+      .then((pass)=>{
+        return userMgt.checkDupID(update.sender.id)
+      })
     }
-    return userMgt.checkDupID(update.sender.id)
 
   })
   .then((newIsDup)=>{

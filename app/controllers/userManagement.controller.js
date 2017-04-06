@@ -24,7 +24,7 @@ exports.recordNewUserID = function(userId) {
     if(err) console.log(`get messenger profile error: ${err}`);
     else if(info) {
 
-      database.ref(`/users/${userId}`).set({
+      return database.ref(`/users/${userId}`).set({
         firstName: info.first_name,
         lastName: info.last_name,
         gender: info.gender,
@@ -33,9 +33,11 @@ exports.recordNewUserID = function(userId) {
       })
       .then(function(){
         console.log('added');
+        return true
       })
       .catch(function(error){
         console.log('failed');
+        return false
       })
 
     }
@@ -57,23 +59,6 @@ exports.setSubscription = function(userId, value) {
     console.log('failed');
   })
 
-}
-
-function delay(t) {
-  return new Promise(function(resolve) {
-    console.log('delay: '+t);
-    resolve(t+9)
-  });
-}
-
-exports.justTesting = function(input) {
-  return delay(input).then(function(c) {
-    console.log('just: '+c);
-    return c + 10;
-  })
-  .catch((err)=>{
-    console.log('justest: ' + err);
-  })
 }
 
 exports.checkDupID = function(uid) {
