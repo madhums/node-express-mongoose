@@ -56,7 +56,8 @@ async function a(id){
 
 botmaster.on('update', (bot, update) => {
 
-  a(update.sender.id).then((isDup)=>{
+  let b = Promise.resolve(a(update.sender.id))
+  b.then((isDup)=>{
     console.log('dadup: '+isDup);
   })
   .catch((err)=>{
