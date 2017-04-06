@@ -67,7 +67,7 @@ console.log('b4 query : ' + database.ref('users').equalTo(uid) );
   .then(function(snapshot){
     // console.log(snapshot.val())
     // console.log(snapshot.exists())
-    console.log(snapshot);
+    console.log(snapshot.val());
     console.log('check dup : ' + snapshot.exists());
     return snapshot.exists() //true means dup
   })
