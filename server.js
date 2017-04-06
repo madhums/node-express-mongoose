@@ -52,12 +52,19 @@ let ttq = null
 
 botmaster.on('update', (bot, update) => {
 
-  let a = null
-  userMgt.checkDupID(update.sender.id).then((isDup)=>{
+  userMgt.checkDupID(update.sender.id)
+  .then((isDup)=>{
+
     console.log('THEDUP: '+isDup);
-    a = isDup
+    if(!isDup) {
+      userMgt.recordNewUserID(update.sender.id)
+    }
+    return userMgt.checkDupID(update.sender.id)
+
   })
-  console.log('THE_A: '+a);
+  .then((newIsDup)=>{
+    console.log('THENEWDUP: '+newIsDup);
+  })
 /*
   try {
     userMgt.checkDupID(update.sender.id).then(function(val) {
