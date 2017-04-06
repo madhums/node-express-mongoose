@@ -70,7 +70,10 @@ exports.justTesting = function(input) {
   return delay(input).then(function(c) {
     console.log('just: '+c);
     return c + 10;
-  });
+  })
+  .catch((err)=>{
+    console.log('justest: ' + err);
+  })
 }
 
 exports.checkDupID = function(uid) {
