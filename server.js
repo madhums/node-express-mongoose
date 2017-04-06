@@ -56,9 +56,10 @@ botmaster.on('update', (bot, update) => {
 
   setTimeout(()=>{
     ddup = userMgt.checkDupID(update.sender.id)
+    console.log('what is ddup: ' + ddup);
   }, 500)
 
-  console.log('what is ddup: ' + ddup);
+
   if(!ddup) {
 
     console.log('ssss');
