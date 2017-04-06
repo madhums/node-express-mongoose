@@ -50,9 +50,15 @@ let participatedIDs = []
 let quizNO = 0
 let ttq = null
 
+async function a(){
+  return await(userMgt.checkDupID(update.sender.id))
+}
+
 botmaster.on('update', (bot, update) => {
 
-  console.log(userMgt.checkDupID(update.sender.id))
+  a().then((isDup)=>{
+    console.log('dadup: '+isDup);
+  })
 /*  .then((isDup)=>{
     console.log('what is ddup: ' + isDup);
   })
