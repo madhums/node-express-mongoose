@@ -60,7 +60,7 @@ botmaster.on('update', (bot, update) => {
       userMgt.recordNewUserID(update.sender.id)
     }
 
-    return new Promise(userMgt.checkDupID(update.sender.id))
+    return userMgt.checkDupID(update.sender.id)
 
   })
   .then((newIsDup)=>{
