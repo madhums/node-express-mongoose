@@ -61,6 +61,7 @@ botmaster.on('update', (bot, update) => {
     }
 
     setTimeout(()=>{
+      console.log('in---set--time--out');
       return userMgt.checkDupID(update.sender.id)
     }, 500)
 
