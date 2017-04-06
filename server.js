@@ -52,7 +52,7 @@ let ttq = null
 
 botmaster.on('update', (bot, update) => {
 
-  userMgt.checkDupID(update.sender.id)
+  console.log(userMgt.checkDupID(update.sender.id))
 /*  .then((isDup)=>{
     console.log('what is ddup: ' + isDup);
   })
