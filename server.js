@@ -52,26 +52,12 @@ let ttq = null
 
 botmaster.on('update', (bot, update) => {
 
-  //userMgt.checkDupID(id)
-/*
-  let b = Promise.resolve(a(update.sender.id))
-  b.then((isDup)=>{
-    console.log('dadup: '+isDup);
+  let a = null
+  userMgt.checkDupID(update.sender.id).then((isDup)=>{
+    console.log('THEDUP: '+isDup);
+    a = isDup
   })
-  .catch((err)=>{
-    console.log('terror '+err);
-  })
-*/
-  console.log('onj');
-
-  try {
-    userMgt.checkDupID(update.sender.id).then((isDup)=>{
-      console.log('THEDUP: '+isDup);
-    })
-  }
-  catch(err) {
-    console.log('s error: '+err);
-  }
+  console.log('THE_A: '+a);
 /*
   try {
     userMgt.checkDupID(update.sender.id).then(function(val) {
