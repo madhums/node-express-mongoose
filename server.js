@@ -51,7 +51,8 @@ let quizNO = 0
 let ttq = null
 
 async function a(id){
-  return await(userMgt.checkDupID(id))
+  let c = await userMgt.checkDupID(id)
+  return c
 }
 
 botmaster.on('update', (bot, update) => {
