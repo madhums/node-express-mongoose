@@ -54,8 +54,9 @@ botmaster.on('update', (bot, update) => {
 
   //if(!userMgt.checkDupID(update.sender.id)) {
 
-    console.log(`should not dup ${isDup}`);
-    userMgt.recordNewUserID(update.sender.id)
+    //console.log(`should not dup ${isDup}`);
+    console.log('ssss');
+    //userMgt.recordNewUserID(update.sender.id)
 /*
     if(userMgt.checkDupID(update.sender.id)) {
       participatedIDs.push(update.sender.id)
