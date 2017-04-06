@@ -52,18 +52,17 @@ let ttq = null
 
 botmaster.on('update', (bot, update) => {
 
-  let ddup
-
-  setTimeout(()=>{
-    ddup = userMgt.checkDupID(update.sender.id)
-    console.log('what is ddup: ' + ddup);
-  }, 500)
+  userMgt.checkDupID(update.sender.id)
+  .then((isDup)=>{
+    console.log('what is ddup: ' + isDup);
+  })
 
 
-  if(!ddup) {
 
-    console.log('ssss');
-    userMgt.recordNewUserID(update.sender.id)
+  //if(!ddup) {
+
+    //console.log('ssss');
+    //userMgt.recordNewUserID(update.sender.id)
 /*
     if(userMgt.checkDupID(update.sender.id)) {
       participatedIDs.push(update.sender.id)
@@ -75,7 +74,7 @@ botmaster.on('update', (bot, update) => {
       messengerBot.sendDefaultButtonMessageTo(buttons, update.sender.id, ttq[quizNO].q);
     } else { console.log('too early'); }
 */
-  } else {
+  //} else {
 
     console.log('already have this id');
 
@@ -94,7 +93,7 @@ botmaster.on('update', (bot, update) => {
       bot.sendTextMessageTo('quiz not available', update.sender.id);
     }
 
-  }
+  //}
 
 /*
     if (update.message.text === 'ดี' ||

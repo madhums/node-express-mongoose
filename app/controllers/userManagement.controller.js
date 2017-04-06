@@ -29,8 +29,7 @@ exports.recordNewUserID = function(userId) {
         lastName: info.last_name,
         gender: info.gender,
         timezone: info.timezone,
-        createdAt: (new Date()).toISOString(),
-        subscribed: true
+        createdAt: (new Date()).toISOString()
       })
       .then(function(){
         console.log('added');
@@ -63,10 +62,8 @@ exports.setSubscription = function(userId, value) {
 
 exports.checkDupID = function(uid) {
 
-  //let dup =
   database.ref('users').equalTo(uid).once('value')
   .then(function(snapshot){
-    
     console.log('check dup : ' + snapshot.exists());
     return snapshot.exists() //true means dup
   })
