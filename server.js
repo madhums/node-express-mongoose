@@ -65,7 +65,16 @@ botmaster.on('update', (bot, update) => {
   console.log('onj');
 
   try {
-    userMgt.justTesting(20).then(function(val) {
+    userMgt.checkDupID(id).then((isDup)=>{
+      console.log('THEDUP: '+isDup);
+    })
+  }
+  catch(err) {
+    console.log('s error: '+err);
+  }
+/*
+  try {
+    userMgt.checkDupID(update.sender.id).then(function(val) {
     // you access the value from the promise here
       console.log('server: '+val);
     })
@@ -74,7 +83,7 @@ botmaster.on('update', (bot, update) => {
   catch(err){
     console.log('s error: '+err);
   }
-
+*/
 /*  .then((isDup)=>{
     console.log('what is ddup: ' + isDup);
   })

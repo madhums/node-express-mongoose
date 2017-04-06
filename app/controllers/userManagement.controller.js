@@ -78,8 +78,7 @@ exports.justTesting = function(input) {
 
 exports.checkDupID = function(uid) {
 
-
-  database.ref('users').equalTo(uid).once('value')
+  return database.ref('users').equalTo(uid).once('value')
   .then(function(snapshot){
     console.log('check dup : ' + snapshot.exists());
     return snapshot.exists() //true means dup
