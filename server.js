@@ -63,12 +63,16 @@ botmaster.on('update', (bot, update) => {
   })
 */
   console.log('onj');
-  justTesting(20).then(function(val) {
-  // you access the value from the promise here
-    console.log('server: '+val);
-  })
-  .catch((err)=>{
-    console.log('perror: ' + err);
+
+  try {
+    justTesting(20).then(function(val) {
+    // you access the value from the promise here
+      console.log('server: '+val);
+    })
+
+  }
+  catch((err)=>{
+    console.log('s error: '+err);
   })
 
 /*  .then((isDup)=>{
