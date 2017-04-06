@@ -59,7 +59,7 @@ exports.setSubscription = function(userId, value) {
 
 }
 
-exports.delay = function(t) {
+function delay(t) {
   return new Promise(function(resolve) {
     console.log('delay: '+t);
     resolve(t+9)
