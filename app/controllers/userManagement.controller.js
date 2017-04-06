@@ -62,7 +62,7 @@ exports.setSubscription = function(userId, value) {
 
 
 exports.checkDupID = function(uid) {
-console.log('b4 query');
+console.log('b4 query : ' + database.ref('users') );
   let dup = database.ref('users').orderByKey().equalTo(uid).once('value')
   .then(function(snapshot){
     // console.log(snapshot.val())
