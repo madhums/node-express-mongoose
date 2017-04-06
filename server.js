@@ -52,10 +52,6 @@ let ttq = null
 
 botmaster.on('update', (bot, update) => {
 
-  userMgt.checkDupID(update.sender.id, (dupo) => {
-    console.log('callback test : ' + dupo);
-  })
-
   let ddup = userMgt.checkDupID(update.sender.id)
   console.log('what is ddup: ' + ddup);
   if(!ddup) {

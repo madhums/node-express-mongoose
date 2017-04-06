@@ -64,7 +64,7 @@ exports.setSubscription = function(userId, value) {
 exports.checkDupID = function(uid) {
 
   //let dup =
-  database.ref('users').orderByKey().equalTo(uid).once('value')
+  database.ref('users').equalTo(uid).once('value')
   .then(function(snapshot){
     console.log('check dup : ' + snapshot.exists());
     return snapshot.exists() //true means dup
