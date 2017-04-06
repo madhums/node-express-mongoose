@@ -60,10 +60,7 @@ botmaster.on('update', (bot, update) => {
       userMgt.recordNewUserID(update.sender.id)
     }
 
-    setTimeout(()=>{
-      console.log('in---set--time--out');
-      return userMgt.checkDupID(update.sender.id)
-    }, 500)
+    return userMgt.checkDupID(update.sender.id)
 
   })
   .then((newIsDup)=>{
