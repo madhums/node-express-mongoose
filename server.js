@@ -225,6 +225,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
     setTimeout( function() {
       console.log('end quiz');
       isQuizOnline = false
+      database.ref(`/quiz/${currentQuiz}/correctUsers`).set(correctUser)
 
       ids.map((id)=>{
         messengerBot.sendTextMessageTo('กิจกรรมจบแล้ว ขอบคุณทุกท่านที่มาร่วมเล่นกับเรา :D', id)
