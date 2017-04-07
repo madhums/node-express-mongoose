@@ -98,7 +98,9 @@ botmaster.on('update', (bot, update) => {
 
   // if enterTime on -> open for users to particate quiz
   if(enterTime) {
+
     console.log('nowP: '+ participants);
+
     if(update.message.text == "เข้าร่วม") {
       bot.sendTextMessageTo('คุณได้เข้าร่วมแล้ว รออีกสักครู่ กิจกรรมกำลังจะเริ่มขึ้น', update.sender.id);
       if(participants.indexOf(update.sender.id) < 0) {
@@ -109,7 +111,7 @@ botmaster.on('update', (bot, update) => {
     else if(update.message.text == "ไม่เข้าร่วม")
       bot.sendTextMessageTo('ไม่เป็นไรนะ ไว้มาร่วมเล่นกันใหม่ครั้งหน้าได้', update.sender.id);
 
-    if(enterTime && participants.indexOf(update.sender.id) >= 0){
+    else if(participants.indexOf(update.sender.id) >= 0){
       bot.sendTextMessageTo('รออีกนิดนะ กิจกรรมยังไม่เริ่ม', update.sender.id);
     }
 
@@ -213,7 +215,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
     let nextQuiz = currentQuiz + 1
     setTimeout( function() {
       console.log('in settimeout');
-      database.ref(`/quiz/${currentQuiz}/correctAnswer`).set(correctUser)
+      database.ref(`/quiz/${currentQuiz}/correctUsers`).set(correctUser)
       shootTheQuestion(quiz, ids, nextQuiz, totalQuiz)
     }, 30000)
 
