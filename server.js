@@ -52,6 +52,12 @@ let participants = []
 let quizNO = 0
 let ttq = null
 
+database.ref(`/quiz/participants`).on('child_added', (childSnapshot, prevChildKey) => {
+  console.log('participants added');
+  console.log(childSnapshot.val());
+  //participants.push()
+})
+
 database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
   console.log('child_added');
   console.log(childSnapshot.val());
@@ -68,6 +74,7 @@ botmaster.on('update', (bot, update) => {
 
       let id = update.sender.id
       userMgt.recordNewUserID(id)
+      allIDs.push(id)
 
       if(enterTime) {
         messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
@@ -88,12 +95,14 @@ botmaster.on('update', (bot, update) => {
   // if enterTime on -> open for users to particate quiz
   if(enterTime) {
 
-    if(update.message.text == "เข้าร่วม")
+    if(update.message.text == "เข้าร่วม") {
       bot.sendTextMessageTo('คุณได้เข้าร่วมแล้ว รออีกสักครู่ กิจกรรมกำลังจะเริ่มขึ้น', update.sender.id);
+      database.ref(`/quiz/participants`).push(update.sender.id)
+    }
     else if(update.message.text == "ไม่เข้าร่วม")
       bot.sendTextMessageTo('ไม่เป็นไรนะ ไว้มาร่วมเล่นกันใหม่ครั้งหน้าได้', update.sender.id);
-    else {
-      bot.sendTextMessageTo('เรายังเปิดให้เข้าร่วมอยู่นะ', update.sender.id);
+    else if(participants.indexOf(update.sender.id) >= 0){
+      bot.sendTextMessageTo('รออีกนิดนะ กิจกรรมยังไม่เริ่ม', update.sender.id);
     }
 
   }
