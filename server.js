@@ -54,6 +54,9 @@ let ttq = null
 
 database.ref(`/quiz/participants`).on('child_added', (childSnapshot, prevChildKey) => {
   console.log('participants added');
+
+    console.log('ALLID: ' + allIDs);
+    console.log('P_ID: ' + participants);
 })
 
 database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
@@ -271,9 +274,12 @@ let quizPromise = Promise.resolve(prepareQuiz())
           }, 100)
         })
 
+        console.log('CLOCK STARTED');
         setTimeout(()=>{
+          console.log('ALLID: ' + allIDs);
+          console.log('P_ID: ' + participants);
           startQuizTime(quiz, participants)
-        }, 10000) //300000
+        }, 15000) //300000
 
       }
     })
