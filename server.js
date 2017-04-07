@@ -18,6 +18,7 @@ let database = userMgt.database
 //let firebase = require('firebase')
 let enterTime = false
 let isQuizOnline = false
+let correctUser = []
 
 app.listen(port, () => {
   console.log('Express app started on port ' + port);
@@ -120,7 +121,7 @@ botmaster.on('update', (bot, update) => {
     //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
     if(update.message.text == ttq[quizNO].a) {
       bot.sendTextMessageTo('correct!', update.sender.id);
-
+      correctUser.push(update.sender.id)
     }
     else bot.sendTextMessageTo('wronggg!', update.sender.id);
   }
@@ -193,6 +194,7 @@ function startQuizTime(quiz, ids) {
 
 function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   //bot.sendTextMessageTo(quiz[currentQuiz].q, update.sender.id);
+  correctUser = []
   console.log('enter shooting : ' + currentQuiz);
   quizNO = currentQuiz
 
@@ -211,6 +213,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
     let nextQuiz = currentQuiz + 1
     setTimeout( function() {
       console.log('in settimeout');
+      database.ref(`/quiz/${currentQuiz}/correctAnswer`).set(correctUser)
       shootTheQuestion(quiz, ids, nextQuiz, totalQuiz)
     }, 30000)
 
@@ -291,7 +294,7 @@ let quizPromise = Promise.resolve(prepareQuiz())
           console.log('ALLID: ' + allIDs);
           console.log('P_ID: ' + participants);
           enterTime = false
-          
+
           if(participants.length > 0) startQuizTime(quiz, participants)
           else {
             allIDs.map((id)=>{
