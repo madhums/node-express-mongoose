@@ -289,7 +289,13 @@ let quizPromise = Promise.resolve(prepareQuiz())
         setTimeout(()=>{
           console.log('ALLID: ' + allIDs);
           console.log('P_ID: ' + participants);
-          startQuizTime(quiz, participants)
+          if(participants.length > 0) startQuizTime(quiz, participants)
+          else {
+            allIDs.map((id)=>{
+              messengerBot.sendTextMessageTo('เสียใจ ไม่มีใครเล่นด้วยเลย :(', id)
+            })
+          }
+
         }, 20000) //300000
 
       }
