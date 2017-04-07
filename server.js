@@ -16,6 +16,7 @@ let messengerProfileAPI = require('./app/apis/messenger_profile.api.js')
 let userMgt = require('./app/controllers/userManagement.controller.js')
 let database = userMgt.database
 //let firebase = require('firebase')
+let enterTime = false
 let isQuizOnline = false
 
 app.listen(port, () => {
@@ -46,80 +47,62 @@ const botmaster = new Botmaster(botmasterSettings);
 const messengerBot = new Botmaster.botTypes.MessengerBot(messengerSettings);
 botmaster.addBot(messengerBot)
 
-let participatedIDs = []
+let allIDs = []
 let quizNO = 0
 let ttq = null
 
 botmaster.on('update', (bot, update) => {
 
+  // if new user -> add to DB
   userMgt.checkDupID(update.sender.id)
   .then((isDup)=>{
-
     console.log('THEDUP: '+isDup);
     if(!isDup) {
-      userMgt.recordNewUserID(update.sender.id)
+
+      let id = update.sender.id
+      userMgt.recordNewUserID(id)
+
+      if(enterTime) {
+        messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
+        messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
+      }
+
     }
-
-    //return userMgt.checkDupID(update.sender.id)
-
-  })
-  .then((newIsDup)=>{
-    console.log('THENEWDUP: '+newIsDup);
-  })
-/*
-  try {
-    userMgt.checkDupID(update.sender.id).then(function(val) {
-    // you access the value from the promise here
-      console.log('server: '+val);
-    })
-
-  }
-  catch(err){
-    console.log('s error: '+err);
-  }
-*/
-/*  .then((isDup)=>{
-    console.log('what is ddup: ' + isDup);
+    else console.log('already have this id');
+    
   })
   .catch((err)=>{
-    console.log('has error: '+err);
+    console.log('serv check dup error : '+err);
   })
-*/
 
 
-  //if(!ddup) {
+  // if enterTime on -> open for users to particate quiz
+  if(enterTime) {
 
-    //console.log('ssss');
-    //userMgt.recordNewUserID(update.sender.id)
-/*
-    if(userMgt.checkDupID(update.sender.id)) {
-      participatedIDs.push(update.sender.id)
-      console.log('enter secret area');
-      let buttons = []
-      ttq[quizNO].choices.forEach((choice) => {
-        buttons.push(choice)
-      })
-      messengerBot.sendDefaultButtonMessageTo(buttons, update.sender.id, ttq[quizNO].q);
-    } else { console.log('too early'); }
-*/
-  //} else {
-
-    console.log('already have this id');
-
-    if(isQuizOnline) {
-
-      console.log('quiz on');
-      //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
-      if(update.message.text == ttq[quizNO].a) {
-        bot.sendTextMessageTo('correct!', update.sender.id);
-
-      }
-      else bot.sendTextMessageTo('wronggg!', update.sender.id);
-    }
+    if(update.message.text == "เข้าร่วม")
+      bot.sendTextMessageTo('คุณได้เข้าร่วมแล้ว รออีกสักครู่ กิจกรรมกำลังจะเริ่มขึ้น', update.sender.id);
+    else if(update.message.text == "ไม่เข้าร่วม")
+      bot.sendTextMessageTo('ไม่เป็นไรนะ ไว้มาร่วมเล่นกันใหม่ครั้งหน้าได้', update.sender.id);
     else {
-      console.log('quiz off');
-      bot.sendTextMessageTo('quiz not available', update.sender.id);
+      bot.sendTextMessageTo('เรายังเปิดให้เข้าร่วมอยู่นะ', update.sender.id);
     }
+
+  }
+
+  if(isQuizOnline) {
+
+    console.log('quiz on');
+    //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
+    if(update.message.text == ttq[quizNO].a) {
+      bot.sendTextMessageTo('correct!', update.sender.id);
+
+    }
+    else bot.sendTextMessageTo('wronggg!', update.sender.id);
+  }
+  else {
+    console.log('quiz off');
+    bot.sendTextMessageTo('quiz not available', update.sender.id);
+  }
 
   //}
 
@@ -219,6 +202,7 @@ async function prepareQuiz() {
 
 function startQuizTime(quiz, ids) {
 
+  enterTime = false
   isQuizOnline = true
   console.log('start quiz length ' + quiz.length);
   let quizLength = quiz.length - 1
@@ -240,7 +224,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   })
 
   ids.map((id)=>{
-    messengerBot.sendDefaultButtonMessageTo(buttons, id, quiz[currentQuiz].q);
+    messengerBot.sendDefaultButtonMessageTo(buttons, id, quiz[currentQuiz].q)
   })
 
   if(currentQuiz < totalQuiz) {
@@ -302,9 +286,20 @@ let quizPromise = Promise.resolve(prepareQuiz())
     userMgt.getAllID(function(err, list){
       if(err) console.log(err);
       else if(list) {
-        participatedIDs = list
-        console.log('parti : ' + participatedIDs);
-        startQuizTime(quiz, participatedIDs)
+        allIDs = list
+        enterTime = true
+
+        console.log('parti : ' + allIDs);
+
+        allIDs.map((id)=>{
+          messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
+          messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
+        })
+
+        setTimeout(()=>{
+          startQuizTime(quiz, allIDs)
+        }, 300000)
+
       }
     })
   })
