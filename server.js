@@ -54,7 +54,6 @@ let ttq = null
 
 database.ref(`/quiz/participants`).on('child_added', (childSnapshot, prevChildKey) => {
   console.log('participants added');
-  participants.push(childSnapshot.val())
 })
 
 database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
@@ -96,7 +95,10 @@ botmaster.on('update', (bot, update) => {
     console.log('nowP: '+ participants);
     if(update.message.text == "เข้าร่วม") {
       bot.sendTextMessageTo('คุณได้เข้าร่วมแล้ว รออีกสักครู่ กิจกรรมกำลังจะเริ่มขึ้น', update.sender.id);
-      database.ref(`/quiz/participants`).push(update.sender.id)
+      if(participants.indexOf(update.sender.id) < 0) {
+        participants.push(update.sender.id)
+        database.ref(`/quiz/participants`).set(participants)
+      }
     }
     else if(update.message.text == "ไม่เข้าร่วม")
       bot.sendTextMessageTo('ไม่เป็นไรนะ ไว้มาร่วมเล่นกันใหม่ครั้งหน้าได้', update.sender.id);
