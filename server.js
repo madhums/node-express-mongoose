@@ -63,7 +63,8 @@ database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
   console.log('child_added');
   console.log(childSnapshot.key);
   console.log(prevChildKey);
-  allIDs.push(childSnapshot.key)
+  if(allIDs.indexOf(childSnapshot.key) < 0)
+    allIDs.push(childSnapshot.key)
 })
 
 botmaster.on('update', (bot, update) => {
