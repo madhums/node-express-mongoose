@@ -48,8 +48,15 @@ const messengerBot = new Botmaster.botTypes.MessengerBot(messengerSettings);
 botmaster.addBot(messengerBot)
 
 let allIDs = []
+let participants = []
 let quizNO = 0
 let ttq = null
+
+database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
+  console.log('child_added');
+  console.log(childSnapshot.val());
+  console.log(prevChildKey);
+})
 
 botmaster.on('update', (bot, update) => {
 
@@ -107,52 +114,6 @@ botmaster.on('update', (bot, update) => {
   }
 
   //}
-
-/*
-    if (update.message.text === 'ดี' ||
-       update.message.text === 'หวัดดี' ||
-       update.message.text === 'นี่' ||
-       update.message.text.indexOf('สวัสดี') > -1 )
-    {
-
-        fetch('http://random.cat/meow')
-        .then( (res) => { return res.json() })
-        .then(function(json){
-
-          let att = {
-            'type': 'image',
-            'payload':{
-              'url': json.file
-            }
-          }
-
-          bot.sendAttachmentTo(att, update.sender.id)
-
-        }).catch(function(err){
-          console.log('fetch error');
-          console.log(err)
-        })
-
-   }
-
-   // weather report
-   else if (update.message.text.indexOf('อุณหภูมิเท่าไร') > -1 ||
-           update.message.text.indexOf('สภาพอากาศ') > -1 ||
-           update.message.text.indexOf('ร้อน') > -1) {
-     console.log('weather reporting!');
-     weatherAPI.getReport(function(err, result){
-       if(err) console.log(err);
-       else bot.sendTextMessageTo(result, update.sender.id);
-     })
-
-   }
-
-   else {
-    const messages = ['บอทยังไม่เข้าใจข้อความของคุณ',
-                      'เรากำลังพัฒนาบอทให้มีความสามารถสูงขึ้น เพื่อเข้าใจคำพูดของคุณ']
-    bot.sendTextCascadeTo(messages, update.sender.id)
-   }
-*/
 
 
 });
