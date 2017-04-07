@@ -107,7 +107,8 @@ botmaster.on('update', (bot, update) => {
     }
     else if(update.message.text == "ไม่เข้าร่วม")
       bot.sendTextMessageTo('ไม่เป็นไรนะ ไว้มาร่วมเล่นกันใหม่ครั้งหน้าได้', update.sender.id);
-    else if(participants.indexOf(update.sender.id) >= 0){
+
+    if(enterTime && participants.indexOf(update.sender.id) >= 0){
       bot.sendTextMessageTo('รออีกนิดนะ กิจกรรมยังไม่เริ่ม', update.sender.id);
     }
 
@@ -180,7 +181,6 @@ async function prepareQuiz() {
 
 function startQuizTime(quiz, ids) {
 
-  enterTime = false
   isQuizOnline = true
   console.log('start quiz length ' + quiz.length);
   let quizLength = quiz.length - 1
@@ -286,9 +286,12 @@ let quizPromise = Promise.resolve(prepareQuiz())
         })
 
         console.log('CLOCK STARTED');
+
         setTimeout(()=>{
           console.log('ALLID: ' + allIDs);
           console.log('P_ID: ' + participants);
+          enterTime = false
+          
           if(participants.length > 0) startQuizTime(quiz, participants)
           else {
             allIDs.map((id)=>{
