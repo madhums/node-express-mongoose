@@ -123,9 +123,12 @@ botmaster.on('update', (bot, update) => {
     //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
     if(update.message.text == ttq[quizNO].a) {
       bot.sendTextMessageTo('correct!', update.sender.id);
-      correctUser.push(update.sender.id)
+
+      if(correctUser.indexOf(update.sender.id) < 0)
+        correctUser.push(update.sender.id)
     }
     else bot.sendTextMessageTo('wronggg!', update.sender.id);
+    
   }
   else if(!enterTime){
     console.log('quiz off');
