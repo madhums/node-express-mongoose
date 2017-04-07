@@ -93,7 +93,7 @@ botmaster.on('update', (bot, update) => {
 
   // if enterTime on -> open for users to particate quiz
   if(enterTime) {
-
+    console.log('nowP: '+ participants);
     if(update.message.text == "เข้าร่วม") {
       bot.sendTextMessageTo('คุณได้เข้าร่วมแล้ว รออีกสักครู่ กิจกรรมกำลังจะเริ่มขึ้น', update.sender.id);
       database.ref(`/quiz/participants`).push(update.sender.id)
