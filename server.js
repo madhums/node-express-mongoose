@@ -64,12 +64,14 @@ botmaster.on('update', (bot, update) => {
 
       if(enterTime) {
         messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
-        messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
+        setTimeout(()=>{
+          messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
+        }, 100)
       }
 
     }
     else console.log('already have this id');
-    
+
   })
   .catch((err)=>{
     console.log('serv check dup error : '+err);
@@ -99,7 +101,7 @@ botmaster.on('update', (bot, update) => {
     }
     else bot.sendTextMessageTo('wronggg!', update.sender.id);
   }
-  else {
+  else if(!enterTime){
     console.log('quiz off');
     bot.sendTextMessageTo('quiz not available', update.sender.id);
   }
@@ -293,7 +295,9 @@ let quizPromise = Promise.resolve(prepareQuiz())
 
         allIDs.map((id)=>{
           messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
-          messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
+          setTimeout(()=>{
+            messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
+          }, 100)
         })
 
         setTimeout(()=>{
