@@ -272,8 +272,8 @@ let quizPromise = Promise.resolve(prepareQuiz())
         })
 
         setTimeout(()=>{
-          startQuizTime(quiz, allIDs)
-        }, 300000)
+          startQuizTime(quiz, participants)
+        }, 10000) //300000
 
       }
     })
