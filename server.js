@@ -215,7 +215,13 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
     setTimeout( function() {
       console.log('end quiz');
       isQuizOnline = false
+
+      ids.map((id)=>{
+        messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
+      })
+
     }, 30000)
+    
   }
 
 }
