@@ -54,8 +54,7 @@ let ttq = null
 
 database.ref(`/quiz/participants`).on('child_added', (childSnapshot, prevChildKey) => {
   console.log('participants added');
-  console.log(childSnapshot.val());
-  //participants.push()
+  participants.push(childSnapshot.val())
 })
 
 database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
