@@ -61,8 +61,9 @@ database.ref(`/quiz/participants`).on('child_added', (childSnapshot, prevChildKe
 
 database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
   console.log('child_added');
-  console.log(childSnapshot.val());
+  console.log(childSnapshot.key);
   console.log(prevChildKey);
+  allIDs.push(childSnapshot.key)
 })
 
 botmaster.on('update', (bot, update) => {
@@ -204,24 +205,27 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   })
 
   if(currentQuiz < totalQuiz) {
+
     console.log('current : ' + currentQuiz + ' , total: ' + totalQuiz);
     let nextQuiz = currentQuiz + 1
     setTimeout( function() {
       console.log('in settimeout');
       shootTheQuestion(quiz, ids, nextQuiz, totalQuiz)
     }, 30000)
+
   }
   else {
+
     setTimeout( function() {
       console.log('end quiz');
       isQuizOnline = false
 
       ids.map((id)=>{
-        messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
+        messengerBot.sendTextMessageTo('กิจกรรมจบแล้ว ขอบคุณทุกท่านที่มาร่วมเล่นกับเรา :D', id)
       })
 
     }, 30000)
-    
+
   }
 
 }
@@ -285,7 +289,7 @@ let quizPromise = Promise.resolve(prepareQuiz())
           console.log('ALLID: ' + allIDs);
           console.log('P_ID: ' + participants);
           startQuizTime(quiz, participants)
-        }, 15000) //300000
+        }, 20000) //300000
 
       }
     })
