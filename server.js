@@ -128,7 +128,7 @@ botmaster.on('update', (bot, update) => {
         correctUser.push(update.sender.id)
     }
     else bot.sendTextMessageTo('wronggg!', update.sender.id);
-    
+
   }
   else if(!enterTime){
     console.log('quiz off');
@@ -306,6 +306,7 @@ let quizPromise = Promise.resolve(prepareQuiz())
             allIDs.map((id)=>{
               messengerBot.sendTextMessageTo('เสียใจ ไม่มีใครเล่นด้วยเลย :(', id)
             })
+            console.log('no one want to play quiz');
           }
 
         }, 20000) //300000
