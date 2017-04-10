@@ -9,4 +9,6 @@ app.get("/test", function(req, res){
   res.send('sss')
 })
 
-module.exports = app
+module.exports = function() {
+  app: app
+}

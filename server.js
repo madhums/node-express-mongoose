@@ -23,7 +23,7 @@ let enterTime = false
 let isQuizOnline = false
 let correctUser = []
 
-app.listen(port, () => {
+router.app.listen(port, () => {
   console.log('Express app started on port ' + port);
 });
 
