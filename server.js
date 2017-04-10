@@ -24,6 +24,9 @@ app.listen(port, () => {
   console.log('Express app started on port ' + port);
 });
 
+app.get("/test", function(req, res){
+  res.send('sss')
+})
 
 const messengerSettings = {
   credentials: {
@@ -53,7 +56,7 @@ let participants = []
 let quizNO = 0
 let ttq = null
 
-database.ref(`/quiz/participants`).on('child_added', (childSnapshot, prevChildKey) => {
+database.ref(`/participants`).on('child_added', (childSnapshot, prevChildKey) => {
   console.log('participants added');
 
     console.log('ALLID: ' + allIDs);
