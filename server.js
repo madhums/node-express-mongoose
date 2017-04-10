@@ -5,7 +5,7 @@
 require('dotenv').config();
 const Botmaster = require('botmaster')
 const express = require('express');
-const router = require('./express.js')
+const app = require('./express.js')
 const https = require('https');
 const http = require('http');
 const fetch = require('node-fetch')
@@ -23,7 +23,7 @@ let enterTime = false
 let isQuizOnline = false
 let correctUser = []
 
-router.app.listen(port, () => {
+app.listen(port, () => {
   console.log('Express app started on port ' + port);
 });
 
