@@ -24,9 +24,6 @@ app.listen(port, () => {
   console.log('Express app started on port ' + port);
 });
 
-app.get("/test", function(req, res){
-  res.send('sss')
-})
 
 const messengerSettings = {
   credentials: {

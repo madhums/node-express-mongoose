@@ -28,6 +28,7 @@ exports.recordNewUserID = function(userId) {
         firstName: info.first_name,
         lastName: info.last_name,
         gender: info.gender,
+        profilePic: info.profile_pic,
         timezone: info.timezone,
         createdAt: (new Date()).toISOString()
       })
