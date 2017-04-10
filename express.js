@@ -1,3 +1,4 @@
+const express = require('express')
 const app = express()
 
 let messengerProfileAPI = require('./app/apis/messenger_profile.api.js')
@@ -9,5 +10,5 @@ module.exports = function() {
   app.get("/test", function(req, res){
     res.send('sss')
   })
-  
+
 }
