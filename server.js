@@ -14,7 +14,7 @@ const port = process.env.PORT || 3002;
 let app = express()
 //module.exports = app;
 
-require('./express.js')(app)
+require('./app/config/express.js')(app)
 
 let weatherAPI = require('./app/apis/weather.api.js')
 let messengerProfileAPI = require('./app/apis/messenger_profile.api.js')
