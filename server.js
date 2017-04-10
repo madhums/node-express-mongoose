@@ -5,14 +5,14 @@
 require('dotenv').config();
 const Botmaster = require('botmaster')
 const express = require('express');
-const app = require('./express.js')
+//const app = require('./express.js')
 const https = require('https');
 const http = require('http');
 const fetch = require('node-fetch')
 const port = process.env.PORT || 3002;
 //const app = express();
 
-//let app = express()
+let app = express()
 
 let weatherAPI = require('./app/apis/weather.api.js')
 let messengerProfileAPI = require('./app/apis/messenger_profile.api.js')
