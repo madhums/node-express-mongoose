@@ -5,7 +5,7 @@
 require('dotenv').config();
 const Botmaster = require('botmaster')
 const express = require('express');
-//const router = require('./express.js')
+const router = require('./express.js')
 const https = require('https');
 const http = require('http');
 const fetch = require('node-fetch')

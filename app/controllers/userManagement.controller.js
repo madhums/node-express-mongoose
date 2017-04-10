@@ -23,7 +23,7 @@ exports.recordNewUserID = function(userId) {
 
     if(err) console.log(`get messenger profile error: ${err}`);
     else if(info) {
-      console.log(JSON.stringify(info));
+      
       database.ref(`/users/${userId}`).set({
         firstName: info.first_name,
         lastName: info.last_name,
