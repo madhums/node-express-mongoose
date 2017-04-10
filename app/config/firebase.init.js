@@ -1,4 +1,4 @@
-
+console.log('run fire base init');
 let firebase = require('firebase')
 let firebaseConfig = {
   apiKey: process.env.firebaseAPIKey,
@@ -8,4 +8,4 @@ let firebaseConfig = {
   messagingSenderId: "524406259822"
 }
 
-module.exports = firebase.initializeApp(firebaseConfig) 
+module.exports = firebase.initializeApp(firebaseConfig)

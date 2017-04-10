@@ -19,7 +19,8 @@ require('./express.js')(app)
 let weatherAPI = require('./app/apis/weather.api.js')
 let messengerProfileAPI = require('./app/apis/messenger_profile.api.js')
 let userMgt = require('./app/controllers/userManagement.controller.js')
-let database = userMgt.database
+let firebase = require('../config/firebase.init.js')
+let database = firebase.database()
 //let firebase = require('firebase')
 let enterTime = false
 let isQuizOnline = false

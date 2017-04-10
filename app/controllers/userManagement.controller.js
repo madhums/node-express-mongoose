@@ -1,23 +1,11 @@
 let https = require('https');
-//let firebase = require('firebase')
 let messengerProfileAPI = require('../apis/messenger_profile.api.js')
 let firebase = require('../config/firebase.init.js')
-/*
-let firebaseConfig = {
-  apiKey: process.env.firebaseAPIKey,
-  authDomain: "messengerchatbot-f6775.firebaseapp.com",
-  databaseURL: "https://messengerchatbot-f6775.firebaseio.com",
-  storageBucket: "messengerchatbot-f6775.appspot.com",
-  messagingSenderId: "524406259822"
-}
 
-
-firebase.initializeApp(firebaseConfig)
-*/
 let database = firebase.database()
 
 //---- DB Functions ----
-exports.database = database
+//exports.database = database
 
 exports.recordNewUserID = function(userId) {
 
