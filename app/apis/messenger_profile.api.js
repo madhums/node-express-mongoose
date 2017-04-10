@@ -3,7 +3,7 @@ let https = require('https');
 exports.getUserInfo = function(uid, cb) {
 
   let apiPath = "https://graph.facebook.com/v2.6/" + uid
-                + "?fields=first_name,last_name,timezone,gender&access_token="
+                + "?fields=first_name,last_name,profile_pic,timezone,gender&access_token="
                 + process.env.pageToken
 
   https.get(apiPath, function (response) {
