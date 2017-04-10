@@ -10,9 +10,9 @@ const https = require('https');
 const http = require('http');
 const fetch = require('node-fetch')
 const port = process.env.PORT || 3002;
-const app = express();
+//const app = express();
 
-let router = require('./express.js')
+let app = require('./express.js')
 
 let weatherAPI = require('./app/apis/weather.api.js')
 let messengerProfileAPI = require('./app/apis/messenger_profile.api.js')
