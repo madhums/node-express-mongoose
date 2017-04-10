@@ -1,5 +1,5 @@
 //let express = require('express')
-let quizResult = require('../controller/quizResult.controller.js')
+let quizResult = require('../controllers/quizResult.controller.js')
 
 module.exports = function(app) {
 
