@@ -1,7 +1,8 @@
 let https = require('https');
-let firebase = require('firebase')
+//let firebase = require('firebase')
 let messengerProfileAPI = require('../apis/messenger_profile.api.js')
-
+let firebase = require('../config/firebase.init.js')
+/*
 let firebaseConfig = {
   apiKey: process.env.firebaseAPIKey,
   authDomain: "messengerchatbot-f6775.firebaseapp.com",
@@ -12,6 +13,7 @@ let firebaseConfig = {
 
 
 firebase.initializeApp(firebaseConfig)
+*/
 let database = firebase.database()
 
 //---- DB Functions ----
@@ -23,7 +25,7 @@ exports.recordNewUserID = function(userId) {
 
     if(err) console.log(`get messenger profile error: ${err}`);
     else if(info) {
-      
+
       database.ref(`/users/${userId}`).set({
         firstName: info.first_name,
         lastName: info.last_name,
