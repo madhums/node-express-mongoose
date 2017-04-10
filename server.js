@@ -105,7 +105,7 @@ botmaster.on('update', (bot, update) => {
       bot.sendTextMessageTo('คุณได้เข้าร่วมแล้ว รออีกสักครู่ กิจกรรมกำลังจะเริ่มขึ้น', update.sender.id);
       if(participants.indexOf(update.sender.id) < 0) {
         participants.push(update.sender.id)
-        database.ref(`/quiz/participants`).set(participants)
+        database.ref(`/participants`).set(participants)
       }
     }
     else if(update.message.text == "ไม่เข้าร่วม")
