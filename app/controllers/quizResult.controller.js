@@ -8,13 +8,10 @@ exports.getResult = function(req, res) {
   .then((snapshot)=>{
 
     let UIDs = snapshot.val()
-
     for(let i = 0; i < UIDs.length; i++) {
       result[UIDs[i]] = 0
     }
 
-    console.log(result);
-    console.log(`result by key 1432315113461939 : ${result[1432315113461939]}`);
     return database.ref('/quiz').once('value')
 
   })
@@ -22,16 +19,17 @@ exports.getResult = function(req, res) {
     let quiz = quizSnapshot.val()
     console.log(quiz);
     res.send(`${quiz}`)
-    /*
-    quiz.forEach((q)=>{
 
-      q.correctUsers.forEach((user)=>{
-        result[]
-      })
-
+    let correctUsers = []
+    correctUsers = quiz.map((q)=>{
+      return q.correctUsers
     })
 
-    */
+    correctUsers.forEach((uid)=>{
+      //if(result.hasOwnProperty(uid))
+      console.log(JSON.stringify(uid));
+    })
+
   })
   /*
   res.render("result", {
