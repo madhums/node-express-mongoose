@@ -20,15 +20,22 @@ exports.getResult = function(req, res) {
     console.log(quiz);
     res.send(`${quiz}`)
 
-    let correctUsers = []
-    correctUsers = quiz.map((q)=>{
+    let allCorrectUsers = []
+    allCorrectUsers = quiz.map((q)=>{
       return q.correctUsers
     })
 
-    correctUsers.forEach((uid)=>{
-      //if(result.hasOwnProperty(uid))
-      console.log(JSON.stringify(uid));
+    allCorrectUsers.forEach((userByOrder)=>{
+      userByOrder.forEach((uid)=>{
+        console.log(JSON.stringify(uid));
+
+        if(result.hasOwnProperty(uid))
+          result[uid]++
+
+      })
     })
+
+    console.log(`end result: ${result}`);
 
   })
   /*
