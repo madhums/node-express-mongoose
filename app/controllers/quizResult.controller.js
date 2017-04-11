@@ -38,8 +38,9 @@ exports.getResult = function(req, res) {
 
     let tempResult = result
     result = []
-
+    console.log(JSON.stringify(usersChunk));
     for(let key in tempResult) {
+      /*
       result.push({
         'id': key,
         'name': usersChunk[key].firstName + usersChunk[key].lastName,
@@ -47,6 +48,9 @@ exports.getResult = function(req, res) {
         'profilePic': usersChunk[key].profilePic,
         'point': tempResult[key]
       })
+      */
+      console.log('\n\n\n');
+      console.log(JSON.stringify(usersChunk[key]));
     }
 
     result.sort( (a,b)=> { return (a.point > b.point) ? 1 : ( (b.point > a.point) ? -1 : 0 ) })
@@ -61,7 +65,7 @@ exports.getResult = function(req, res) {
     res.render("result", {
       a: result
     })
-    
+
   })
 
 }
