@@ -32,11 +32,27 @@ exports.getResult = function(req, res) {
     })
 
     console.log(`end result: ${JSON.stringify(result)}`);
+    return database.ref('/users').once('value')
+  })
+  .then((usersChunk)=>{
+
+    let sortedResult = []
+    for(let key in result) {
+      sortedResult.push({
+        'id': key,
+        'name': usersChunk[key].firstName + usersChunk[key].lastName,
+        'gender': usersChunk[key].gender,
+        'profilePic': usersChunk[key].profilePic,
+        'point': result[key]
+      })
+    }
+
+    sortedResult.sort( (a,b)=> { return (a.point > b.point) ? 1 : ( (b.point > a.point) ? -1 : 0 ) })
 
   })
 
   res.render("result", {
-    a: result
+    a: sortedResult
   })
 
 }
