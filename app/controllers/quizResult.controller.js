@@ -35,7 +35,7 @@ exports.getResult = function(req, res) {
       })
     })
 
-    console.log(`end result: ${result}`);
+    console.log(`end result: ${JSON.stringify(result)}`);
 
   })
   /*
