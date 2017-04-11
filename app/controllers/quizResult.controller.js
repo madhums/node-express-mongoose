@@ -13,7 +13,7 @@ exports.getResult = function(req, res) {
       return { [i]: 0 }
     })
     console.log(result);
-    console.log(`${result[1432315113461939]}`);
+    console.log(`${Object.keys(result)}`);
     return database.ref('/quiz').once('value')
 
   })
