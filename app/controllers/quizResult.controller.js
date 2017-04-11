@@ -2,10 +2,38 @@ let firebase = require('../config/firebase.init.js')
 let database = firebase.database()
 
 exports.getResult = function(req, res) {
-  let a = 50
-  //res.render('')
-  //res.send(`${a}`)
+
+  let result = null
+  database.ref('/participants').once('value')
+  .then((snapshot)=>{
+
+    let UIDs = snapshot.val()
+
+    result = UIDs.map((i)=>{
+      return { 'ID': i, 'score': 0 }
+    })
+    console.log(result);
+    return database.ref('/quiz').once('value')
+
+  })
+  .then((quizSnapshot)=>{
+    let quiz = quizSnapshot.val()
+    console.log(quiz);
+    res.send(`${quiz}`)
+    /*
+    quiz.forEach((q)=>{
+
+      q.correctUsers.forEach((user)=>{
+        result[]
+      })
+
+    })
+
+    */
+  })
+  /*
   res.render("result", {
     a: a
   })
+  */
 }
