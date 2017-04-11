@@ -3,6 +3,9 @@
     <title>Quiz Result</title>
   </head>
   <body>
-    result :<br /><%=JSON.stringify(a)%>
+    result :<br /><br />
+    <% for(let i = 0; i < result.length; i++) { %>
+      <%=i%>. <img src="<%=result[i].profilePic%>"> คุณ <%=result[i].name%> ตอบถูก <%=result[i].point%>/<%=quizLength%>
+    <% } %>
   </body>
 </html>

@@ -4,6 +4,8 @@ let database = firebase.database()
 exports.getResult = function(req, res) {
 
   let result = new Object()
+  let quizLength = 0
+
   database.ref('/participants').once('value')
   .then((snapshot)=>{
 
@@ -19,6 +21,7 @@ exports.getResult = function(req, res) {
 
     let quiz = quizSnapshot.val()
     let allCorrectUsers = []
+    quizLength = quiz.length
 
     allCorrectUsers = quiz.map((q)=>{
       return q.correctUsers
@@ -39,32 +42,25 @@ exports.getResult = function(req, res) {
     let usersChunk = usersChunkSnapshot.val()
     let tempResult = result
     result = []
-    console.log(JSON.stringify(usersChunk));
-    for(let key in tempResult) {
 
+    for(let key in tempResult) {
       result.push({
         'id': key,
-        'name': usersChunk[key].firstName + usersChunk[key].lastName,
+        'name': usersChunk[key].firstName + ' ' + usersChunk[key].lastName,
         'gender': usersChunk[key].gender,
         'profilePic': usersChunk[key].profilePic,
         'point': tempResult[key]
       })
-
-      console.log('\n\n\n');
-      console.log(usersChunk.length);
     }
 
-    result.sort( (a,b)=> { return (a.point > b.point) ? 1 : ( (b.point > a.point) ? -1 : 0 ) })
-
-    console.log(`result : ${result}`);
-    console.log(`or object result? : ${JSON.stringify(result)}`);
-    return result
+    return result.sort( (a,b)=> { return (a.point > b.point) ? 1 : ( (b.point > a.point) ? -1 : 0 ) })
 
   })
   .then((result)=>{
 
     res.render("result", {
-      a: result
+      result: result,
+      quizLength:quizLength
     })
 
   })
