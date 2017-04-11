@@ -28,6 +28,7 @@ exports.getResult = function(req, res) {
     })
     console.log('b4 allU foreach');
     allCorrectUsers.forEach((userByOrder)=>{
+      console.log('b4 yByO foreach');
       userByOrder.forEach((uid)=>{
         if(result.hasOwnProperty(uid))
           result[uid]++
