@@ -10,9 +10,10 @@ exports.getResult = function(req, res) {
     let UIDs = snapshot.val()
 
     result = UIDs.map((i)=>{
-      return { 'ID': i, 'score': 0 }
+      return { `${i}`: 0 }
     })
     console.log(result);
+    console.log(`${result['1432315113461939']}`);
     return database.ref('/quiz').once('value')
 
   })
