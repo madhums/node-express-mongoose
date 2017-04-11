@@ -40,6 +40,8 @@ exports.getResult = function(req, res) {
     result = []
     console.log(JSON.stringify(usersChunk));
     for(let key in tempResult) {
+
+      //if(usersChunk.indexOf(key))
       /*
       result.push({
         'id': key,
@@ -50,7 +52,7 @@ exports.getResult = function(req, res) {
       })
       */
       console.log('\n\n\n');
-      console.log(JSON.stringify(usersChunk[key]));
+      console.log(JSON.stringify(usersChunk[0]));
     }
 
     result.sort( (a,b)=> { return (a.point > b.point) ? 1 : ( (b.point > a.point) ? -1 : 0 ) })
