@@ -14,7 +14,7 @@ exports.getResult = function(req, res) {
     }
 
     console.log(result);
-    console.log(`result key: ${Object.keys(result)}`);
+    console.log(`result by key 1432315113461939 : ${result[1432315113461939]}`);
     return database.ref('/quiz').once('value')
 
   })
