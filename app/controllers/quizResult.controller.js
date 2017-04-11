@@ -13,7 +13,10 @@ exports.getResult = function(req, res) {
       return { [i]: 0 }
     })
     console.log(result);
-    console.log(`${Object.keys(result)}`);
+    console.log(`result key: ${Object.keys(result)}`);
+
+    let a = {a:1,b:2}
+    console.log(`a key: ${Object.keys(a)}`);
     return database.ref('/quiz').once('value')
 
   })
