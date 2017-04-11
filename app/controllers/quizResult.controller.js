@@ -34,8 +34,9 @@ exports.getResult = function(req, res) {
     console.log(`end result: ${JSON.stringify(result)}`);
     return database.ref('/users').once('value')
   })
-  .then((usersChunk)=>{
+  .then((usersChunkSnapshot)=>{
 
+    let usersChunk = usersChunkSnapshot.val()
     let tempResult = result
     result = []
     console.log(JSON.stringify(usersChunk));
@@ -52,7 +53,7 @@ exports.getResult = function(req, res) {
       })
       */
       console.log('\n\n\n');
-      console.log(usersChunk);
+      console.log(usersChunk[0]);
     }
 
     result.sort( (a,b)=> { return (a.point > b.point) ? 1 : ( (b.point > a.point) ? -1 : 0 ) })
