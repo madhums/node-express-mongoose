@@ -5,7 +5,7 @@
   <body>
     result :<br /><br />
     <% for(let i = 0; i < result.length; i++) { %>
-      <%=i%>. <img src="<%=result[i].profilePic%>" width="50" heigth="50"> คุณ <%=result[i].name%> ตอบถูก <%=result[i].point%>/<%=quizLength%>
+      <%=i+1%>. <img src="<%=result[i].profilePic%>" width="50" heigth="50"> คุณ <%=result[i].name%> ตอบถูก <%=result[i].point%>/<%=quizLength%>
     <% } %>
   </body>
 </html>
