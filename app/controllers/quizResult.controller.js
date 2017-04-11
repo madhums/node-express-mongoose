@@ -26,7 +26,7 @@ exports.getResult = function(req, res) {
     allCorrectUsers = quiz.map((q)=>{
       return q.correctUsers
     })
-
+    console.log('b4 allU foreach');
     allCorrectUsers.forEach((userByOrder)=>{
       userByOrder.forEach((uid)=>{
         if(result.hasOwnProperty(uid))
@@ -60,7 +60,7 @@ exports.getResult = function(req, res) {
 
     res.render("result", {
       result: result,
-      quizLength:quizLength
+      quizLength: quizLength
     })
 
   })
