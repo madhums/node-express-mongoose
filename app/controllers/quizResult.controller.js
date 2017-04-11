@@ -10,11 +10,13 @@ exports.getResult = function(req, res) {
   .then((snapshot)=>{
 
     let UIDs = snapshot.val()
-    for(let i = 0; i < UIDs.length; i++) {
-      result[UIDs[i]] = 0
+    if(UIDs) {
+      for(let i = 0; i < UIDs.length; i++) {
+        result[UIDs[i]] = 0
+      }
+      return database.ref('/quiz').once('value')
     }
-
-    return database.ref('/quiz').once('value')
+    else throw 'no participants'
 
   })
   .then((quizSnapshot)=>{
@@ -63,6 +65,15 @@ exports.getResult = function(req, res) {
     res.render("result", {
       result: result,
       quizLength: quizLength
+    })
+
+  })
+  .catch((error)=>{
+
+    console.log('error found: ' + error);
+    res.render("result", {
+      result: [],
+      quizLength: 0
     })
 
   })
