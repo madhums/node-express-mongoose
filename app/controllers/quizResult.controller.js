@@ -3,20 +3,18 @@ let database = firebase.database()
 
 exports.getResult = function(req, res) {
 
-  let result = null
+  let result = new Object()
   database.ref('/participants').once('value')
   .then((snapshot)=>{
 
     let UIDs = snapshot.val()
 
-    result = UIDs.map((i)=>{
-      return { [i]: 0 }
-    })
+    for(let i = 0; i < UIDs.length; i++) {
+      result[UIDs[i]] = 0
+    }
+
     console.log(result);
     console.log(`result key: ${Object.keys(result)}`);
-
-    let a = {a:1,b:2}
-    console.log(`a key: ${Object.keys(a)}`);
     return database.ref('/quiz').once('value')
 
   })
