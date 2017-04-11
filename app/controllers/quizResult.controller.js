@@ -52,7 +52,7 @@ exports.getResult = function(req, res) {
       })
       */
       console.log('\n\n\n');
-      console.log(JSON.stringify(usersChunk[0]));
+      console.log(usersChunk[0]);
     }
 
     result.sort( (a,b)=> { return (a.point > b.point) ? 1 : ( (b.point > a.point) ? -1 : 0 ) })
