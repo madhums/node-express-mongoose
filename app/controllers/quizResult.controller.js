@@ -10,7 +10,7 @@ exports.getResult = function(req, res) {
     let UIDs = snapshot.val()
 
     result = UIDs.map((i)=>{
-      return { i: 0 }
+      return { [i]: 0 }
     })
     console.log(result);
     console.log(`${result['1432315113461939']}`);
