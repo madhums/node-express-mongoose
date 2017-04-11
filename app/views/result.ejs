@@ -3,9 +3,17 @@
     <title>Quiz Result</title>
   </head>
   <body>
-    result :<br /><br />
-    <% for(let i = 0; i < result.length; i++) { %>
-      <%=i+1%>. <img src="<%=result[i].profilePic%>" width="50" heigth="50"> คุณ <%=result[i].name%> ตอบถูก <%=result[i].point%>/<%=quizLength%>
+    <% if(error) { %>
+
+      error: <%=error%>
+
+    <% } else {%>
+
+      result :<br /><br />
+      <% for(let i = 0; i < result.length; i++) { %>
+        <%=i+1%>. <img src="<%=result[i].profilePic%>" width="50" heigth="50"> คุณ <%=result[i].name%> ตอบถูก <%=result[i].point%>/<%=quizLength%>
+      <% } %>
+
     <% } %>
   </body>
 </html>

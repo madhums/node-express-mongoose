@@ -63,6 +63,7 @@ exports.getResult = function(req, res) {
   .then((result)=>{
 
     res.render("result", {
+      error: null,
       result: result,
       quizLength: quizLength
     })
@@ -72,6 +73,7 @@ exports.getResult = function(req, res) {
 
     console.log('error found: ' + error);
     res.render("result", {
+      error: 'no participants found',
       result: [],
       quizLength: 0
     })
