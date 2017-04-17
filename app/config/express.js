@@ -14,7 +14,8 @@ module.exports = function(app) {
   app.set('view engine', 'ejs');
 
   app.get("/result", quizResult.getResult)
-  app.get("/addQuestion", jsonParser, urlencodedParser, quizInput.addQuiz)
+  app.get("/addquiz", jsonParser, urlencodedParser, quizInput.addQuiz)
 
+  app.get("/*", res.render("404"))
 
 }
