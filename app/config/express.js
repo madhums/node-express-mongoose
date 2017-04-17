@@ -8,6 +8,8 @@ let urlencodedParser = bodyParser.urlencoded({
 });
 let jsonParser = bodyParser.json();
 
+app.use(express.static('public'))
+
 module.exports = function(app) {
 
   app.set('views', './app/views');
