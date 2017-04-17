@@ -16,7 +16,7 @@ function createQuizBox() {
     let num = i + 1
 
     let newDiv = document.createElement('div');
-   	newDiv.id = 'q' + num;
+   	newDiv.id = 'div' + num;
     newDiv.innerHTML = 'num = ' + num
 
     let newQuestion = document.createElement('input');
@@ -43,7 +43,7 @@ function createQuizBox() {
     newDiv.appendChild(choice1)
     newDiv.appendChild(choice2)
     newDiv.appendChild(choice3)
-    newDiv.appendChild(answer)
+    //newDiv.appendChild(answer)
 
     toAdd.appendChild(newDiv);
 
