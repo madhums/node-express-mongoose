@@ -1,4 +1,4 @@
-createQuizBox() {
+function createQuizBox() {
 
   let x = document.getElementById("quiznumber");
   let length = parseInt(x.value)
