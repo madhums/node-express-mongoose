@@ -1,6 +1,6 @@
 //let express = require('express')
 let ejs = require('ejs');
-let express =
+//let express =
 let quizResult = require('../controllers/quizResult.controller.js')
 let quizInput = require('../controllers/quizInput.controller.js')
 let bodyParser = require("body-parser");
