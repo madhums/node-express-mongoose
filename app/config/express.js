@@ -16,6 +16,6 @@ module.exports = function(app) {
   app.get("/result", quizResult.getResult)
   app.get("/addquiz", jsonParser, urlencodedParser, quizInput.addQuiz)
 
-  app.get("/*", res.render("404"))
+  app.get("/*", (req, res) => { res.render("404") } )
 
 }
