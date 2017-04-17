@@ -8,10 +8,10 @@ let urlencodedParser = bodyParser.urlencoded({
 });
 let jsonParser = bodyParser.json();
 
-app.use(express.static('public'))
-
 module.exports = function(app) {
 
+  app.use(express.static('public'))
+  
   app.set('views', './app/views');
   app.set('view engine', 'ejs');
 
