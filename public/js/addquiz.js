@@ -5,7 +5,7 @@ function createQuizBox() {
 
   let toAdd = document.createDocumentFragment();
 
-  for(let i = 0; i < length; i++) {
+  for(let i = 0; i < length && length <= 20; i++) {
 
     /*
     let newDiv = document.createElement('div');
