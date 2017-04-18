@@ -20,6 +20,7 @@ function createQuizBox() {
 
         let newQuestion = document.createElement('input');
         newQuestion.id = 'q' + num
+        newQuestion.name = 'q' + num
         newQuestion.type = 'text'
 
       newQuestionDiv.appendChild(newQuestion)
