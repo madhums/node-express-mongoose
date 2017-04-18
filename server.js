@@ -138,7 +138,32 @@ botmaster.on('update', (bot, update) => {
   }
   else if(!enterTime){
     console.log('quiz off');
-    bot.sendTextMessageTo('quiz not available', update.sender.id);
+    //bot.sendTextMessageTo('quiz not available', update.sender.id);
+    if(update.message.text == "sendMeTemplate") {
+
+      let att = {
+        'type': 'template',
+        'payload':{
+          'template_type': 'button',
+          'text': 'press any button, won\'t you?',
+          'buttons': [
+            {
+              'type': 'postback',
+              'title': 'button 1',
+              'payload': 'press button 1'
+            },
+            {
+              'type': 'postback',
+              'title': 'button 2',
+              'payload': 'press button 2'
+            }
+          ]
+        }
+      }
+
+      bot.sendAttachmentTo(att, update.sender.id)
+
+    }
   }
 
   //}
