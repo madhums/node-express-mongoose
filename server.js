@@ -76,7 +76,9 @@ database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
 
 botmaster.on('update', (bot, update) => {
 
-
+  if(update.postback) {
+    messengerBot.sendTextMessageTo('your payload is : ' + update.postback.payload, id)
+  }
   // if new user -> add to DB
   userMgt.checkDupID(update.sender.id)
   .then((isDup)=>{
