@@ -19,9 +19,20 @@ function createQuizBox() {
    	newDiv.id = 'div' + num;
     newDiv.innerHTML = 'num = ' + num
 
-    let newQuestion = document.createElement('input');
-    newQuestion.id = 'q' + num
-    newQuestion.type = 'text'
+      let newQuestionDiv = document.createElement('div');
+     	newQuestionDiv.id = 'q' + num + 'div';
+      newQuestionDiv.innerHTML = 'คำถามข้อที่ ' + num + ' : '
+
+        let newQuestion = document.createElement('input');
+        newQuestion.id = 'q' + num
+        newQuestion.type = 'text'
+
+      newQuestionDiv.appendChild(newQuestion)
+      newQuestionDiv.appendChild(document.createElement('br'))
+
+      // let newQuestionDiv = document.createElement('div');
+     // 	newQuestionDiv.id = 'q' + num + 'div';
+      // newQuestionDiv.innerHTML = 'คำถามข้อที่ ' + num + ' : '
 
     let choice1 = document.createElement('input');
     choice1.id = 'q' + num + 'c1'
@@ -39,7 +50,7 @@ function createQuizBox() {
     answer = 'q' + num + 'ans'
     answer.type = 'text'
 
-    newDiv.appendChild(newQuestion)
+    newDiv.appendChild(newQuestionDiv)
     newDiv.appendChild(choice1)
     newDiv.appendChild(choice2)
     newDiv.appendChild(choice3)
