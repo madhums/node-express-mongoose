@@ -73,16 +73,14 @@ database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
     allIDs.push(childSnapshot.key)
 })
 
+try {
+
 botmaster.on('update', (bot, update) => {
 
   if(update.postback) {
-    try {
-      console.log(JSON.stringify(update));
-      messengerBot.sendTextMessageTo('your payload is : ' + update.postback.payload, update.sender.id)
-    }
-    catch(err) {
-      console.log('in update postback error: ' + err);
-    }
+
+    console.log(JSON.stringify(update));
+    messengerBot.sendTextMessageTo('your payload is : ' + update.postback.payload, update.sender.id)
 
   }
 
@@ -186,6 +184,11 @@ botmaster.on('update', (bot, update) => {
 
 
 });
+
+}
+catch(err) {
+  console.log('on update error: ' + err);
+}
 
 console.log('started');
 
