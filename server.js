@@ -30,10 +30,6 @@ app.listen(port, () => {
   console.log('Express app started on port ' + port);
 });
 
-app.post("/webhook", (req, res)=>{
-  console.log('\n\nwelcome to hooker\n\n');
-})
-
 const messengerSettings = {
   credentials: {
     verifyToken: process.env.vToken,
@@ -78,12 +74,13 @@ database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
 })
 
 botmaster.on('update', (bot, update) => {
-
+/*
   if(update.postback) {
 
     console.log(JSON.stringify(update));
     messengerBot.sendTextMessageTo('your payload is : ' + update.postback.payload, update.sender.id)
   }
+  */
   // if new user -> add to DB
   userMgt.checkDupID(update.sender.id)
   .then((isDup)=>{
@@ -170,6 +167,10 @@ botmaster.on('update', (bot, update) => {
       }
 
       bot.sendAttachmentTo(att, update.sender.id)
+      .then((s)=>{
+        console.log('WTF');
+        console.log(JSON.stringify(s));
+      })
 
     }
   }
