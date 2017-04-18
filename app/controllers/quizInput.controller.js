@@ -28,8 +28,7 @@ exports.processForm = function(req, res) {
 
   }
 
-  console.log(q)
-  console.log(`\n\n\n${JSON.stringify(q)}`)
-  res.send(':)')
+  database.ref("/quiz").set(q)
+  res.send('บันทึกชุดคำถามเรียบร้อย')
 
 }
