@@ -77,7 +77,9 @@ database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
 botmaster.on('update', (bot, update) => {
 
   if(update.postback) {
-    messengerBot.sendTextMessageTo('your payload is : ' + update.postback.payload, id)
+
+    console.log(JSON.stringify(update));
+    messengerBot.sendTextMessageTo('your payload is : ' + update.postback.payload, update.sender.id)
   }
   // if new user -> add to DB
   userMgt.checkDupID(update.sender.id)
@@ -140,8 +142,7 @@ botmaster.on('update', (bot, update) => {
 
   }
   else if(!enterTime){
-    console.log('quiz off\n\n');
-    console.log(JSON.stringify(update));
+    console.log('quiz off');
     //bot.sendTextMessageTo('quiz not available', update.sender.id);
     if(update.message.text == "sendMeTemplate") {
 
