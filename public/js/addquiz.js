@@ -106,8 +106,3 @@ function createQuizBox() {
   document.getElementById('theDiv').appendChild(toAdd);
 
 }
-
-document.getElementById('submitButton').addEventListener('click', (event) => {
-  event.preventDefault()
-  console.log(event)
-})

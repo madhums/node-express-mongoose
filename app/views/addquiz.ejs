@@ -17,6 +17,11 @@
         <input type="reset" /><br /><br />
       </form>
     </div>
-
+    <script>
+      document.getElementById('submitButton').addEventListener('click', (event) => {
+        event.preventDefault()
+        console.log(event)
+      })
+    </script>
   </body>
 </html>
