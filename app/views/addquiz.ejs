@@ -8,8 +8,8 @@
     <div id="main">
       ใส่จำนวนข้อที่ต้องการถาม: <input id="quiznumber" type="number" size="5" onkeyup="createQuizBox()"/>
       <br />
-      <form id="quizForm" method="POST">
-        <input id="numbers" type="hidden" value="0" /><br /><br />
+      <form id="quizForm" action="/processQuizForm" method="POST">
+        <input id="numbers" name="numbers" type="hidden" value="0" /><br /><br />
         <div id="theDiv" style="padding: 5px 0px 5px 20px">
         </div>
         <br /><br />
@@ -17,11 +17,5 @@
         <input type="reset" /><br /><br />
       </form>
     </div>
-    <script>
-      document.getElementById('submitButton').addEventListener('click', (event) => {
-        event.preventDefault()
-        console.log(event)
-      })
-    </script>
   </body>
 </html>

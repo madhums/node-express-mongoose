@@ -3,6 +3,8 @@ function createQuizBox() {
   let x = document.getElementById("quiznumber");
   let length = parseInt(x.value)
 
+  document.getElementById('numbers').value = length
+
   let toAdd = document.createDocumentFragment();
 
   for(let i = 0; i < length && length <= 20; i++) {

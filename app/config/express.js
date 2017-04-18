@@ -11,13 +11,14 @@ let jsonParser = bodyParser.json();
 
 module.exports = function(app, express) {
 
-  app.use(express.static('public'))
-
   app.set('views', './app/views');
   app.set('view engine', 'ejs');
+  app.use(express.static('public'))
 
   app.get("/result", quizResult.getResult)
-  app.get("/addquiz", jsonParser, urlencodedParser, quizInput.addQuiz)
+  app.get("/addquiz", quizInput.addQuiz)
+
+  app.post("/processQuizForm", jsonParser, urlencodedParser, quizInput.processForm)
 
   app.get("/*", (req, res) => { res.render("404") } )
 
