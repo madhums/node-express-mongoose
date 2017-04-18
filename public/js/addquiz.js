@@ -7,12 +7,6 @@ function createQuizBox() {
 
   for(let i = 0; i < length && length <= 20; i++) {
 
-    /*
-    let newDiv = document.createElement('div');
-   	newDiv.id = 'r'+i;
-    newDiv.innerHTML = 'i = ' + i
-   	toAdd.appendChild(newDiv);
-    */
     let num = i + 1
 
     let newDiv = document.createElement('div');
@@ -28,6 +22,7 @@ function createQuizBox() {
 
       newQuestionDiv.appendChild(newQuestion)
       newQuestionDiv.appendChild(document.createElement('br'))
+      newQuestionDiv.appendChild(document.createElement('br'))
 
     newDiv.appendChild(newQuestionDiv)
 
@@ -42,6 +37,7 @@ function createQuizBox() {
 
           let choice1 = document.createElement('input');
           choice1.id = 'q' + num + 'c1'
+          choice1.name = 'q' + num + 'c1'
           choice1.type = 'text'
 
         choice1Div.appendChild(choice1)
@@ -55,6 +51,7 @@ function createQuizBox() {
 
           let choice2 = document.createElement('input');
           choice2.id = 'q' + num + 'c2'
+          choice2.name = 'q' + num + 'c2'
           choice2.type = 'text'
 
         choice2Div.appendChild(choice2)
@@ -68,6 +65,7 @@ function createQuizBox() {
 
           let choice3 = document.createElement('input');
           choice3.id = 'q' + num + 'c3'
+          choice3.name = 'q' + num + 'c3'
           choice3.type = 'text'
 
         choice3Div.appendChild(choice3)
@@ -81,9 +79,11 @@ function createQuizBox() {
 
           let answer = document.createElement('input');
           answer.id = 'q' + num + 'ans'
+          answer.name = 'q' + num + 'ans'
           answer.type = 'text'
 
         answerDiv.appendChild(answer)
+        answerDiv.appendChild(document.createElement('br'))
         answerDiv.appendChild(document.createElement('br'))
         answerDiv.appendChild(document.createElement('br'))
 

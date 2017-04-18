@@ -6,13 +6,16 @@
   <body>
     ใส่จำนวนข้อที่ต้องการถาม: <input id="quiznumber" type="number" size="5" onkeyup="createQuizBox()"/>
     <br />
-    <form action="/" methd="POST">
+    <form id="quizForm" action="/" method="POST">
       <input id="numbers" type="hidden" value="0" />
       <br />
       <br />
       <div id="theDiv" style="padding: 5px 0px 5px 20px">
-
       </div>
+      <br />
+      <br />
+      <input type="submit" value="บันทึกข้อมูล" />
+      <input type="reset" />
     </form>
   </body>
 </html>
