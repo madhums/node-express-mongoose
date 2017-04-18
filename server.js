@@ -30,6 +30,9 @@ app.listen(port, () => {
   console.log('Express app started on port ' + port);
 });
 
+app.post("/webhook", (req, res)=>{
+  console.log('\n\nwelcome to hooker\n\n');
+})
 
 const messengerSettings = {
   credentials: {
