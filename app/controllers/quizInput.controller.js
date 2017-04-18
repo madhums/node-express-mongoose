@@ -13,17 +13,16 @@ exports.processForm = function(req, res) {
   let choices = []
   let length = req.body.numbers
 
-  for(let i = 0; i < length; i ++) {
+  for(let i = 1; i <= length; i ++) {
 
-    tempNum = i + 1
     choices = []
-    for(let j = 0; j < 3; j++) {
-      choices.push(req.body[`q${tempNum}c${j}`])
+    for(let j = 1; j <= 3; j++) {
+      choices.push(req.body[`q${i}c${j}`])
     }
 
     q.push({
-      'a': req.body[`q${tempNum}ans`],
-      'q': req.body[`q${tempNum}`],
+      'a': req.body[`q${i}ans`],
+      'q': req.body[`q${i}`],
       'choices': choices
     })
 
