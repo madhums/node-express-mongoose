@@ -73,7 +73,6 @@ database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
     allIDs.push(childSnapshot.key)
 })
 
-try {
 
 botmaster.on('update', (bot, update) => {
 
@@ -185,10 +184,6 @@ botmaster.on('update', (bot, update) => {
 
 });
 
-}
-catch(err) {
-  console.log('on update error: ' + err);
-}
 
 console.log('started');
 
@@ -294,22 +289,22 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
 
 console.log('after quiz request');
 
-let weatherReporter = nodeSchedule.scheduleJob('0 0 5,11,17,23 * * *', function(){
-  userMgt.getAllID(function(err, list){
-    if(err) console.log(err);
-    else if(list) {
-      console.log(list);
-
-      list.map((a) => {
-        weatherAPI.getReport(function(err, result){
-          if(err) console.log(err);
-          else messengerBot.sendTextMessageTo(result, a);
-        })
-      })
-
-    }
-  })
-})
+// let weatherReporter = nodeSchedule.scheduleJob('0 0 5,11,17,23 * * *', function(){
+//   userMgt.getAllID(function(err, list){
+//     if(err) console.log(err);
+//     else if(list) {
+//       console.log(list);
+//
+//       list.map((a) => {
+//         weatherAPI.getReport(function(err, result){
+//           if(err) console.log(err);
+//           else messengerBot.sendTextMessageTo(result, a);
+//         })
+//       })
+//
+//     }
+//   })
+// })
 
 /*
 messengerProfileAPI.getUserInfo('1432315113461939', function(err, info){
@@ -323,6 +318,9 @@ userMgt.getAllSubscribedID(function(err, ids){
   else console.log('success');
 })
 */
+
+try {
+
 let quizPromise = Promise.resolve(prepareQuiz())
 
 
@@ -366,7 +364,10 @@ let quizPromise = Promise.resolve(prepareQuiz())
   })
 //})
 
-
+}
+catch(err) {
+  console.log('quiz promise error: ' + err);
+}
 
 /*
 getAllID(function(err, list){
