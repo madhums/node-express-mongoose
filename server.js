@@ -76,6 +76,7 @@ database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
 
 botmaster.on('update', (bot, update) => {
 
+
   // if new user -> add to DB
   userMgt.checkDupID(update.sender.id)
   .then((isDup)=>{
@@ -137,7 +138,8 @@ botmaster.on('update', (bot, update) => {
 
   }
   else if(!enterTime){
-    console.log('quiz off');
+    console.log('quiz off\n\n');
+    console.log(JSON.stringify(update));
     //bot.sendTextMessageTo('quiz not available', update.sender.id);
     if(update.message.text == "sendMeTemplate") {
 
