@@ -80,7 +80,7 @@ function createQuizBox() {
         answerDiv.innerHTML = 'คำตอบ : '
 
           let answer = document.createElement('input');
-          answer = 'q' + num + 'ans'
+          answer.id = 'q' + num + 'ans'
           answer.type = 'text'
 
         answerDiv.appendChild(answer)
