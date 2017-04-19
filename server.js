@@ -26,7 +26,6 @@ enterTime = false
 isQuizOnline = false
 let correctUser = []
 
-
 app.listen(port, () => {
   console.log('Express app started on port ' + port);
 });
@@ -125,7 +124,21 @@ botmaster.on('update', (bot, update) => {
       }
 
     }
-    else {
+    else if(isQuizOnline) {
+
+      console.log('quiz on');
+      //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
+      if(update.message.text == ttq[quizNO].a) {
+        bot.sendTextMessageTo('correct!', update.sender.id);
+
+        if(correctUser.indexOf(update.sender.id) < 0)
+          correctUser.push(update.sender.id)
+      }
+      else bot.sendTextMessageTo('wronggg!', update.sender.id);
+
+    }
+    /*
+      {
       console.log('quiz off');
       //bot.sendTextMessageTo('quiz not available', update.sender.id);
       if(update.message.text == "sendMeTemplate") {
@@ -155,11 +168,12 @@ botmaster.on('update', (bot, update) => {
 
       }
     }
-
+    */
 
   }
   else if(update.postback){
 
+    /*
     if(isQuizOnline) {
 
       console.log('quiz on');
@@ -176,9 +190,10 @@ botmaster.on('update', (bot, update) => {
     else {
       bot.sendTextMessageTo('Quiz is not available right now, please come back again.', update.sender.id);
     }
-    /*
+
     console.log(JSON.stringify(update));
     messengerBot.sendTextMessageTo('your payload is : ' + update.postback.payload, update.sender.id)
+
     */
 
   }
@@ -255,13 +270,17 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
 
   let buttons = []
   quiz[currentQuiz].choices.forEach((choice) => {
+    /*
     buttons.push({
       'type': 'postback',
       'title': choice,
       'payload': choice
     })
+    */
+    button.push(choice)
   })
 
+  /*
   let buttonTemplate = {
     'type': 'template',
     'payload':{
@@ -270,10 +289,11 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
       'buttons': buttons
     }
   }
+  */
 
   ids.map((id)=>{
-    messengerBot.sendAttachmentTo(buttonTemplate, id)
-    //messengerBot.sendDefaultButtonMessageTo(buttons, id, quiz[currentQuiz].q)
+    //messengerBot.sendAttachmentTo(buttonTemplate, id)
+    messengerBot.sendDefaultButtonMessageTo(buttons, id, quiz[currentQuiz].q)
   })
 
   if(currentQuiz < totalQuiz) {
