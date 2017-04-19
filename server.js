@@ -124,21 +124,7 @@ botmaster.on('update', (bot, update) => {
       }
 
     }
-
-    if(isQuizOnline) {
-
-      console.log('quiz on');
-      //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
-      if(update.message.text == ttq[quizNO].a) {
-        bot.sendTextMessageTo('correct!', update.sender.id);
-
-        if(correctUser.indexOf(update.sender.id) < 0)
-          correctUser.push(update.sender.id)
-      }
-      else bot.sendTextMessageTo('wronggg!', update.sender.id);
-
-    }
-    else if(!enterTime){
+    else {
       console.log('quiz off');
       //bot.sendTextMessageTo('quiz not available', update.sender.id);
       if(update.message.text == "sendMeTemplate") {
@@ -163,13 +149,8 @@ botmaster.on('update', (bot, update) => {
           }
         }
 
-        try {
-          bot.sendAttachmentTo(att, update.sender.id)
-        }
-        catch(err) {
-          console.log('error: ' + err);
-        }
-
+        bot.sendAttachmentTo(att, update.sender.id)
+        console.log('error: ' + err);
 
       }
     }
@@ -178,8 +159,26 @@ botmaster.on('update', (bot, update) => {
   }
   else if(update.postback){
 
+    if(isQuizOnline) {
+
+      console.log('quiz on');
+      //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
+      if(update.postback.payload == ttq[quizNO].a) {
+        bot.sendTextMessageTo('correct!', update.sender.id);
+
+        if(correctUser.indexOf(update.sender.id) < 0)
+          correctUser.push(update.sender.id)
+      }
+      else bot.sendTextMessageTo('wronggg!', update.sender.id);
+
+    }
+    else {
+      bot.sendTextMessageTo('Quiz is not available right now, please come back again.', update.sender.id);
+    }
+    /*
     console.log(JSON.stringify(update));
     messengerBot.sendTextMessageTo('your payload is : ' + update.postback.payload, update.sender.id)
+    */
 
   }
 
@@ -255,11 +254,25 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
 
   let buttons = []
   quiz[currentQuiz].choices.forEach((choice) => {
-    buttons.push(choice)
+    buttons.push({
+      'type': 'postback',
+      'title': choice,
+      'payload': choice
+    })
   })
 
+  let buttonTemplate = {
+    'type': 'template',
+    'payload':{
+      'template_type': 'button',
+      'text': quiz[currentQuiz].q,
+      'buttons': buttons
+    }
+  }
+
   ids.map((id)=>{
-    messengerBot.sendDefaultButtonMessageTo(buttons, id, quiz[currentQuiz].q)
+    messengerBot.sendAttachmentTo(buttonTemplate, id)
+    //messengerBot.sendDefaultButtonMessageTo(buttons, id, quiz[currentQuiz].q)
   })
 
   if(currentQuiz < totalQuiz) {
