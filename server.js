@@ -277,7 +277,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
       'payload': choice
     })
     */
-    button.push(choice)
+    buttons.push(choice)
   })
 
   /*
