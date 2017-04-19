@@ -40,11 +40,9 @@ const messengerSettings = {
   webhookEndpoint: process.env.hookPlace,
   // botmaster will mount this webhook on https://Your_Domain_Name/messenger/webhook1234
 };
-
 const botsSettings = [{
     messenger: messengerSettings
 }];
-
 const botmasterSettings = {
     botsSettings,
     app
@@ -58,6 +56,8 @@ let allIDs = []
 let participants = []
 let quizNO = 0
 let ttq = null
+
+// event listener for participants and new user
 
 database.ref(`/participants`).on('child_added', (childSnapshot, prevChildKey) => {
   console.log('participants added');
