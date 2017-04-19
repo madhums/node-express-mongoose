@@ -75,109 +75,114 @@ database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
 
 
 botmaster.on('update', (bot, update) => {
-/*
-  if(update.postback) {
+
+  if(update.message) {
+
+    // if new user -> add to DB
+    userMgt.checkDupID(update.sender.id)
+    .then((isDup)=>{
+      console.log('THEDUP: '+isDup);
+      if(!isDup) {
+
+        let id = update.sender.id
+        userMgt.recordNewUserID(id)
+        allIDs.push(id)
+
+        if(enterTime) {
+          messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
+          setTimeout(()=>{
+            messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
+          }, 100)
+        }
+
+      }
+      else console.log('already have this id');
+
+    })
+    .catch((err)=>{
+      console.log('serv check dup error : '+err);
+    })
+
+
+    // if enterTime on -> open for users to particate quiz
+    if(enterTime) {
+
+      console.log('nowP: '+ participants);
+
+      if(update.message.text == "เข้าร่วม") {
+        bot.sendTextMessageTo('คุณได้เข้าร่วมแล้ว รออีกสักครู่ กิจกรรมกำลังจะเริ่มขึ้น', update.sender.id);
+        if(participants.indexOf(update.sender.id) < 0) {
+          participants.push(update.sender.id)
+          database.ref(`/participants`).set(participants)
+        }
+      }
+      else if(update.message.text == "ไม่เข้าร่วม")
+        bot.sendTextMessageTo('ไม่เป็นไรนะ ไว้มาร่วมเล่นกันใหม่ครั้งหน้าได้', update.sender.id);
+
+      else if(participants.indexOf(update.sender.id) >= 0){
+        bot.sendTextMessageTo('รออีกนิดนะ กิจกรรมยังไม่เริ่ม', update.sender.id);
+      }
+
+    }
+
+    if(isQuizOnline) {
+
+      console.log('quiz on');
+      //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
+      if(update.message.text == ttq[quizNO].a) {
+        bot.sendTextMessageTo('correct!', update.sender.id);
+
+        if(correctUser.indexOf(update.sender.id) < 0)
+          correctUser.push(update.sender.id)
+      }
+      else bot.sendTextMessageTo('wronggg!', update.sender.id);
+
+    }
+    else if(!enterTime){
+      console.log('quiz off');
+      //bot.sendTextMessageTo('quiz not available', update.sender.id);
+      if(update.message.text == "sendMeTemplate") {
+
+        let att = {
+          'type': 'template',
+          'payload':{
+            'template_type': 'button',
+            'text': 'press any button, won\'t you?',
+            'buttons': [
+              {
+                'type': 'postback',
+                'title': 'button 1',
+                'payload': 'press button 1'
+              },
+              {
+                'type': 'postback',
+                'title': 'button 2',
+                'payload': 'press button 2'
+              }
+            ]
+          }
+        }
+
+        try {
+          bot.sendAttachmentTo(att, update.sender.id)
+        }
+        catch(err) {
+          console.log('error: ' + err);
+        }
+
+
+      }
+    }
+
+
+  }
+  else if(update.postback){
 
     console.log(JSON.stringify(update));
     messengerBot.sendTextMessageTo('your payload is : ' + update.postback.payload, update.sender.id)
 
   }
-*/
-  // if new user -> add to DB
-  userMgt.checkDupID(update.sender.id)
-  .then((isDup)=>{
-    console.log('THEDUP: '+isDup);
-    if(!isDup) {
 
-      let id = update.sender.id
-      userMgt.recordNewUserID(id)
-      allIDs.push(id)
-
-      if(enterTime) {
-        messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
-        setTimeout(()=>{
-          messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
-        }, 100)
-      }
-
-    }
-    else console.log('already have this id');
-
-  })
-  .catch((err)=>{
-    console.log('serv check dup error : '+err);
-  })
-
-
-  // if enterTime on -> open for users to particate quiz
-  if(enterTime) {
-
-    console.log('nowP: '+ participants);
-
-    if(update.message.text == "เข้าร่วม") {
-      bot.sendTextMessageTo('คุณได้เข้าร่วมแล้ว รออีกสักครู่ กิจกรรมกำลังจะเริ่มขึ้น', update.sender.id);
-      if(participants.indexOf(update.sender.id) < 0) {
-        participants.push(update.sender.id)
-        database.ref(`/participants`).set(participants)
-      }
-    }
-    else if(update.message.text == "ไม่เข้าร่วม")
-      bot.sendTextMessageTo('ไม่เป็นไรนะ ไว้มาร่วมเล่นกันใหม่ครั้งหน้าได้', update.sender.id);
-
-    else if(participants.indexOf(update.sender.id) >= 0){
-      bot.sendTextMessageTo('รออีกนิดนะ กิจกรรมยังไม่เริ่ม', update.sender.id);
-    }
-
-  }
-
-  if(isQuizOnline) {
-
-    console.log('quiz on');
-    //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
-    if(update.message.text == ttq[quizNO].a) {
-      bot.sendTextMessageTo('correct!', update.sender.id);
-
-      if(correctUser.indexOf(update.sender.id) < 0)
-        correctUser.push(update.sender.id)
-    }
-    else bot.sendTextMessageTo('wronggg!', update.sender.id);
-
-  }
-  else if(!enterTime){
-    console.log('quiz off');
-    //bot.sendTextMessageTo('quiz not available', update.sender.id);
-    if(update.message.text == "sendMeTemplate") {
-
-      let att = {
-        'type': 'template',
-        'payload':{
-          'template_type': 'button',
-          'text': 'press any button, won\'t you?',
-          'buttons': [
-            {
-              'type': 'postback',
-              'title': 'button 1'//,
-              //'payload': 'press button 1'
-            },
-            {
-              'type': 'postback',
-              'title': 'button 2'//,
-              //'payload': 'press button 2'
-            }
-          ]
-        }
-      }
-
-      try {
-        bot.sendAttachmentTo(att, update.sender.id)
-      }
-      catch(err) {
-        console.log('error: ' + err);
-      }
-
-
-    }
-  }
 
   //}
 
