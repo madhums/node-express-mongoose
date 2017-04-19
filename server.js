@@ -26,6 +26,9 @@ let enterTime = false
 let isQuizOnline = false
 let correctUser = []
 
+module.exports = enterTime
+module.exports = isQuizOnline
+
 app.listen(port, () => {
   console.log('Express app started on port ' + port);
 });
