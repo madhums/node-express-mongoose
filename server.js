@@ -156,13 +156,13 @@ botmaster.on('update', (bot, update) => {
           'buttons': [
             {
               'type': 'postback',
-              'title': 'button 1',
-              'payload': 'press button 1'
+              'title': 'button 1'//,
+              //'payload': 'press button 1'
             },
             {
               'type': 'postback',
-              'title': 'button 2',
-              'payload': 'press button 2'
+              'title': 'button 2'//,
+              //'payload': 'press button 2'
             }
           ]
         }
