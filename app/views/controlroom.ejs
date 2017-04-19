@@ -4,9 +4,21 @@
   </head>
   <body>
     <% include include/header.ejs %>
+    <br />
 
-    control
-    Enter Status : <%= (enterTime) ? `<font color="green">ONLINE</font>` : `<font color="red">OFFLINE</font>` %>
-    Quiz Status : <%= (isQuizOnline) ? `<font color="green">ONLINE</font>` : `<font color="red">OFFLINE</font>` %>
+    Enter Status :
+    <% if(enterTime) { %>
+      <font color="green">ONLINE</font>
+    <% } else { %>
+      <font color="red">OFFLINE</font>
+    <% } %>
+    <br />
+
+    Quiz Status :
+    <% if(isQuizOnline) { %>
+      <font color="green">ONLINE</font>
+    <% } else { %>
+      <font color="red">OFFLINE</font>
+    <% } %>
   </body>
 </html>
