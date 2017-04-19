@@ -22,12 +22,10 @@ let userMgt = require('./app/controllers/userManagement.controller.js')
 let firebase = require('./app/config/firebase.init.js')
 let database = firebase.database()
 //let firebase = require('firebase')
-let enterTime = false
-let isQuizOnline = false
+enterTime = false
+isQuizOnline = false
 let correctUser = []
 
-module.exports = enterTime
-module.exports = isQuizOnline
 
 app.listen(port, () => {
   console.log('Express app started on port ' + port);
