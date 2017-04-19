@@ -28,6 +28,7 @@ exports.processForm = function(req, res) {
 
   }
 
+  //database.ref("/participants").set([])
   database.ref("/quiz").set(q)
   res.send('บันทึกชุดคำถามเรียบร้อย')
 

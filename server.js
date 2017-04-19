@@ -173,6 +173,7 @@ botmaster.on('update', (bot, update) => {
   }
   else if(update.postback){
 
+    console.log(JSON.stringify(update));
     /*
     if(isQuizOnline) {
 
