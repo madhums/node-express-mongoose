@@ -21,17 +21,21 @@
       <font color="red"><strong>OFFLINE</strong></font>
     <% } %>
     <br />
+    <br />
 
     Quiz Ready? :
+    <br />
     <% if(quizReady) { %>
-      <% quizReady.forEach((status)=>{ %>
+      <% quizReady.forEach((status, index)=>{ %>
 
+        <%=index+1%>.
         <% if(status) { %>
           <font color="#00ff00"><strong>TRUE</strong></font>
         <% } else { %>
           <font color="red"><strong>false</strong></font>
         <% } %>
-        
+        <br />
+
       <% }) %>
     <% } else { %>
       <font color="red"><strong>NULL</strong></font>
