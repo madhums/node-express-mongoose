@@ -22,8 +22,14 @@ let userMgt = require('./app/controllers/userManagement.controller.js')
 let firebase = require('./app/config/firebase.init.js')
 let database = firebase.database()
 //let firebase = require('firebase')
+
+// quiz management variable
 enterTime = false
 isQuizOnline = false
+readyToStart = false
+quizReady = null
+
+
 let correctUser = []
 
 app.listen(port, () => {
@@ -396,7 +402,11 @@ let quizPromise = Promise.resolve(prepareQuiz())
 
 //let quiz = nodeSchedule.scheduleJob('0 30 9 * * *', function(){
   quizPromise.then((quiz) => {
+    
     ttq = quiz
+    quizReady = new Array(ttq.length).fill(false)
+    console.log(`quizready = ${quizReady}`);
+
     userMgt.getAllID(function(err, list){
       if(err) console.log(err);
       else if(list) {
