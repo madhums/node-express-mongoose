@@ -354,6 +354,9 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
 
       ids.map((id)=>{
         messengerBot.sendTextMessageTo('กิจกรรมจบแล้ว ขอบคุณทุกท่านที่มาร่วมเล่นกับเรา :D', id)
+        setTimeout(()=>{
+          messengerBot.sendTextMessageTo('คุณสามารดูผลคะแนนได้ที่ https://dsmbot.herokuapp.com/result', id)
+        },3000)
       })
 
     }, 30000)
@@ -437,7 +440,7 @@ let quizPromise = Promise.resolve(prepareQuiz())
             console.log('no one want to play quiz');
           }
 
-        }, 20000) //300000
+        }, 30000) //300000
 
       }
     })
