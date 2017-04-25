@@ -13,7 +13,7 @@ exports.getResult = function(req, res) {
   .then((snapshot)=>{
 
     if(isQuizOnline) throw 'ongoing quiz'
-    
+
     let UIDs = snapshot.val()
     if(UIDs) {
       for(let i = 0; i < UIDs.length; i++) {
@@ -79,7 +79,7 @@ exports.getResult = function(req, res) {
 
     console.log('error found: ' + error);
     res.render("result", {
-      error: 'no participants found',
+      error: error,
       result: [],
       quizLength: 0,
       showMenu: showMenu
