@@ -12,6 +12,8 @@ exports.getResult = function(req, res) {
   database.ref('/participants').once('value')
   .then((snapshot)=>{
 
+    if(isQuizOnline) throw 'ongoing quiz'
+    
     let UIDs = snapshot.val()
     if(UIDs) {
       for(let i = 0; i < UIDs.length; i++) {
@@ -20,7 +22,6 @@ exports.getResult = function(req, res) {
       return database.ref('/quiz').once('value')
     }
     else throw 'no participants'
-    if(isQuizOnline) throw 'ongoing quiz'
 
   })
   .then((quizSnapshot)=>{
