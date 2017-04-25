@@ -4,7 +4,7 @@ let database = firebase.database()
 exports.getResult = function(req, res) {
 
   let showMenu = false
-  if(req.params.secretKey == "MarkIsWatchingUs") showMenu = true
+  if(req.query.key == "MarkIsWatchingUs") showMenu = true
 
   let result = new Object()
   let quizLength = 0

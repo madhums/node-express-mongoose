@@ -21,7 +21,7 @@ module.exports = function(app, express) {
   app.get("/", index.getIndexPage)
   app.get("/policy", index.getPolicyPage)
   app.get("/controlRoom", quizControl.getControlInterface)
-  app.get("/result/:secretKey", quizResult.getResult)
+  app.get("/result/", quizResult.getResult)
   app.get("/addquiz", quizInput.addQuiz)
 
   app.post("/processQuizForm", jsonParser, urlencodedParser, quizInput.processForm)
