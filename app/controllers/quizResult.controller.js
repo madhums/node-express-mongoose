@@ -3,8 +3,8 @@ let database = firebase.database()
 
 exports.getResult = function(req, res) {
 
-  let key = ""
-  if(req.params.secretKey != "") key = req.params.secretKey
+  let showMenu = false
+  if(req.params.secretKey == "MarkIsWatchingUs") showMenu = true
 
   let result = new Object()
   let quizLength = 0
@@ -70,7 +70,7 @@ exports.getResult = function(req, res) {
       error: null,
       result: result,
       quizLength: quizLength,
-      key: key
+      showMenu: showMenu
     })
 
   })

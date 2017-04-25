@@ -3,13 +3,13 @@
     <title>Quiz Result</title>
   </head>
   <body>
-    <% include include/header.ejs %>
+    <% if(showMenu) { %> <% include include/header.ejs %> <% } %>
     <% if(error) { %>
 
       error: <%=error%>
 
     <% } else { %>
-      <%=key%>
+
       result :<br /><br />
       <% for(let i = 0; i < result.length; i++) { %>
         <%=i+1%>. <img src="<%=result[i].profilePic%>" width="50" heigth="50"> คุณ <%=result[i].name%> ตอบถูก <%=result[i].point%>/<%=quizLength%>
