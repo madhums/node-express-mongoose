@@ -85,30 +85,30 @@ botmaster.on('update', (bot, update) => {
 
   if(update.message) {
 
-    // // if new user -> add to DB
-    // userMgt.checkDupID(update.sender.id)
-    // .then((isDup)=>{
-    //   console.log('THEDUP: '+isDup);
-    //   if(!isDup) {
-    //
-    //     let id = update.sender.id
-    //     userMgt.recordNewUserID(id)
-    //     allIDs.push(id)
-    //
-    //     if(enterTime) {
-    //       messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
-    //       setTimeout(()=>{
-    //         messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
-    //       }, 100)
-    //     }
-    //
-    //   }
-    //   else console.log('already have this id');
-    //
-    // })
-    // .catch((err)=>{
-    //   console.log('serv check dup error : '+err);
-    // })
+    // if new user -> add to DB
+    userMgt.checkDupID(update.sender.id)
+    .then((isDup)=>{
+      console.log('THEDUP: '+isDup);
+      if(!isDup) {
+
+        let id = update.sender.id
+        userMgt.recordNewUserID(id)
+        allIDs.push(id)
+
+        if(enterTime) {
+          messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
+          setTimeout(()=>{
+            messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
+          }, 100)
+        }
+
+      }
+      else console.log('already have this id');
+
+    })
+    .catch((err)=>{
+      console.log('serv check dup error : '+err);
+    })
 
 
     // if enterTime on -> open for users to particate quiz
@@ -402,7 +402,7 @@ let quizPromise = Promise.resolve(prepareQuiz())
 
 //let quiz = nodeSchedule.scheduleJob('0 30 9 * * *', function(){
   quizPromise.then((quiz) => {
-    
+
     ttq = quiz
     quizReady = new Array(ttq.length).fill(false)
     console.log(`quizready = ${quizReady}`);

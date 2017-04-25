@@ -4,6 +4,8 @@ let ejs = require('ejs');
 let quizControl = require('../controllers/quizControl.controller.js')
 let quizResult = require('../controllers/quizResult.controller.js')
 let quizInput = require('../controllers/quizInput.controller.js')
+let index = require('../controllers/index.cotnroller.js')
+
 let bodyParser = require("body-parser");
 let urlencodedParser = bodyParser.urlencoded({
  extended: true
@@ -16,6 +18,8 @@ module.exports = function(app, express) {
   app.set('view engine', 'ejs');
   app.use(express.static('public'))
 
+  app.get("/", index.getIndexPage)
+  app.get("/policy", index.getPolicyPage)
   app.get("/controlRoom", quizControl.getControlInterface)
   app.get("/result", quizResult.getResult)
   app.get("/addquiz", quizInput.addQuiz)

@@ -26,6 +26,7 @@
     Quiz Ready? :
     <br />
     <% if(quizReady) { %>
+      
       <% quizReady.forEach((status, index)=>{ %>
 
         <%=index+1%>.
@@ -37,6 +38,7 @@
         <br />
 
       <% }) %>
+
     <% } else { %>
       <font color="red"><strong>NULL</strong></font>
     <% } %>
