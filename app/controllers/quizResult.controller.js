@@ -17,6 +17,7 @@ exports.getResult = function(req, res) {
       return database.ref('/quiz').once('value')
     }
     else throw 'no participants'
+    if(isQuizOnline) throw 'ongoing quiz'
 
   })
   .then((quizSnapshot)=>{
