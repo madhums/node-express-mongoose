@@ -80,7 +80,8 @@ exports.getResult = function(req, res) {
     res.render("result", {
       error: 'no participants found',
       result: [],
-      quizLength: 0
+      quizLength: 0,
+      showMenu: showMenu
     })
 
   })
