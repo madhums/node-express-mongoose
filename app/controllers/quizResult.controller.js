@@ -3,6 +3,9 @@ let database = firebase.database()
 
 exports.getResult = function(req, res) {
 
+  let key = ""
+  if(req.params.secretKey != "") key = req.params.secretKey
+
   let result = new Object()
   let quizLength = 0
 
@@ -66,7 +69,8 @@ exports.getResult = function(req, res) {
     res.render("result", {
       error: null,
       result: result,
-      quizLength: quizLength
+      quizLength: quizLength,
+      key: key
     })
 
   })
