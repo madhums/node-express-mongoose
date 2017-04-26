@@ -405,7 +405,7 @@ userMgt.getAllSubscribedID(function(err, ids){
 
 let checkStart = setInterval(()=>{
   console.log('readyToStart : ' + readyToStart);
-  if(readyToStart) startQuiz()
+  //if(readyToStart) startQuiz()
 }, 1000)
 
 
