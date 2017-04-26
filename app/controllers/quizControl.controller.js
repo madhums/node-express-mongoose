@@ -10,3 +10,13 @@ exports.getControlInterface = function(req, res) {
     isQuizOnline: isQuizOnline
   })
 }
+
+exports.changeReadyToStart = function(req, res) {
+  let value = req.query.value
+
+  if(typeof(value) === "boolean")
+    readyToStart = true
+
+  console.log('quizcontrol: ' + readyToStart);
+  res.json({'status': 'done'})
+}

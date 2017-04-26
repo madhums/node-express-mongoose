@@ -399,11 +399,9 @@ userMgt.getAllSubscribedID(function(err, ids){
 })
 */
 
-setInterval(()=>{
-  if(readyToStart) console.log('START!');
-  else console.log('interval log : ' + readyToStart);
-}, 1000)
-
+// database.ref("/staging/readyToStart").on('value',(readyToStartSnapshot)=>{
+//   if(readyToStartSnapshot.val()) console.log('ready: ' + readyToStartSnapshot.val());
+// })
 
 let quizPromise = Promise.resolve(prepareQuiz())
 

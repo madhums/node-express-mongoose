@@ -6,6 +6,14 @@
     <% include include/header.ejs %>
     <br />
 
+    readyToStart :
+    <% if(readyToStart) { %>
+      <font id="ready" color="#00ff00"><strong>YES</strong></font>
+    <% } else { %>
+      <font id="ready" color="red"><strong>NO</strong></font>
+    <% } %>
+    <br />
+
     Enter Status :
     <% if(enterTime) { %>
       <font color="#00ff00"><strong>ONLINE</strong></font>
@@ -43,13 +51,9 @@
       <font color="red"><strong>NULL</strong></font>
     <% } %>
 
-    <button onclick="startQuiz()"> Start Quiz </button>
-  </body>
+    <button onclick="changeReadyToStartAJAX()"> Start Quiz </button>
 
-  <script>
-    function startQuiz() {
-      readyToStart = true
-      console.log(readyToStart);
-    }
-  </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="/js/control.js"></script>
+  </body>
 </html>
