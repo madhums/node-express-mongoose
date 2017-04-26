@@ -8,6 +8,10 @@
       span.redText {
         color: red;
       }
+      .centerAll {
+        margin-left: auto;
+        margin-right: auto;
+      }
     </style>
   </head>
   <body>
@@ -17,14 +21,29 @@
       error: <%=error%>
 
     <% } else { %>
-      <div style="margin-left: auto; margin-right: auto; max-width: 850px">
+      <div style="margin-left: auto; margin-right: auto; max-width: 1280px">
         <h2 style="text-align: center;">Score Result</h2><br /><br />
-        <% for(let i = 0; i < result.length; i++) { %>
-          <div>
-            <%=i+1%>. <img style="vertical-align: middle" src="<%=result[i].profilePic%>" width="50" heigth="50">
-            <span><%=result[i].name%></span> ได้คะแนนรวม <span class="redText"><%=result[i].point%></span> คะแนน
-          </div>
-        <% } %>
+        <table class="centerAll">
+          <% for(let i = 0; i < result.length; i++) { %>
+            <tr>
+              <td>
+                <%=i+1%>.
+              </td>
+              <td>
+                <img style="vertical-align: middle" src="<%=result[i].profilePic%>" width="50" heigth="50">
+              </td>
+              <td>
+                <span><%=result[i].name%></span>
+              </td>
+              <td>
+                ได้คะแนนรวม
+              </td>
+              <td>
+                <span class="redText"><%=result[i].point%></span> คะแนน
+              </td>
+            </tr>
+          <% } %>
+        </table>
       </div>
 
     <% } %>
