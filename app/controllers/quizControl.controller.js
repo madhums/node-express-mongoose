@@ -13,7 +13,7 @@ exports.getControlInterface = function(req, res) {
 
 exports.changeReadyToStart = function(req, res) {
   let value = req.query.value
-  console.log(value);
+  console.log(value + ' type = ' + typeof(value));
   if(typeof(value) === "boolean")
     readyToStart = true
 
