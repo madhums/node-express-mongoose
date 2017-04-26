@@ -38,7 +38,7 @@ function updateStatus() {
 
 
   })
-  .fail(()=>{
+  .fail((error)=>{
     console.log(error);
   })
 
