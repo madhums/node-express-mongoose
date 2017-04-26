@@ -1,6 +1,14 @@
 <html>
   <head>
     <title>Quiz Result</title>
+    <style>
+      span {
+        font-size: 28px;
+      }
+      span.redText {
+        color: red;
+      }
+    </style>
   </head>
   <body>
     <% if(showMenu) { %> <% include include/header.ejs %> <% } %>
@@ -9,11 +17,12 @@
       error: <%=error%>
 
     <% } else { %>
-      <div style="margin-left: auto; margin-right: auto; max-width: 800px">
+      <div style="margin-left: auto; margin-right: auto; max-width: 850px">
         <h2 style="text-align: center;">Score Result</h2><br /><br />
         <% for(let i = 0; i < result.length; i++) { %>
           <div>
-            <%=i+1%>. <img style="vertical-align: middle" src="<%=result[i].profilePic%>" width="50" heigth="50"> คุณ <%=result[i].name%> ได้คะแนนรวม <%=result[i].point%> คะแนน
+            <%=i+1%>. <img style="vertical-align: middle" src="<%=result[i].profilePic%>" width="50" heigth="50">
+            <span><%=result[i].name%></span> ได้คะแนนรวม <span class="redText"><%=result[i].point%></span> คะแนน
           </div>
         <% } %>
       </div>
