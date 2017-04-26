@@ -8,11 +8,11 @@ function changeReadyToStartAJAX() {
     console.log(data);
     setTimeout(()=>{
       updateStatus()
-    }, 200)
+    }, 1000)
 
     setTimeout(()=>{
       updateStatus()
-    }, 1000)
+    }, 2000)
 
   })
   .fail(()=>{
