@@ -4,7 +4,7 @@ function changeReadyToStartAJAX() {
   })
   .done((data)=>{
     console.log(data);
-    $("#ready").html = "YES"
+    $("#ready").html("YES")
   })
   .fail(()=>{
     console.log(error);

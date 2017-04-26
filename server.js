@@ -403,12 +403,60 @@ userMgt.getAllSubscribedID(function(err, ids){
 //   if(readyToStartSnapshot.val()) console.log('ready: ' + readyToStartSnapshot.val());
 // })
 
-setInterval(()=>{
+let checkStart = setInterval(()=>{
   console.log('readyToStart : ' + readyToStart);
+  if(readyToStart) startQuiz()
 }, 1000)
 
-let quizPromise = Promise.resolve(prepareQuiz())
 
+function startQuiz() {
+
+  clearInterval(checkStart)
+  let quizPromise = Promise.resolve(prepareQuiz())
+
+  quizPromise.then((quiz) => {
+
+    ttq = quiz
+    quizReady = new Array(ttq.length).fill(false)
+    console.log(`quizready = ${quizReady}`);
+
+    userMgt.getAllID(function(err, list){
+      if(err) console.log(err);
+      else if(list) {
+        allIDs = list
+        enterTime = true
+
+        console.log('parti : ' + allIDs);
+
+        allIDs.map((id)=>{
+          messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
+          setTimeout(()=>{
+            messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
+          }, 500)
+        })
+
+        console.log('CLOCK STARTED');
+
+        setTimeout(()=>{
+          console.log('ALLID: ' + allIDs);
+          console.log('P_ID: ' + participants);
+          enterTime = false
+
+          if(participants.length > 0) startQuizTime(quiz, participants)
+          else {
+            allIDs.map((id)=>{
+              messengerBot.sendTextMessageTo('เสียใจ ไม่มีใครเล่นด้วยเลย :(', id)
+            })
+            console.log('no one want to play quiz');
+          }
+
+        }, 30000) //300000
+
+      }
+    })
+  })
+
+}
 
 //let quiz = nodeSchedule.scheduleJob('0 30 9 * * *', function(){
   quizPromise.then((quiz) => {
