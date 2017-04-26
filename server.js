@@ -401,6 +401,7 @@ userMgt.getAllSubscribedID(function(err, ids){
 
 setInterval(()=>{
   if(readyToStart) console.log('START!');
+  else console.log('interval log : ' + readyToStart);
 }, 1000)
 
 
