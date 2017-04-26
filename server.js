@@ -399,6 +399,10 @@ userMgt.getAllSubscribedID(function(err, ids){
 })
 */
 
+setInterval(()=>{
+  if(readyToStart) console.log('START!');
+}, 1000)
+
 
 let quizPromise = Promise.resolve(prepareQuiz())
 
@@ -422,7 +426,7 @@ let quizPromise = Promise.resolve(prepareQuiz())
           messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
           setTimeout(()=>{
             messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
-          }, 100)
+          }, 500)
         })
 
         console.log('CLOCK STARTED');
