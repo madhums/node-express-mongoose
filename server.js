@@ -403,6 +403,10 @@ userMgt.getAllSubscribedID(function(err, ids){
 //   if(readyToStartSnapshot.val()) console.log('ready: ' + readyToStartSnapshot.val());
 // })
 
+setInterval(()=>{
+  console.log('readyToStart : ' + readyToStart);
+}, 1000)
+
 let quizPromise = Promise.resolve(prepareQuiz())
 
 
