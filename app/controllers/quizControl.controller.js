@@ -19,3 +19,12 @@ exports.changeReadyToStart = function(req, res) {
   console.log('quizcontrol: ' + readyToStart);
   res.json({'status': 'done'})
 }
+
+exports.getAllStatus = function(req, res) {
+  res.json({
+    'enterTime' : enterTime,
+    'isQuizOnline': isQuizOnline,
+    'quizReady': quizReady,
+    'readyToStart': readyToStart
+  })
+}

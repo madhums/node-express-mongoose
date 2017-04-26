@@ -12,21 +12,22 @@
     <% } else { %>
       <font id="ready" color="red"><strong>NO</strong></font>
     <% } %>
-    <br />
+    __________ <button onclick="changeReadyToStartAJAX()"> Start Quiz </button>
+    <br /><br /><br />
 
     Enter Status :
     <% if(enterTime) { %>
-      <font color="#00ff00"><strong>ONLINE</strong></font>
+      <font id="enterStatus" color="#00ff00"><strong>ONLINE</strong></font>
     <% } else { %>
-      <font color="red"><strong>OFFLINE</strong></font>
+      <font id="enterStatus" color="red"><strong>OFFLINE</strong></font>
     <% } %>
     <br />
 
     Quiz Status :
     <% if(isQuizOnline) { %>
-      <font color="#00ff00"><strong>ONLINE</strong></font>
+      <font id="quizOnlineStatus" color="#00ff00"><strong>ONLINE</strong></font>
     <% } else { %>
-      <font color="red"><strong>OFFLINE</strong></font>
+      <font id="quizOnlineStatus" color="red"><strong>OFFLINE</strong></font>
     <% } %>
     <br />
     <br />
@@ -39,19 +40,19 @@
 
         <%=index+1%>.
         <% if(status) { %>
-          <font color="#00ff00"><strong>TRUE</strong></font>
+          <font id=`q${index+1}Status` color="#00ff00"><strong>TRUE</strong></font>
         <% } else { %>
-          <font color="red"><strong>false</strong></font>
+          <font id=`q${index+1}Status` color="red"><strong>false</strong></font>
         <% } %>
         <br />
 
       <% }) %>
 
     <% } else { %>
-      <font color="red"><strong>NULL</strong></font>
+      <font id="quizReadyStatus" color="red"><strong>NO</strong></font>
     <% } %>
 
-    <button onclick="changeReadyToStartAJAX()"> Start Quiz </button>
+
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script type="text/javascript" src="/js/control.js"></script>
