@@ -62,7 +62,7 @@ function updateStatus() {
     }
 
     //quizReadyStatus
-    if(quizReady) {
+    if(data.quizReady) {
       quizReady.forEach((quiz)=>{
         let elem = ""
 
