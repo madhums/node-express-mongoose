@@ -419,7 +419,7 @@ function startQuiz() {
     ttq = quiz
     quizReady = new Array(ttq.length).fill(false)
     console.log(`quizready = ${quizReady}`);
-
+    /*
     userMgt.getAllID(function(err, list){
       if(err) console.log(err);
       else if(list) {
@@ -454,6 +454,7 @@ function startQuiz() {
 
       }
     })
+    */
   })
 
 }
