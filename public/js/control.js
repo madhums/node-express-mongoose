@@ -63,11 +63,13 @@ function updateStatus() {
 
     //quizReadyStatus
     if(data.quizReady) {
-      quizReady.forEach((quiz)=>{
+
+      $("#quizReadyStatus").empty()
+      quizReady.forEach((quiz, index)=>{
         let elem = ""
 
-        if(quiz) elem = `<span id=\`q${index+1}Status\` style="color: #00ff00"><strong>false</strong></span>`
-        else elem = `<span id=\`q${index+1}Status\` style="color: #ff0000"><strong>false</strong></span>`
+        if(quiz) elem = `${index+1}. <span id=\`q${index+1}Status\` style="color: #00ff00"><strong>false</strong></span>`
+        else elem = `${index+1}. <span id=\`q${index+1}Status\` style="color: #ff0000"><strong>false</strong></span>`
 
         $("#quizReadyStatus").append(elem)
 
