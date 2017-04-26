@@ -26,19 +26,19 @@
         <table class="centerAll">
           <% for(let i = 0; i < result.length; i++) { %>
             <tr>
-              <td>
+              <td style="padding: 4px 5px 4px 5px">
                 <%=i+1%>.
               </td>
-              <td>
+              <td style="padding: 4px 5px 4px 5px">
                 <img style="vertical-align: middle" src="<%=result[i].profilePic%>" width="50" heigth="50">
               </td>
-              <td>
+              <td style="padding: 4px 12px 4px 12px">
                 <span><%=result[i].name%></span>
               </td>
-              <td>
+              <td style="padding: 4px 5px 4px 5px">
                 ได้คะแนนรวม
               </td>
-              <td>
+              <td style="padding: 4px 12px 4px 12px">
                 <span class="redText"><%=result[i].point%></span> คะแนน
               </td>
             </tr>
