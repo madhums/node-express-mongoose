@@ -1,5 +1,7 @@
 function changeReadyToStartAJAX() {
 
+  $("#prepareButton").attr('disabled', true)
+
   let request = $.getJSON('https://dsmbot.herokuapp.com/changeReadyToStart?value=true', () => {
     console.log('requested');
   })
@@ -78,6 +80,7 @@ function updateStatus() {
       $("#ready").html("RUNNING")
       $("#ready").css('color', '#00ff00')
       $("#controlEnterTime").attr('disabled', false)
+      $("#controlStartQuiz").append(`<button id="controlStartQuiz" onclick="startQuiz()"> Start Quiz </button>`)
     }
     else {
       $("#ready").html("")

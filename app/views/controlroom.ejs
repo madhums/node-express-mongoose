@@ -8,13 +8,13 @@
 
     <div style="text-align: center">
 
-      Quiz :
+      Prepare Quiz :
       <% if(readyToStart) { %>
         <font id="ready" color="#00ff00"><strong>RUNNING</strong></font>
       <% } else { %>
         <font id="ready" color="red"><strong>WAIT FOR ACTION</strong></font>
       <% } %>
-      <button onclick="changeReadyToStartAJAX()"> Prepare Quiz </button>
+      <button id="prepareButton" onclick="changeReadyToStartAJAX()"> Run </button>
       <br /><br /><br />
 
       Enter Status :
@@ -24,8 +24,9 @@
         <font id="enterStatus" color="red"><strong>CLOSE</strong></font>
       <% } %>
       <br /><br />
+
       <div id="enterTimeButton">
-        <% if(readyToStart) { %>
+        <% if(!readyToStart) { %>
           <button id="controlEnterTime" onclick="" disabled>Open Enter Session</button
         <% } else { %>
 
@@ -48,9 +49,9 @@
 
       <div id="startQuizButton">
         <% if(readyToStart && enterTime) { %>
-          <button id="controlStartQuiz" onclick="startQuiz()" disabled> Start Quiz </button
+          <button id="controlStartQuiz" onclick="startQuiz()" disabled> Start Quiz </button>
         <% } else if(readyToStart && !enterTime){ %>
-          <button id="controlStartQuiz" onclick="startQuiz()"> Start Quiz </button
+          <button id="controlStartQuiz" onclick="startQuiz()"> Start Quiz </button>
         <% } %>
       </div>
 
