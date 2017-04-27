@@ -68,7 +68,7 @@ function updateStatus() {
       $("#enterStatus").html("OPEN")
       $("#enterStatus").css('color', '#00ff00')
 
-      $("#controlEnterTime").attr('onclick', 'changeEnterStatus(close)')
+      $("#controlEnterTime").attr('onclick', 'changeEnterStatus(\'close\')')
       $("#controlEnterTime").html('Close Enter Session')
 
     }
@@ -77,7 +77,7 @@ function updateStatus() {
       $("#enterStatus").html("CLOSE")
       $("#enterStatus").css('color', 'red')
 
-      if(data.readyToStart) $("#controlEnterTime").attr('onclick', 'changeEnterStatus(open)')
+      if(data.readyToStart) $("#controlEnterTime").attr('onclick', 'changeEnterStatus(\'open\')')
       $("#controlEnterTime").html('Open Enter Session')
 
     }
