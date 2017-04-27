@@ -14,7 +14,10 @@
       <% } else { %>
         <font id="ready" color="red"><strong>WAIT FOR ACTION</strong></font>
       <% } %>
-      <button id="prepareButton" onclick="changeReadyToStartAJAX()"> Run </button>
+
+      <% if(!readyToStart) { %>
+        <button id="prepareButton" onclick="changeReadyToStartAJAX()"> Run </button>
+      <% } %>
       <br /><br /><br />
 
       Enter Status :
@@ -48,11 +51,9 @@
       <% } %>
 
       <div id="startQuizButton">
-        <% if(readyToStart && enterTime) { %>
-          <button id="controlStartQuiz" onclick="startQuiz()" disabled> Start Quiz </button>
-        <% } else if(readyToStart && !enterTime){ %>
+        <% if(openedAtLeastOneTime) { %>
           <button id="controlStartQuiz" onclick="startQuiz()"> Start Quiz </button>
-        <% } else if(!readyToStart) { %>
+        <% } else { %>
           <button id="controlStartQuiz" onclick="startQuiz()" disabled> Start Quiz </button>
         <% } %>
       </div>

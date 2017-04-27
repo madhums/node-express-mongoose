@@ -1,3 +1,5 @@
+let openedAtLeastOneTime = false
+
 function changeReadyToStartAJAX() {
 
   $("#prepareButton").attr('disabled', true)
@@ -29,6 +31,8 @@ function changeEnterStatus(param) {
     })
     .done((data)=>{
 
+      if(param == 'open') openedAtLeastOneTime = true
+
       console.log(data);
       setTimeout(()=>{
         updateStatus()
@@ -45,23 +49,28 @@ function changeEnterStatus(param) {
 
 
 function startQuiz() {
-  $("#controlStartQuiz").attr('disabled', true)
-  console.log('trigger startQuiz');
 
-  let request = $.getJSON('https://dsmbot.herokuapp.com/justStartTheQuiz', () => {
-    console.log('requested');
-  })
-  .done((data)=>{
+  if(openedAtLeastOneTime) {
 
-    console.log(data);
-    setTimeout(()=>{
-      updateStatus()
-    }, 700)
+    $("#controlStartQuiz").attr('disabled', true)
+    console.log('trigger startQuiz');
 
-  })
-  .fail(()=>{
-    console.log(error);
-  })
+    let request = $.getJSON('https://dsmbot.herokuapp.com/justStartTheQuiz', () => {
+      console.log('requested');
+    })
+    .done((data)=>{
+
+      console.log(data);
+      setTimeout(()=>{
+        updateStatus()
+      }, 700)
+
+    })
+    .fail(()=>{
+      console.log(error);
+    })
+
+  }
 
 }
 
@@ -80,6 +89,7 @@ function updateStatus() {
       $("#ready").html("RUNNING")
       $("#ready").css('color', '#00ff00')
       $("#controlEnterTime").attr('disabled', false)
+      $("#prepareButton").remove()
     }
     else {
       $("#ready").html("")
@@ -107,7 +117,8 @@ function updateStatus() {
       if(data.readyToStart) $("#controlEnterTime").attr('onclick', 'changeEnterStatus(\'open\')')
       $("#controlEnterTime").html('Open Enter Session')
 
-      $("#controlStartQuiz").attr('disabled', false)
+      if(openedAtLeastOneTime)
+        $("#controlStartQuiz").attr('disabled', false)
 
     }
 
@@ -115,6 +126,8 @@ function updateStatus() {
     if(data.isQuizOnline) {
       $("#quizOnlineStatus").html("ONLINE")
       $("#quizOnlineStatus").css('color', '#00ff00')
+
+      $("#controlStartQuiz").attr('disabled', true)
     }
     else {
       $("#quizOnlineStatus").html("OFFLINE")
