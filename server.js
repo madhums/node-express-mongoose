@@ -406,7 +406,7 @@ userMgt.getAllSubscribedID(function(err, ids){
 let checkStart = setInterval(()=>{
   console.log('readyToStart : ' + readyToStart);
   if(readyToStart) startQuiz()
-}, 1000)
+}, 3000)
 
 
 function startQuiz() {
@@ -434,7 +434,7 @@ function startQuiz() {
           if(enterTime) {
           //------ enterTime = true
             clearInterval(checkEnterTime)
-            
+
             console.log('parti : ' + allIDs);
 
             allIDs.map((id)=>{
@@ -446,25 +446,32 @@ function startQuiz() {
 
             console.log('CLOCK STARTED');
 
-            setTimeout(()=>{
-              console.log('ALLID: ' + allIDs);
-              console.log('P_ID: ' + participants);
-              enterTime = false
+            let checkStartTheQuiz = setInterval(()=>{
 
-              if(participants.length > 0) startQuizTime(quiz, participants)
-              else {
-                allIDs.map((id)=>{
-                  messengerBot.sendTextMessageTo('เสียใจ ไม่มีใครเล่นด้วยเลย :(', id)
-                })
-                console.log('no one want to play quiz');
+              //setTimeout(()=>{
+              if(isQuizOnline) {
+
+                console.log('ALLID: ' + allIDs);
+                console.log('P_ID: ' + participants);
+                enterTime = false
+
+                if(participants.length > 0) startQuizTime(quiz, participants)
+                else {
+                  allIDs.map((id)=>{
+                    messengerBot.sendTextMessageTo('เสียใจ ไม่มีใครเล่นด้วยเลย :(', id)
+                  })
+                  console.log('no one want to play quiz');
+                }
+
               }
+              //}, 30000) //300000
 
-            }, 30000) //300000
+            }, 5000)
 
           //------end enterTime = true
           }
 
-        }, 1000)
+        }, 2000)
 
 
 
