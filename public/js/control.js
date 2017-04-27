@@ -54,12 +54,17 @@ function updateStatus() {
     if(data.readyToStart) {
       $("#ready").html("RUNNING")
       $("#ready").css('color', '#00ff00')
-      $("#changeEnterButton").prop('disabled', false)
+
+      let val = (data.enterTime) ? 'close' : 'open'
+      let enterTimeButtonElem = `<button id="controlEnterTime" onclick="changeEnterStatus(\`${val}\`)"`
+      $("#enterTimeButton").empty()
+      $("#enterTimeButton").append(enterTimeButtonElem)
+      
     }
     else {
       $("#ready").html("")
       $("#ready").css('color', 'red')
-      $("#changeEnterButton").prop('disabled', true)
+      $("#controlEnterTime").prop('disabled', true)
     }
 
     //enter status
