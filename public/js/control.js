@@ -107,6 +107,7 @@ function updateStatus() {
       $("#enterStatus").html("OPEN")
       $("#enterStatus").css('color', '#00ff00')
 
+      $("#controlEnterTime").attr('disabled', false)
       $("#controlEnterTime").attr('onclick', 'changeEnterStatus(\'close\')')
       $("#controlEnterTime").html('Close Enter Session')
 
