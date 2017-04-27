@@ -1,8 +1,6 @@
 <html>
   <head>
     <title>Quiz Control Room</title>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="/js/control.js"></script>
   </head>
   <body>
     <% include include/header.ejs %>
@@ -53,9 +51,11 @@
       <% } %>
 
       <div id="startQuizButton">
-        <% if(openedAtLeastOneTime) { %>
+        <% if(readyToStart && enterTime) { %>
+          <button id="controlStartQuiz" onclick="startQuiz()" disabled> Start Quiz </button>
+        <% } else if(readyToStart && !enterTime){ %>
           <button id="controlStartQuiz" onclick="startQuiz()"> Start Quiz </button>
-        <% } else { %>
+        <% } else if(!readyToStart) { %>
           <button id="controlStartQuiz" onclick="startQuiz()" disabled> Start Quiz </button>
         <% } %>
       </div>
@@ -85,5 +85,9 @@
       <font id="quizReadyStatus" color="red"><strong>NO</strong></font>
     <% } %>
 
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="/js/control.js"></script>
   </body>
 </html>

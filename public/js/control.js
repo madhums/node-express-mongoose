@@ -1,4 +1,4 @@
-let openedAtLeastOneTime = false
+var openedAtLeastOneTime = false
 
 function changeReadyToStartAJAX() {
 
