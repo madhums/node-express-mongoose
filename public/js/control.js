@@ -1,4 +1,3 @@
-console.log('opn : ' + openedAtLeastOneTime);
 
 function changeReadyToStartAJAX() {
 
@@ -30,8 +29,6 @@ function changeEnterStatus(param) {
       console.log('requested');
     })
     .done((data)=>{
-
-      console.log('opn in enter: ' + openedAtLeastOneTime);
 
       console.log(data);
       setTimeout(()=>{
