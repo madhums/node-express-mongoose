@@ -19,6 +19,7 @@ function changeReadyToStartAJAX() {
 
 function changeEnterStatus(param) {
 
+  console.log('trigger changeEnterStatus : ' + param);
   if(param != '' && (param == 'open' || param == 'close')) {
 
     let request = $.getJSON('https://dsmbot.herokuapp.com/changeEnterStatus?value='+param, () => {
