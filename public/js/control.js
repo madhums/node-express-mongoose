@@ -72,11 +72,13 @@ function updateStatus() {
       $("#enterStatus").html("OPEN")
       $("#enterStatus").css('color', '#00ff00')
       $("#changeEnterButton").attr('onclick', 'changeEnterStatus(close)')
+      $("#changeEnterButton").html('Close Enter Session')
     }
     else {
       $("#enterStatus").html("CLOSE")
       $("#enterStatus").css('color', 'red')
       $("#changeEnterButton").attr('onclick', 'changeEnterStatus(open)')
+      $("#changeEnterButton").html('Open Enter Session')
     }
 
     //isQuizOnline

@@ -29,7 +29,7 @@ exports.changeEnterStatus = function(req, res) {
   else if(value == 'close')
     enterTime = false
 
-  console.log('entertime: ' + entertime);
+  console.log('entertime: ' + enterTime);
   res.json({'status': 'done'})
 }
 
