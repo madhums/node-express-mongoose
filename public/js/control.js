@@ -18,7 +18,7 @@ function changeReadyToStartAJAX() {
 }
 
 function changeEnterStatus(param) {
-
+  $("#controlEnterTime").attr('disabled', true)
   console.log('trigger changeEnterStatus : ' + param);
   if(param != '' && (param == 'open' || param == 'close')) {
 
@@ -54,31 +54,32 @@ function updateStatus() {
     if(data.readyToStart) {
       $("#ready").html("RUNNING")
       $("#ready").css('color', '#00ff00')
-
-      let val = (data.enterTime) ? 'close' : 'open'
-      let enterTimeButtonElem = `<button id="controlEnterTime" onclick="changeEnterStatus(\`${val}\`)">Open Enter Session</button>`
-      $("#enterTimeButton").empty()
-      $("#enterTimeButton").append(enterTimeButtonElem)
-
+      $("#controlEnterTime").attr('disabled', false)
     }
     else {
       $("#ready").html("")
       $("#ready").css('color', 'red')
-      $("#controlEnterTime").prop('disabled', true)
+      $("#controlEnterTime").attr('disabled', true)
     }
 
     //enter status
     if(data.enterTime) {
+
       $("#enterStatus").html("OPEN")
       $("#enterStatus").css('color', '#00ff00')
-      $("#changeEnterButton").attr('onclick', 'changeEnterStatus(close)')
-      $("#changeEnterButton").html('Close Enter Session')
+
+      $("#controlEnterTime").attr('onclick', 'changeEnterStatus(close)')
+      $("#controlEnterTime").html('Close Enter Session')
+
     }
     else {
+
       $("#enterStatus").html("CLOSE")
       $("#enterStatus").css('color', 'red')
-      $("#changeEnterButton").attr('onclick', 'changeEnterStatus(open)')
-      $("#changeEnterButton").html('Open Enter Session')
+
+      if(enterTime) $("#controlEnterTime").attr('onclick', 'changeEnterStatus(open)')
+      $("#controlEnterTime").html('Open Enter Session')
+
     }
 
     //isQuizOnline
