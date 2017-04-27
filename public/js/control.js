@@ -71,9 +71,13 @@ function startQuiz() {
     })
 
   }
+  else alert('คุณยังไม่ได้เปิดรับผู้ร่วมกิจกรรมเลยสักครั้ง')
 
 }
 
+function qActivate(number) {
+  
+}
 
 function updateStatus() {
 

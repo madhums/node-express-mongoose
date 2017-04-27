@@ -10,9 +10,9 @@
 
       Prepare Quiz :
       <% if(readyToStart) { %>
-        <font id="ready" color="#00ff00"><strong>RUNNING</strong></font>
+        <font id="ready" color="#00ff00">RUNNING</font>
       <% } else { %>
-        <font id="ready" color="red"><strong>WAIT FOR ACTION</strong></font>
+        <font id="ready" color="red">WAIT FOR ACTION</font>
       <% } %>
 
       <% if(!readyToStart) { %>
@@ -22,9 +22,9 @@
 
       Enter Status :
       <% if(enterTime) { %>
-        <font id="enterStatus" color="#00ff00"><strong>OPEN</strong></font>
+        <font id="enterStatus" color="#00ff00">OPEN</font>
       <% } else { %>
-        <font id="enterStatus" color="red"><strong>CLOSE</strong></font>
+        <font id="enterStatus" color="red">CLOSE</font>
       <% } %>
       <br /><br />
 
@@ -34,9 +34,15 @@
         <% } else { %>
 
           <% if(enterTime) { %>
-            <button id="controlEnterTime" onclick="changeEnterStatus('close')">Close Enter Session</button
+            <button id="controlEnterTime" onclick="changeEnterStatus('close')">Close Enter Session</button>
           <% } else { %>
-            <button id="controlEnterTime" onclick="changeEnterStatus('open')">Open Enter Session</button
+
+            <% if(isQuizOnline) { %>
+              <button id="controlEnterTime" onclick="changeEnterStatus('open')" disabled>Open Enter Session</button>
+            <% } else { %>
+              <button id="controlEnterTime" onclick="changeEnterStatus('open')">Open Enter Session</button>
+            <% } %>
+
           <% } %>
         <% } %>
       </div>
@@ -45,9 +51,9 @@
 
       Quiz Status :
       <% if(isQuizOnline) { %>
-        <font id="quizOnlineStatus" color="#00ff00"><strong>ONLINE</strong></font>
+        <font id="quizOnlineStatus" color="#00ff00">ONLINE</font>
       <% } else { %>
-        <font id="quizOnlineStatus" color="red"><strong>OFFLINE</strong></font>
+        <font id="quizOnlineStatus" color="red">OFFLINE</font>
       <% } %>
 
       <div id="startQuizButton">
@@ -56,6 +62,8 @@
         <% } else if(readyToStart && !enterTime){ %>
           <button id="controlStartQuiz" onclick="startQuiz()"> Start Quiz </button>
         <% } else if(!readyToStart) { %>
+          <button id="controlStartQuiz" onclick="startQuiz()" disabled> Start Quiz </button>
+        <% } else if(isQuizEnd) { %>
           <button id="controlStartQuiz" onclick="startQuiz()" disabled> Start Quiz </button>
         <% } %>
       </div>
@@ -75,7 +83,8 @@
         <% if(status) { %>
           <span id=`q${index+1}Status` style="color: #00ff00"><strong>TRUE</strong></span>
         <% } else { %>
-          <span id=`q${index+1}Status` style="color: #ff0000"><strong>false</strong></span>
+          <span id=`q${index+1}Status` style="color: #ff0000"><strong>false</strong> ___ </span>
+          <button id=`q${index+1}Button` onclick=`qActivate(${index+1})`> Shoot </button>
         <% } %>
         <br />
 

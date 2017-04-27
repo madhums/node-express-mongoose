@@ -28,7 +28,7 @@ enterTime = false
 isQuizOnline = false
 readyToStart = false
 quizReady = null
-
+isQuizEnd = false
 
 let correctUser = []
 
@@ -350,6 +350,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
     setTimeout( function() {
       console.log('end quiz');
       isQuizOnline = false
+      isQuizEnd = true
       database.ref(`/quiz/${currentQuiz}/correctUsers`).set(correctUser)
 
       ids.map((id)=>{
