@@ -56,7 +56,7 @@ function updateStatus() {
       $("#ready").css('color', '#00ff00')
 
       let val = (data.enterTime) ? 'close' : 'open'
-      let enterTimeButtonElem = `<button id="controlEnterTime" onclick="changeEnterStatus(\`${val}\`)"></button>`
+      let enterTimeButtonElem = `<button id="controlEnterTime" onclick="changeEnterStatus(\`${val}\`)">Open Enter Session</button>`
       $("#enterTimeButton").empty()
       $("#enterTimeButton").append(enterTimeButtonElem)
 
