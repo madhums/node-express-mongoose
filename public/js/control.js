@@ -41,6 +41,29 @@ function changeEnterStatus(param) {
 
 }
 
+
+function startQuiz() {
+  $("#controlStartQuiz").attr('disabled', true)
+  console.log('trigger startQuiz');
+
+  let request = $.getJSON('https://dsmbot.herokuapp.com/justStartTheQuiz', () => {
+    console.log('requested');
+  })
+  .done((data)=>{
+
+    console.log(data);
+    setTimeout(()=>{
+      updateStatus()
+    }, 700)
+
+  })
+  .fail(()=>{
+    console.log(error);
+  })
+
+}
+
+
 function updateStatus() {
 
   let request = $.getJSON('https://dsmbot.herokuapp.com/getAllStatus', () => {
@@ -71,6 +94,8 @@ function updateStatus() {
       $("#controlEnterTime").attr('onclick', 'changeEnterStatus(\'close\')')
       $("#controlEnterTime").html('Close Enter Session')
 
+      $("#controlStartQuiz").attr('disabled', true)
+
     }
     else {
 
@@ -79,6 +104,8 @@ function updateStatus() {
 
       if(data.readyToStart) $("#controlEnterTime").attr('onclick', 'changeEnterStatus(\'open\')')
       $("#controlEnterTime").html('Open Enter Session')
+
+      $("#controlStartQuiz").attr('disabled', false)
 
     }
 

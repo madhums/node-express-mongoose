@@ -33,6 +33,13 @@ exports.changeEnterStatus = function(req, res) {
   res.json({'status': 'done'})
 }
 
+exports.startQuiz = function(req, res) {
+
+  isQuizOnline = true
+  console.log('isQuizOnline: ' + isQuizOnline);
+  res.json({'status': 'done'})
+}
+
 exports.getAllStatus = function(req, res) {
   res.json({
     'enterTime' : enterTime,

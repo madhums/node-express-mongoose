@@ -14,18 +14,29 @@
       <% } else { %>
         <font id="ready" color="red"><strong>WAIT FOR ACTION</strong></font>
       <% } %>
-      <button onclick="changeReadyToStartAJAX()"> Start Quiz </button>
+      <button onclick="changeReadyToStartAJAX()"> Prepare Quiz </button>
       <br /><br /><br />
 
       Enter Status :
       <% if(enterTime) { %>
-        <font id="enterStatus" color="#00ff00"><strong>ONLINE</strong></font>
+        <font id="enterStatus" color="#00ff00"><strong>OPEN</strong></font>
       <% } else { %>
-        <font id="enterStatus" color="red"><strong>OFFLINE</strong></font>
+        <font id="enterStatus" color="red"><strong>CLOSE</strong></font>
       <% } %>
+      <br /><br />
       <div id="enterTimeButton">
-        <button id="controlEnterTime" onclick="" disabled>Open Enter Session</button
+        <% if(readyToStart) { %>
+          <button id="controlEnterTime" onclick="" disabled>Open Enter Session</button
+        <% } else { %>
+
+          <% if(enterTime) { %>
+            <button id="controlEnterTime" onclick="changeEnterStatus(\'close\')">Close Enter Session</button
+          <% } else { %>
+            <button id="controlEnterTime" onclick="changeEnterStatus(\'open\')">Open Enter Session</button
+          <% } %>
+        <% } %>
       </div>
+
       <br /><br />
 
       Quiz Status :
@@ -34,6 +45,14 @@
       <% } else { %>
         <font id="quizOnlineStatus" color="red"><strong>OFFLINE</strong></font>
       <% } %>
+
+      <div id="startQuizButton">
+        <% if(readyToStart && enterTime) { %>
+          <button id="controlStartQuiz" onclick="startQuiz()" disabled> Start Quiz </button
+        <% } else if(readyToStart && !enterTime){ %>
+          <button id="controlStartQuiz" onclick="startQuiz()"> Start Quiz </button
+        <% } %>
+      </div>
 
     </div>
 
