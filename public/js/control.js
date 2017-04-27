@@ -1,4 +1,3 @@
-var openedAtLeastOneTime = false
 console.log('opn : ' + openedAtLeastOneTime);
 
 function changeReadyToStartAJAX() {
@@ -32,7 +31,6 @@ function changeEnterStatus(param) {
     })
     .done((data)=>{
 
-      if(param == 'open') openedAtLeastOneTime = true
       console.log('opn in enter: ' + openedAtLeastOneTime);
 
       console.log(data);

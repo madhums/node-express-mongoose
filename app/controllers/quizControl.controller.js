@@ -7,7 +7,8 @@ exports.getControlInterface = function(req, res) {
 
   res.render('controlroom', {
     enterTime: enterTime,
-    isQuizOnline: isQuizOnline
+    isQuizOnline: isQuizOnline,
+    openedAtLeastOneTime: openedAtLeastOneTime
   })
 }
 
@@ -27,7 +28,7 @@ exports.changeEnterStatus = function(req, res) {
   if(value == 'open') {
     enterTime = true
     openedAtLeastOneTime = true
-  }    
+  }
   else if(value == 'close')
     enterTime = false
 
@@ -47,6 +48,7 @@ exports.getAllStatus = function(req, res) {
     'enterTime' : enterTime,
     'isQuizOnline': isQuizOnline,
     'quizReady': quizReady,
-    'readyToStart': readyToStart
+    'readyToStart': readyToStart,
+    'openedAtLeastOneTime': openedAtLeastOneTime
   })
 }
