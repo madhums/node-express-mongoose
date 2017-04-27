@@ -47,8 +47,6 @@ function changeEnterStatus(param) {
 
 function startQuiz() {
 
-  if(openedAtLeastOneTime) {
-
     $("#controlStartQuiz").attr('disabled', true)
     console.log('trigger startQuiz');
 
@@ -66,9 +64,6 @@ function startQuiz() {
     .fail(()=>{
       console.log(error);
     })
-
-  }
-  else alert('คุณยังไม่ได้เปิดรับผู้ร่วมกิจกรรมเลยสักครั้ง')
 
 }
 
