@@ -457,10 +457,12 @@ function startQuiz() {
 
                 if(participants.length > 0) startQuizTime(quiz, participants)
                 else {
+
                   allIDs.map((id)=>{
                     messengerBot.sendTextMessageTo('เสียใจ ไม่มีใครเล่นด้วยเลย :(', id)
                   })
                   console.log('no one want to play quiz');
+
                 }
 
               }
