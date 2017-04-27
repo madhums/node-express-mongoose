@@ -52,6 +52,8 @@
           <button id="controlStartQuiz" onclick="startQuiz()" disabled> Start Quiz </button>
         <% } else if(readyToStart && !enterTime){ %>
           <button id="controlStartQuiz" onclick="startQuiz()"> Start Quiz </button>
+        <% } else if(!readyToStart) { %>
+          <button id="controlStartQuiz" onclick="startQuiz()" disabled> Start Quiz </button>
         <% } %>
       </div>
 

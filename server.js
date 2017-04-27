@@ -448,6 +448,7 @@ function startQuiz() {
 
             let checkStartTheQuiz = setInterval(()=>{
 
+              clearInterval(checkStartTheQuiz)
               console.log('now opening for enter');
               //setTimeout(()=>{
               if(isQuizOnline) {

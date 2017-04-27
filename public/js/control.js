@@ -80,7 +80,6 @@ function updateStatus() {
       $("#ready").html("RUNNING")
       $("#ready").css('color', '#00ff00')
       $("#controlEnterTime").attr('disabled', false)
-      $("#startQuizButton").append(`<button id="controlStartQuiz" onclick="startQuiz()"> Start Quiz </button>`)
     }
     else {
       $("#ready").html("")
