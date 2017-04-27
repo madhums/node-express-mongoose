@@ -448,11 +448,11 @@ function startQuiz() {
 
             let checkStartTheQuiz = setInterval(()=>{
 
-              clearInterval(checkStartTheQuiz)
               console.log('now opening for enter');
               //setTimeout(()=>{
               if(isQuizOnline) {
 
+                clearInterval(checkStartTheQuiz)
                 console.log('ALLID: ' + allIDs);
                 console.log('P_ID: ' + participants);
                 enterTime = false
