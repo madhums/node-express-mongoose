@@ -76,7 +76,7 @@ function startQuiz() {
 }
 
 function qActivate(number) {
-  
+
 }
 
 function updateStatus() {
@@ -121,6 +121,7 @@ function updateStatus() {
       if(data.readyToStart) $("#controlEnterTime").attr('onclick', 'changeEnterStatus(\'open\')')
       $("#controlEnterTime").html('Open Enter Session')
 
+      //console.log('oplonw : ' + openedAtLeastOneTime);
       if(openedAtLeastOneTime)
         $("#controlStartQuiz").attr('disabled', false)
 
