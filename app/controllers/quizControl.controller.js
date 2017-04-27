@@ -24,8 +24,10 @@ exports.changeEnterStatus = function(req, res) {
 
   let value = req.query.value
 
-  if(value == 'open')
+  if(value == 'open') {
     enterTime = true
+    openedAtLeastOneTime = true
+  }    
   else if(value == 'close')
     enterTime = false
 
