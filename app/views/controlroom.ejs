@@ -20,10 +20,10 @@
       Enter Status :
       <% if(enterTime) { %>
         <font id="enterStatus" color="#00ff00"><strong>ONLINE</strong></font>
-        <button id="changeEnterButton" <% (readyToStart) ? 'disabled' : '' %> onclick="changeEnterStatus(close)" >Close Enter Session</button>
+        <button id="changeEnterButton" onclick="changeEnterStatus(close)" <% (!readyToStart) ? 'disabled' : '' %>>Close Enter Session</button>
       <% } else { %>
         <font id="enterStatus" color="red"><strong>OFFLINE</strong></font>
-        <button id="changeEnterButton" <% (readyToStart) ? 'disabled' : '' %> onclick="changeEnterStatus(open)" >Open Enter Session</button>
+        <button id="changeEnterButton" onclick="changeEnterStatus(open)" <% (!readyToStart) ? 'disabled' : '' %>>Open Enter Session</button>
       <% } %>
       <br /><br />
 
