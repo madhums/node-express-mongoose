@@ -123,7 +123,7 @@ function updateStatus() {
       $("#controlEnterTime").html('Open Enter Session')
 
       //console.log('oplonw : ' + openedAtLeastOneTime);
-      if(openedAtLeastOneTime)
+      if(data.openedAtLeastOneTime)
         $("#controlStartQuiz").attr('disabled', false)
 
     }
