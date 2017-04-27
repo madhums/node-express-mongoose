@@ -20,6 +20,19 @@ exports.changeReadyToStart = function(req, res) {
   res.json({'status': 'done'})
 }
 
+exports.changeEnterStatus = function(req, res) {
+
+  let value = req.query.value
+
+  if(value == 'open')
+    enterTime = true
+  else if(value == 'close')
+    enterTime = false
+
+  console.log('entertime: ' + entertime);
+  res.json({'status': 'done'})
+}
+
 exports.getAllStatus = function(req, res) {
   res.json({
     'enterTime' : enterTime,

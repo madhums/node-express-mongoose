@@ -20,11 +20,14 @@ module.exports = function(app, express) {
 
   app.get("/", index.getIndexPage)
   app.get("/policy", index.getPolicyPage)
-  app.get("/getAllStatus", quizControl.getAllStatus)
-  app.get("/changeReadyToStart", quizControl.changeReadyToStart)
-  app.get("/controlRoom", quizControl.getControlInterface)
   app.get("/result/", quizResult.getResult)
   app.get("/addquiz", quizInput.addQuiz)
+
+
+  app.get("/getAllStatus", quizControl.getAllStatus)
+  app.get("/changeReadyToStart", quizControl.changeReadyToStart)
+  app.get("/changeEnterStatus", quizControl.changeEnterStatus)
+  app.get("/controlRoom", quizControl.getControlInterface)
 
   app.post("/processQuizForm", jsonParser, urlencodedParser, quizInput.processForm)
 

@@ -17,6 +17,28 @@ function changeReadyToStartAJAX() {
 
 }
 
+function changeEnterStatus(param) {
+
+  if(param != '' && (param == 'open' || param == 'close')) {
+
+    let request = $.getJSON('https://dsmbot.herokuapp.com/changeEnterStatus?value='+param, () => {
+      console.log('requested');
+    })
+    .done((data)=>{
+
+      console.log(data);
+      setTimeout(()=>{
+        updateStatus()
+      }, 700)
+
+    })
+    .fail(()=>{
+      console.log(error);
+    })
+
+  }
+
+}
 
 function updateStatus() {
 
@@ -29,22 +51,26 @@ function updateStatus() {
 
     // ready
     if(data.readyToStart) {
-      $("#ready").html("YES")
+      $("#ready").html("RUNNING")
       $("#ready").css('color', '#00ff00')
+      $("#changeEnterButton").prop('disabled', false)
     }
     else {
-      $("#ready").html("NO")
+      $("#ready").html("")
       $("#ready").css('color', 'red')
+      $("#changeEnterButton").prop('disabled', true)
     }
 
     //enter status
     if(data.enterTime) {
       $("#enterStatus").html("OPEN")
       $("#enterStatus").css('color', '#00ff00')
+      $("#changeEnterButton").attr('onclick', 'changeEnterStatus(close)')
     }
     else {
       $("#enterStatus").html("CLOSE")
       $("#enterStatus").css('color', 'red')
+      $("#changeEnterButton").attr('onclick', 'changeEnterStatus(open)')
     }
 
     //isQuizOnline

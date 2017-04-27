@@ -6,29 +6,36 @@
     <% include include/header.ejs %>
     <br />
 
-    readyToStart :
-    <% if(readyToStart) { %>
-      <font id="ready" color="#00ff00"><strong>YES</strong></font>
-    <% } else { %>
-      <font id="ready" color="red"><strong>NO</strong></font>
-    <% } %>
-    __________ <button onclick="changeReadyToStartAJAX()"> Start Quiz </button>
-    <br /><br /><br />
+    <div style="text-align: center">
 
-    Enter Status :
-    <% if(enterTime) { %>
-      <font id="enterStatus" color="#00ff00"><strong>ONLINE</strong></font>
-    <% } else { %>
-      <font id="enterStatus" color="red"><strong>OFFLINE</strong></font>
-    <% } %>
-    <br />
+      Quiz :
+      <% if(readyToStart) { %>
+        <font id="ready" color="#00ff00"><strong>RUNNING</strong></font>
+      <% } else { %>
+        <font id="ready" color="red"><strong>WAIT FOR ACTION</strong></font>
+      <% } %>
+      __________ <button onclick="changeReadyToStartAJAX()"> Start Quiz </button>
+      <br /><br /><br />
 
-    Quiz Status :
-    <% if(isQuizOnline) { %>
-      <font id="quizOnlineStatus" color="#00ff00"><strong>ONLINE</strong></font>
-    <% } else { %>
-      <font id="quizOnlineStatus" color="red"><strong>OFFLINE</strong></font>
-    <% } %>
+      Enter Status :
+      <% if(enterTime) { %>
+        <font id="enterStatus" color="#00ff00"><strong>ONLINE</strong></font>
+        <button id="changeEnterButton" <% (readyToStart) ? disabled : '' %> onclick="changeEnterStatus(close)" >Close Enter Session</button>
+      <% } else { %>
+        <font id="enterStatus" color="red"><strong>OFFLINE</strong></font>
+        <button id="changeEnterButton" <% (readyToStart) ? disabled : '' %> onclick="changeEnterStatus(open)" >Open Enter Session</button>
+      <% } %>
+      <br /><br />
+
+      Quiz Status :
+      <% if(isQuizOnline) { %>
+        <font id="quizOnlineStatus" color="#00ff00"><strong>ONLINE</strong></font>
+      <% } else { %>
+        <font id="quizOnlineStatus" color="red"><strong>OFFLINE</strong></font>
+      <% } %>
+
+    </div>
+
     <br />
     <br />
 
