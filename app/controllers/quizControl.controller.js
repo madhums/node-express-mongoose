@@ -45,7 +45,7 @@ exports.startQuiz = function(req, res) {
 
 exports.activateQ = function(req, res) {
 
-  let target = req.query.number
+  let target = req.query.qnumber
 
   if(target && (target >= 0 && target <= quizReady.length)) {
 
@@ -54,7 +54,7 @@ exports.activateQ = function(req, res) {
     res.json({'status': 'done'})
 
   }
-  
+
 }
 
 exports.getAllStatus = function(req, res) {
