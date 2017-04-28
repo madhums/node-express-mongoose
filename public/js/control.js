@@ -70,8 +70,8 @@ function startQuiz() {
 function qActivate(number) {
   console.log(`js number = ${number}`);
   let target = parseInt(number)
-  $(`q${target}Button`).attr('disabled', true)
-  $(`q${target}Button`).html('pressed')
+  $(`#q${target}Button`).attr('disabled', true)
+  $(`#q${target}Button`).html('pressed')
   console.log(`js target = ${target}`);
   let request = $.getJSON('https://dsmbot.herokuapp.com/activateQ?qnumber='+target, () => {
     console.log('requested');
@@ -161,12 +161,12 @@ function updateStatus() {
         let elem = ""
 
         if(quiz) {
-          elem = `${index+1}. <span id=\`q${index+1}Status\` style="color: #00ff00"><strong>ACTIVATED</strong></span><br>`
-          elem += `<button id=\`q${index+1}Button\` onclick="" disabled> activated </button>`
+          elem = `${index+1}. <span id=\`q${index+1}Status\` style="color: #00ff00"><strong>ACTIVATED</strong></span> `
+          elem += `<button id=\`q${index+1}Button\` onclick="" disabled> activated </button><br>`
         }
         else {
-          elem = `${index+1}. <span id=\`q${index+1}Status\` style="color: #ff0000"><strong>false</strong></span><br>`
-          elem += `<button id=\`q${index+1}Button\` onclick=\`qActivate(${index+1})\`> Activate </button>`
+          elem = `${index+1}. <span id=\`q${index+1}Status\` style="color: #ff0000"><strong>false</strong></span> `
+          elem += `<button id=\`q${index+1}Button\` onclick=\`qActivate(${index+1})\`> Activate </button><br>`
         }
 
         $("#quizReadyStatus").append(elem)
