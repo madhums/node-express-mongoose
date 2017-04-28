@@ -56,6 +56,7 @@ exports.getAllQuestions = function(req, res) {
 
   })
   .catch((error)=>{
+    console.log(`there's an error : ` + error);
     res.json({
       'error': error,
       'questions': questions
