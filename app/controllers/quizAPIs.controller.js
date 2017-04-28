@@ -36,6 +36,7 @@ exports.getAllQuestions = function(req, res) {
     questions.forEach((quiz)=>{
 
       let correctedUsersInfo = []
+      console.log('b4 cu foreach');
       quiz.correctedUsers.forEach((user)=>{
 
         correctedUsersInfo.push({
@@ -46,7 +47,7 @@ exports.getAllQuestions = function(req, res) {
         })
 
       })
-
+      console.log('b4 call q.cu');
       quiz.correctedUsers = correctedUsersInfo
       console.log(correctedUsers);
     })
