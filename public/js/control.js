@@ -11,7 +11,7 @@ function changeReadyToStartAJAX() {
     console.log(data);
     setTimeout(()=>{
       updateStatus()
-    }, 1000)
+    }, 1500)
 
   })
   .fail(()=>{
