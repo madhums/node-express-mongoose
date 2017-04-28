@@ -23,7 +23,7 @@ exports.getAllUsersInfo = function(req, res) {
     })
 
   })
-  catch((error)=>{
+  .catch((error)=>{
 
     console.log(`there's an error [getAllUsersInfo] : ${error}`);
     res.json({
@@ -42,23 +42,32 @@ exports.getAllParticipantsInfo = function(req, res) {
   database.ref('/participants').once('value')
   .then((snapshot) => {
 
-    let participants = snapshot.val()
-    for(let key in participants) {
+    participantsInfo = snapshot.val()
+    return database.ref('/users').once('value')
+
+  })
+  .then((snapshot) => {
+
+    let users = snapshot.val()
+    let tempParticipantsInfo = participantsInfo
+    participantsInfo = []
+
+    for(let key in tempParticipantsInfo) {
       participantsInfo.push({
         'id': key,
-        'name': participants[key].firstName + ' ' + participants[key].lastName,
-        'gender': participants[key].gender,
-        'profilePic': participants[key].profilePic
+        'name': users[key].firstName + ' ' + users[key].lastName,
+        'gender': users[key].gender,
+        'profilePic': users[key].profilePic
       })
     }
 
     res.json({
       'error': null,
-      'participantsInfo': participantsInfo
+      'usersInfo': participantsInfo
     })
 
   })
-  catch((error)=>{
+  .catch((error)=>{
 
     console.log(`there's an error [getAllUsersInfo] : ${error}`);
     res.json({
