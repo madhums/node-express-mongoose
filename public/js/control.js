@@ -11,7 +11,7 @@ function changeReadyToStartAJAX() {
     console.log(data);
     setTimeout(()=>{
       updateStatus()
-    }, 1000)
+    }, 1200)
 
   })
   .fail(()=>{
@@ -81,7 +81,7 @@ function qActivate(number) {
     console.log(data);
     setTimeout(()=>{
       updateStatus()
-    }, 700)
+    }, 1000)
 
   })
   .fail(()=>{

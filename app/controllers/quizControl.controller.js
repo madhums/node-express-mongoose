@@ -45,9 +45,9 @@ exports.startQuiz = function(req, res) {
 
 exports.activateQ = function(req, res) {
 
-  let target = req.query.qnumber
+  let target = req.query.qnumber - 1
 
-  if(target && (target >= 0 && target <= quizReady.length)) {
+  if(target && (target >= 0 && target < quizReady.length)) {
 
     console.log('enter activeQ');
     quizReady[target] = true
