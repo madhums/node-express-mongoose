@@ -17,7 +17,32 @@ module.exports = function(app, express) {
 
   app.set('views', './app/views');
   app.set('view engine', 'ejs');
+
+  let allowedHeader = ["http://localhost:3000"]
+  app.use(function(req, res, next) {
+
+    var origin = req.get('origin');
+    //console.log(req.session);
+    if (origin) {
+     if (allowedHeader.indexOf(origin) > -1){
+      res.header("Access-Control-Allow-Origin", "*");
+     }
+     else{
+     return res.status(403).end();
+     }
+    }
+
+    if ('OPTIONS' == req.method) {
+     return res.status(200).end();
+    }
+
+    next();
+
+  })
+
   app.use(express.static('public'))
+
+
 
   app.get("/", index.getIndexPage)
   app.get("/policy", index.getPolicyPage)
