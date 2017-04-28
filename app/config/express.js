@@ -4,6 +4,7 @@ let ejs = require('ejs');
 let quizControl = require('../controllers/quizControl.controller.js')
 let quizResult = require('../controllers/quizResult.controller.js')
 let quizInput = require('../controllers/quizInput.controller.js')
+let quizAPIs = require('../controllers/quizAPIs.controller.js')
 let index = require('../controllers/index.cotnroller.js')
 
 let bodyParser = require("body-parser");
@@ -29,6 +30,12 @@ module.exports = function(app, express) {
   app.get("/changeReadyToStart", quizControl.changeReadyToStart)
   app.get("/changeEnterStatus", quizControl.changeEnterStatus)
   app.get("/controlRoom", quizControl.getControlInterface)
+
+  // API for front-end
+  app.get("/getAllUsersInfo", (req, res)=>{ res.send('get all users info')} )
+  app.get("/getAllParticipantsInfo", (req, res)=>{ res.send('get all parti info')} )
+  app.get("/getAllQuestions", quizAPIs.getAllQuestions)
+  app.get("/getParticipantsScore", quizAPIs.getParticipantsScore)
 
   app.post("/processQuizForm", jsonParser, urlencodedParser, quizInput.processForm)
 

@@ -28,8 +28,9 @@ enterTime = false
 openedAtLeastOneTime = false
 isQuizOnline = false
 readyToStart = false
-quizReady = null
 isQuizEnd = false
+
+quizReady = null // will be assigned as ARRAY
 
 let correctUser = []
 
@@ -352,6 +353,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
       console.log('end quiz');
       isQuizOnline = false
       isQuizEnd = true
+      readyToStart = false
       database.ref(`/quiz/${currentQuiz}/correctUsers`).set(correctUser)
 
       ids.map((id)=>{
