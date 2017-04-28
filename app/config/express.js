@@ -33,7 +33,7 @@ module.exports = function(app, express) {
 
   // API for front-end
   app.get("/getAllUsersInfo", quizAPIs.getAllUsersInfo)
-  app.get("/getAllParticipantsInfo", (req, res)=>{ res.send('get all parti info')} )
+  app.get("/getAllParticipantsInfo", quizAPIs.getAllParticipantsInfo} )
   app.get("/getAllQuestions", quizAPIs.getAllQuestions)
   app.get("/getParticipantsScore", quizAPIs.getParticipantsScore)
 
