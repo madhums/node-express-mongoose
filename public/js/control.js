@@ -68,11 +68,11 @@ function startQuiz() {
 }
 
 function qActivate(number) {
-
+  console.log(`js number = ${number}`);
   let target = parseInt(number)
   $(`q${target}Button`).attr('disabled', true)
   $(`q${target}Button`).html('pressed')
-
+  console.log(`js target = ${target}`);
   let request = $.getJSON('https://dsmbot.herokuapp.com/activateQ?qnumber='+target, () => {
     console.log('requested');
   })
