@@ -15,7 +15,7 @@ exports.getAllQuestions = function(req, res) {
     quizSnapshot.forEach((quiz)=>{
 
       let choices = quiz.choices
-      let correctedUsers = quiz.correctedUsers
+      let correctedUsers = quiz.correctUsers
 
       questions.push({
         'question': quiz.q,
