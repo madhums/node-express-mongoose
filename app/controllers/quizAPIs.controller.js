@@ -8,12 +8,35 @@ exports.getAllQuestions = function(req, res) {
 
   database.ref('/quiz').once('value')
   .then((snapshot)=>{
+
     let quizSnapshot = snapshot.val()
-    console.log(`quiz queried [${quizSnapshot.length}] : ${quizSnapshot}`);
-    res.send('got it')
+    quizLength = quizSnapshot.length
+
+    quizSnapshot.forEach((quiz)=>{
+
+      let choices = quiz.choices
+      let correctedUsers = quiz.correctedUsers
+
+      questions.push({
+        'question': quiz.q,
+        'answer': quiz.a,
+        'choices': choices,
+        'correctedUsers': correctedUsers
+      })
+
+    })
+
+    res.json({
+      'error': null,
+      'questions': questions
+    })
+
   })
   .catch((error)=>{
-    res.send('error')
+    res.json({
+      'error': error,
+      'questions': questions
+    })
   })
 
 }
