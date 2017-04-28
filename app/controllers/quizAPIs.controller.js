@@ -52,14 +52,14 @@ exports.getAllParticipantsInfo = function(req, res) {
     let tempParticipantsInfo = participantsInfo
     participantsInfo = []
 
-    for(let key in tempParticipantsInfo) {
+    tempParticipantsInfo.forEach((key)=> {
       participantsInfo.push({
         'id': key,
         'name': users[key].firstName + ' ' + users[key].lastName,
         'gender': users[key].gender,
         'profilePic': users[key].profilePic
       })
-    }
+    })
 
     res.json({
       'error': null,
@@ -69,7 +69,7 @@ exports.getAllParticipantsInfo = function(req, res) {
   })
   .catch((error)=>{
 
-    console.log(`there's an error [getAllUsersInfo] : ${error}`);
+    console.log(`there's an error [getAllParticipantsInfo] : ${error}`);
     res.json({
       'error': error,
       'participantsInfo': participantsInfo
