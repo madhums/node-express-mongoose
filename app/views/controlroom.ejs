@@ -77,10 +77,11 @@
 
         <%=index+1%>.
         <% if(status) { %>
-          <span id=`q<%=index+1%>Status` style="color: #00ff00"><strong>TRUE</strong></span>
+          <span id=`q<%=index+1%>Status` style="color: #00ff00"><strong>ACTIVATED</strong></span>
+          <button id=`q<%=index+1%>Button` onclick="" disabled> activated </button>
         <% } else { %>
-          <span id=`q<%=index+1%>Status` style="color: #ff0000"><strong>false</strong> ___ </span>
-          <button id=`q<%=index+1%>Button` onclick=`qActivate(<%=index+1%>)`> Shoot </button>
+          <span id=`q<%=index+1%>Status` style="color: #ff0000"><strong>Inactive</strong> ___ </span>
+          <button id=`q<%=index+1%>Button` onclick=`qActivate(<%=index+1%>)`> Activate </button>
         <% } %>
         <br />
 

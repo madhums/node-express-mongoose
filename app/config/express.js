@@ -18,7 +18,7 @@ module.exports = function(app, express) {
   app.set('views', './app/views');
   app.set('view engine', 'ejs');
 
-  let allowedHeader = ["http://localhost:3000"]
+  let allowedHeader = ["http://localhost:3000", "https://messengerchatbot-f6775.firebaseapp.com"]
   app.use(function(req, res, next) {
 
     var origin = req.get('origin');
@@ -52,6 +52,7 @@ module.exports = function(app, express) {
 
   app.get("/getAllStatus", quizControl.getAllStatus)
   app.get("/justStartTheQuiz", quizControl.startQuiz)
+  app.get("/activateQ", quizControl.activateQ)
   app.get("/changeReadyToStart", quizControl.changeReadyToStart)
   app.get("/changeEnterStatus", quizControl.changeEnterStatus)
   app.get("/controlRoom", quizControl.getControlInterface)

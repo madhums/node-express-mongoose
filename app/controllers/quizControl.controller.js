@@ -43,6 +43,20 @@ exports.startQuiz = function(req, res) {
   res.json({'status': 'done'})
 }
 
+exports.activateQ = function(req, res) {
+
+  let target = req.query.number
+
+  if(target && (target >= 0 && target <= quizReady.length)) {
+
+    console.log('enter activeQ');
+    quizReady[target] = true
+    res.json({'status': 'done'})
+
+  }
+  
+}
+
 exports.getAllStatus = function(req, res) {
   res.json({
     'enterTime' : enterTime,
