@@ -166,7 +166,7 @@ function updateStatus() {
           elem += `<button id="q${index+1}Button" onclick="" disabled> activated </button><br><br><br>`
         }
         else {
-          elem = `${index+1}. <span id="q${index+1}Status" style="color: #ff0000"><strong>false</strong></span> `
+          elem = `${index+1}. <span id="q${index+1}Status" style="color: #ff0000"><strong>Inactive</strong></span> `
 
           if(data.isQuizOnline)
             elem += `<button id="q${index+1}Button" onclick="qActivate(${index+1})"> Activate </button><br><br><br>`

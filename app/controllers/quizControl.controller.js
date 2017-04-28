@@ -8,7 +8,8 @@ exports.getControlInterface = function(req, res) {
   res.render('controlroom', {
     enterTime: enterTime,
     isQuizOnline: isQuizOnline,
-    openedAtLeastOneTime: openedAtLeastOneTime
+    openedAtLeastOneTime: openedAtLeastOneTime,
+    isQuizEnd: isQuizEnd
   })
 }
 
@@ -39,15 +40,14 @@ exports.changeEnterStatus = function(req, res) {
 exports.startQuiz = function(req, res) {
 
   isQuizOnline = true
-  console.log('isQuizOnline: ' + isQuizOnline);
+
   res.json({'status': 'done'})
 }
 
 exports.activateQ = function(req, res) {
-  console.log(`aQ qnumber = ${req.query.qnumber}`);
+
   let target = req.query.qnumber - 1
-  console.log(`aQ target = ${target}`);
-  console.log(`aQ quize.length = ${quizReady.length}`);
+
   if(target >= 0 && target < quizReady.length) {
 
     console.log('enter activeQ');
@@ -64,6 +64,7 @@ exports.getAllStatus = function(req, res) {
     'isQuizOnline': isQuizOnline,
     'quizReady': quizReady,
     'readyToStart': readyToStart,
-    'openedAtLeastOneTime': openedAtLeastOneTime
+    'openedAtLeastOneTime': openedAtLeastOneTime,
+    'isQuizEnd': isQuizEnd
   })
 }

@@ -11,11 +11,13 @@
       Prepare Quiz :
       <% if(readyToStart) { %>
         <font id="ready" color="#00ff00">RUNNING</font>
+      <% } else if(isQuizEnd){ %>
+        <font id="ready" color="blue">Quiz End</font>
       <% } else { %>
         <font id="ready" color="red">WAIT FOR ACTION</font>
       <% } %>
 
-      <% if(!readyToStart) { %>
+      <% if(!readyToStart && !isQuizEnd) { %>
         <button id="prepareButton" onclick="changeReadyToStartAJAX()"> Run </button>
       <% } %>
       <br /><br /><br />
@@ -81,7 +83,7 @@
               <span id="q<%=index+1%>Status" style="color: #00ff00"><strong>ACTIVATED</strong></span>
               <button id="q<%=index+1%>Button" onclick="" disabled> activated </button>
             <% } else { %>
-              <span id="q<%=index+1%>Status" style="color: #ff0000"><strong>Inactive</strong> ___ </span>
+              <span id="q<%=index+1%>Status" style="color: #ff0000"><strong>Inactive</strong></span>
 
               <% if(isQuizOnline) { %>
                 <button id="q<%=index+1%>Button" onclick="qActivate(<%=index+1%>)"> Activate </button>

@@ -297,8 +297,21 @@ function startQuizTime(quiz, ids) {
   let quizLength = quiz.length - 1
   ttq = quiz
   console.log('ttq' + ttq.length);
-  shootTheQuestion(quiz, ids, 0, quizLength)
-  console.log('end start quiz');
+
+  let checkFirstQuiz = setInterval(()=>{
+
+    console.log(`wait for first quiz .. status : ${quizReady[0]}`);
+
+    if(quizReady[0]) {
+
+      clearInterval(checkFirstQuiz)
+
+      shootTheQuestion(quiz, ids, 0, quizLength)
+      console.log('end start quiz');
+
+    }
+
+  }, 2000)
 
 }
 
@@ -340,11 +353,20 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
 
     console.log('current : ' + currentQuiz + ' , total: ' + totalQuiz);
     let nextQuiz = currentQuiz + 1
-    setTimeout( function() {
-      console.log('in settimeout');
-      database.ref(`/quiz/${currentQuiz}/correctUsers`).set(correctUser)
-      shootTheQuestion(quiz, ids, nextQuiz, totalQuiz)
-    }, 30000)
+
+    //setTimeout( function() {
+    let quizInterval = setInterval(()=>{
+
+      console.log(`wait for ${nextQuiz} quiz .. status : ${quizReady[nextQuiz]}`);
+      if(quizReady[nextQuiz]) {
+
+        clearInterval(quizInterval)
+        shootTheQuestion(quiz, ids, nextQuiz, quizLength)
+
+      }
+
+    }, 3000)
+    //}, 30000)
 
   }
   else {
