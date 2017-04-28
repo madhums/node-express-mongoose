@@ -32,9 +32,10 @@ exports.getAllQuestions = function(req, res) {
   .then((usersChunkSnapshot)=>{
 
     let usersChunk = usersChunkSnapshot.val()
-    let correctedUsersInfo = []
 
     questions.forEach((quiz)=>{
+
+      let correctedUsersInfo = []
 
       for(let key in quiz.correctedUsers) {
         correctedUsersInfo.push({
@@ -44,9 +45,8 @@ exports.getAllQuestions = function(req, res) {
           'profilePic': usersChunk[key].profilePic
         })
       }
-
       quiz.correctedUsers = correctedUsersInfo
-
+      console.log(correctedUsers);
     })
 
     res.json({
