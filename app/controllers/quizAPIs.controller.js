@@ -26,6 +26,29 @@ exports.getAllQuestions = function(req, res) {
 
     })
 
+    return database.ref('/users').once('value')
+
+  })
+  .then((usersChunkSnapshot)=>{
+
+    let usersChunk = usersChunkSnapshot.val()
+    let correctedUsersInfo = []
+
+    questions.forEach((quiz)=>{
+
+      for(let key in quiz.correctedUsers) {
+        correctedUsersInfo.push({
+          'id': key,
+          'name': usersChunk[key].firstName + ' ' + usersChunk[key].lastName,
+          'gender': usersChunk[key].gender,
+          'profilePic': usersChunk[key].profilePic
+        })
+      }
+
+      quiz.correctedUsers = correctedUsersInfo
+
+    })
+
     res.json({
       'error': null,
       'questions': questions
@@ -40,6 +63,7 @@ exports.getAllQuestions = function(req, res) {
   })
 
 }
+
 
 exports.getParticipantsScore = function(req, res) {
 
