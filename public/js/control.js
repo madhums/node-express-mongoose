@@ -145,6 +145,7 @@ function updateStatus() {
       $("#quizOnlineStatus").html("ONLINE")
       $("#quizOnlineStatus").css('color', '#00ff00')
 
+      $("#controlEnterTime").attr('disabled', true)
       $("#controlStartQuiz").attr('disabled', true)
     }
     else {

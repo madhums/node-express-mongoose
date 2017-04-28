@@ -57,7 +57,7 @@
       <% } %>
 
       <div id="startQuizButton">
-        <% if(openedAtLeastOneTime && !isQuizEnd) { %>
+        <% if(openedAtLeastOneTime && !isQuizEnd && !isQuizOnline) { %>
           <button id="controlStartQuiz" onclick="startQuiz()" > Start Quiz </button>
         <% } else { %>
           <button id="controlStartQuiz" onclick="startQuiz()" disabled> Start Quiz </button>
@@ -67,7 +67,7 @@
       <br />
       <br />
 
-      Quiz Ready? :
+      สถานะของคำถามแต่ละข้อ :
       <br />
 
       <% if(quizReady) { %>

@@ -115,14 +115,19 @@ exports.getAllQuestions = function(req, res) {
     questions.forEach((quiz)=>{
 
       let correctedUsersInfo = []
-      quiz.correctedUsers.forEach((user)=>{
-        correctedUsersInfo.push({
-          'id': user,
-          'name': usersChunk[user].firstName + ' ' + usersChunk[user].lastName,
-          'gender': usersChunk[user].gender,
-          'profilePic': usersChunk[user].profilePic
+
+      if(quiz.correctedUsers) {
+
+        quiz.correctedUsers.forEach((user)=>{
+          correctedUsersInfo.push({
+            'id': user,
+            'name': usersChunk[user].firstName + ' ' + usersChunk[user].lastName,
+            'gender': usersChunk[user].gender,
+            'profilePic': usersChunk[user].profilePic
+          })
         })
-      })
+
+      }
 
       quiz.correctedUsers = correctedUsersInfo
       //console.log(quiz.correctedUsers);
