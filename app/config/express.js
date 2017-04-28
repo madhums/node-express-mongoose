@@ -32,7 +32,7 @@ module.exports = function(app, express) {
   app.get("/controlRoom", quizControl.getControlInterface)
 
   // API for front-end
-  app.get("/getAllUsersInfo", (req, res)=>{ res.send('get all users info')} )
+  app.get("/getAllUsersInfo", quizAPIs.getAllUsersInfo)
   app.get("/getAllParticipantsInfo", (req, res)=>{ res.send('get all parti info')} )
   app.get("/getAllQuestions", quizAPIs.getAllQuestions)
   app.get("/getParticipantsScore", quizAPIs.getParticipantsScore)

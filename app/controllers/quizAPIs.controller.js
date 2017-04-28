@@ -1,13 +1,83 @@
 let firebase = require('../config/firebase.init.js')
 let database = firebase.database()
 
+exports.getAllUsersInfo = function(req, res) {
+
+  let usersInfo = []
+  database.ref('/users').once('value')
+  .then((snapshot) => {
+
+    let users = snapshot.val()
+    for(let key in users) {
+      usersInfo.push({
+        'id': key,
+        'name': users[key].firstName + ' ' + users[key].lastName,
+        'gender': users[key].gender,
+        'profilePic': users[key].profilePic
+      })
+    }
+
+    res.json({
+      'error': null,
+      'usersInfo': usersInfo
+    })
+
+  })
+  catch((error)=>{
+
+    console.log(`there's an error [getAllUsersInfo] : ${error}`);
+    res.json({
+      'error': error,
+      'usersInfo': usersInfo
+    })
+
+  })
+
+}
+
+
+exports.getAllParticipantsInfo = function(req, res) {
+
+  let participantsInfo = []
+  database.ref('/participants').once('value')
+  .then((snapshot) => {
+
+    let participants = snapshot.val()
+    for(let key in participants) {
+      participantsInfo.push({
+        'id': key,
+        'name': participants[key].firstName + ' ' + participants[key].lastName,
+        'gender': participants[key].gender,
+        'profilePic': participants[key].profilePic
+      })
+    }
+
+    res.json({
+      'error': null,
+      'participantsInfo': participantsInfo
+    })
+
+  })
+  catch((error)=>{
+
+    console.log(`there's an error [getAllUsersInfo] : ${error}`);
+    res.json({
+      'error': error,
+      'participantsInfo': participantsInfo
+    })
+
+  })
+
+}
+
+
 exports.getAllQuestions = function(req, res) {
 
   let questions = []
   let quizLength = 0
 
   database.ref('/quiz').once('value')
-  .then((snapshot)=>{
+  .then((snapshot) => {
 
     let quizSnapshot = snapshot.val()
     quizLength = quizSnapshot.length
@@ -36,16 +106,13 @@ exports.getAllQuestions = function(req, res) {
     questions.forEach((quiz)=>{
 
       let correctedUsersInfo = []
-      
       quiz.correctedUsers.forEach((user)=>{
-
         correctedUsersInfo.push({
           'id': user,
           'name': usersChunk[user].firstName + ' ' + usersChunk[user].lastName,
           'gender': usersChunk[user].gender,
           'profilePic': usersChunk[user].profilePic
         })
-
       })
 
       quiz.correctedUsers = correctedUsersInfo
@@ -59,7 +126,7 @@ exports.getAllQuestions = function(req, res) {
 
   })
   .catch((error)=>{
-    console.log(`there's an error : ` + error);
+    console.log(`there's an error [getAllQuestions] : ` + error);
     res.json({
       'error': error,
       'questions': questions
