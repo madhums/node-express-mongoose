@@ -84,7 +84,7 @@ function qActivate(number) {
     }, 1000)
 
   })
-  .fail(()=>{
+  .fail((error)=>{
     console.log(error);
   })
 
@@ -162,11 +162,11 @@ function updateStatus() {
 
         if(quiz) {
           elem = `${index+1}. <span id=\`q${index+1}Status\` style="color: #00ff00"><strong>ACTIVATED</strong></span><br>`
-          elem += `<button id=\`q<%=index+1%>Button\` onclick="" disabled> activated </button>`
+          elem += `<button id=\`q${index+1}Button\` onclick="" disabled> activated </button>`
         }
         else {
           elem = `${index+1}. <span id=\`q${index+1}Status\` style="color: #ff0000"><strong>false</strong></span><br>`
-          elem += `<button id=\`q<%=index+1%>Button\` onclick=\`qActivate(<%=index+1%>)\`> Activate </button>`
+          elem += `<button id=\`q${index+1}Button\` onclick=\`qActivate(${index+1})\`> Activate </button>`
         }
 
         $("#quizReadyStatus").append(elem)
