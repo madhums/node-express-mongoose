@@ -101,7 +101,7 @@ botmaster.on('update', (bot, update) => {
           messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
           setTimeout(()=>{
             messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
-          }, 100)
+          }, 500)
         }
 
       }
@@ -200,7 +200,7 @@ botmaster.on('update', (bot, update) => {
             messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
             setTimeout(()=>{
               messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
-            }, 100)
+            }, 500)
           }
 
         }
