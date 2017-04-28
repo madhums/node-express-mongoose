@@ -36,15 +36,17 @@ exports.getAllQuestions = function(req, res) {
     questions.forEach((quiz)=>{
 
       let correctedUsersInfo = []
+      quiz.correctedUsers.forEach((user)=>{
 
-      for(let key in quiz.correctedUsers) {
         correctedUsersInfo.push({
-          'id': key,
-          'name': usersChunk[key].firstName + ' ' + usersChunk[key].lastName,
-          'gender': usersChunk[key].gender,
-          'profilePic': usersChunk[key].profilePic
+          'id': user,
+          'name': usersChunk[user].firstName + ' ' + usersChunk[user].lastName,
+          'gender': usersChunk[user].gender,
+          'profilePic': usersChunk[user].profilePic
         })
-      }
+
+      })
+
       quiz.correctedUsers = correctedUsersInfo
       console.log(correctedUsers);
     })
