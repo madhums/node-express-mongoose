@@ -64,39 +64,37 @@
         <% } %>
       </div>
 
+      <br />
+      <br />
+
+      Quiz Ready? :
+      <br />
+
+      <% if(quizReady) { %>
+
+        <div id="quizReadyStatus">
+          <br /><br />
+          <% quizReady.forEach((status, index)=>{ %>
+
+            <%=index+1%>.
+            <% if(status) { %>
+              <span id="q<%=index+1%>Status" style="color: #00ff00"><strong>ACTIVATED</strong></span>
+              <button id="q<%=index+1%>Button" onclick="" disabled> activated </button>
+            <% } else { %>
+              <span id="q<%=index+1%>Status" style="color: #ff0000"><strong>Inactive</strong> ___ </span>
+              <button id="q<%=index+1%>Button" onclick="qActivate(<%=index+1%>)"> Activate </button>
+            <% } %>
+            <br /><br /><br />
+
+          <% }) %>
+
+        </div>
+
+      <% } else { %>
+        <div id="quizReadyStatus" ><strong>NO</strong></div>
+      <% } %>
+
     </div>
-
-    <br />
-    <br />
-
-    Quiz Ready? :
-    <br />
-
-    <% if(quizReady) { %>
-
-      <div id="quizReadyStatus">
-        <br /><br />
-        <% quizReady.forEach((status, index)=>{ %>
-
-          <%=index+1%>.
-          <% if(status) { %>
-            <span id="q<%=index+1%>Status" style="color: #00ff00"><strong>ACTIVATED</strong></span>
-            <button id="q<%=index+1%>Button" onclick="" disabled> activated </button>
-          <% } else { %>
-            <span id="q<%=index+1%>Status" style="color: #ff0000"><strong>Inactive</strong> ___ </span>
-            <button id="q<%=index+1%>Button" onclick="qActivate(<%=index+1%>)"> Activate </button>
-          <% } %>
-          <br />
-
-        <% }) %>
-
-      </div>
-
-    <% } else { %>
-      <div id="quizReadyStatus" ><strong>NO</strong></div>
-    <% } %>
-
-
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script type="text/javascript" src="/js/control.js"></script>

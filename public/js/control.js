@@ -161,12 +161,12 @@ function updateStatus() {
         let elem = ""
 
         if(quiz) {
-          elem = `${index+1}. <span id=\`q${index+1}Status\` style="color: #00ff00"><strong>ACTIVATED</strong></span> `
-          elem += `<button id=\`q${index+1}Button\` onclick="" disabled> activated </button><br>`
+          elem = `${index+1}. <span id="q${index+1}Status" style="color: #00ff00"><strong>ACTIVATED</strong></span> `
+          elem += `<button id="q${index+1}Button" onclick="" disabled> activated </button><br><br><br>`
         }
         else {
-          elem = `${index+1}. <span id=\`q${index+1}Status\` style="color: #ff0000"><strong>false</strong></span> `
-          elem += `<button id=\`q${index+1}Button\` onclick=\`qActivate(${index+1})\`> Activate </button><br>`
+          elem = `${index+1}. <span id="q${index+1}Status" style="color: #ff0000"><strong>false</strong></span> `
+          elem += `<button id="q${index+1}Button" onclick="qActivate(${index+1})"> Activate </button><br><br><br>`
         }
 
         $("#quizReadyStatus").append(elem)
