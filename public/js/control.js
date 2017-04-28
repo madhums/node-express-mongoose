@@ -14,7 +14,7 @@ function changeReadyToStartAJAX() {
     }, 1500)
 
   })
-  .fail(()=>{
+  .fail((error)=>{
     console.log(error);
   })
 
@@ -36,7 +36,7 @@ function changeEnterStatus(param) {
       }, 700)
 
     })
-    .fail(()=>{
+    .fail((error)=>{
       console.log(error);
     })
 
@@ -61,7 +61,7 @@ function startQuiz() {
       }, 700)
 
     })
-    .fail(()=>{
+    .fail((error)=>{
       console.log(error);
     })
 
@@ -90,6 +90,29 @@ function qActivate(number) {
 
 
 }
+
+function endIt() {
+
+  $("#endingButton").html('processing')
+  $("#endingButton").attr('disabled', true)
+
+  let request = $.getJSON('https://dsmbot.herokuapp.com/endQuizNow', () => {
+    console.log('requested');
+  })
+  .done((data)=>{
+
+    console.log(data);
+    setTimeout(()=>{
+      updateStatus()
+    }, 700)
+
+  })
+  .fail((error)=>{
+    console.log(error);
+  })
+
+}
+
 
 function updateStatus() {
 

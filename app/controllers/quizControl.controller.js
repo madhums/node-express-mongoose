@@ -38,9 +38,7 @@ exports.changeEnterStatus = function(req, res) {
 }
 
 exports.startQuiz = function(req, res) {
-
   isQuizOnline = true
-
   res.json({'status': 'done'})
 }
 
@@ -56,6 +54,11 @@ exports.activateQ = function(req, res) {
 
   }
 
+}
+
+exports.endQuizNow = function(req, res) {
+  isQuizEnd = true
+  res.json({'status': 'done'})
 }
 
 exports.getAllStatus = function(req, res) {
