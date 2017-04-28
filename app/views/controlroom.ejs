@@ -102,6 +102,16 @@
         <div id="quizReadyStatus" ><strong>NO</strong></div>
       <% } %>
 
+      <% if(isQuizOnline && quizReady[quizReady.length - 1]) { %>
+
+        <button id="endingButton" onclick="endIt()">END QUIZ</button>
+
+      <% } else { %>
+
+        <button id="endingButton" onclick="" disabled>END QUIZ</button>
+
+      <% } %>
+
     </div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>

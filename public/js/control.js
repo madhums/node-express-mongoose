@@ -180,6 +180,15 @@ function updateStatus() {
       })
     }
 
+    if(data.isQuizOnline && data.quizReady[data.quizReady.length - 1]) {
+      $("#endingButton").attr('onclick', 'endIt()')
+      $("#endingButton").attr('disabled', false)
+    }
+    else {
+      $("#endingButton").attr('onclick', '')
+      $("#endingButton").attr('disabled', true)
+    }
+
   })
   .fail((error)=>{
     console.log(error);

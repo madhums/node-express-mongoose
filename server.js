@@ -371,21 +371,31 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   }
   else {
 
-    setTimeout( function() {
-      console.log('end quiz');
-      isQuizOnline = false
-      isQuizEnd = true
-      readyToStart = false
-      database.ref(`/quiz/${currentQuiz}/correctUsers`).set(correctUser)
+    let checkEnding = setInterval(()=>{
 
-      ids.map((id)=>{
-        messengerBot.sendTextMessageTo('กิจกรรมจบแล้ว ขอบคุณทุกท่านที่มาร่วมเล่นกับเรา :D', id)
-        setTimeout(()=>{
-          messengerBot.sendTextMessageTo('คุณสามารดูผลคะแนนได้ที่ https://dsmbot.herokuapp.com/result', id)
-        },3000)
-      })
+      //setTimeout( function() {
+      console.log(`waiting for ending command : ${isQuizEnd}`);
+      if(isQuizEnd) {
 
-    }, 30000)
+        clearInterval(checkEnding)
+        isQuizOnline = false
+        //isQuizEnd = true
+        readyToStart = false
+        database.ref(`/quiz/${currentQuiz}/correctUsers`).set(correctUser)
+
+        ids.map((id)=>{
+
+          messengerBot.sendTextMessageTo('กิจกรรมจบแล้ว ขอบคุณทุกท่านที่มาร่วมเล่นกับเรา :D', id)
+          setTimeout(()=>{
+            messengerBot.sendTextMessageTo('คุณสามารดูผลคะแนนได้ที่ https://dsmbot.herokuapp.com/result', id)
+          },3000)
+
+        })
+
+      }
+      //}, 30000)
+
+    }, 5000)
 
   }
 
@@ -432,7 +442,7 @@ userMgt.getAllSubscribedID(function(err, ids){
 let checkStart = setInterval(()=>{
   console.log('readyToStart : ' + readyToStart);
   if(readyToStart) startQuiz()
-}, 3000)
+}, 7000)
 
 
 function startQuiz() {
