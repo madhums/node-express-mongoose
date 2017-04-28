@@ -82,7 +82,13 @@
               <button id="q<%=index+1%>Button" onclick="" disabled> activated </button>
             <% } else { %>
               <span id="q<%=index+1%>Status" style="color: #ff0000"><strong>Inactive</strong> ___ </span>
-              <button id="q<%=index+1%>Button" onclick="qActivate(<%=index+1%>)"> Activate </button>
+
+              <% if(isQuizOnline) { %>
+                <button id="q<%=index+1%>Button" onclick="qActivate(<%=index+1%>)"> Activate </button>
+              <% } else { %>
+                <button id="q<%=index+1%>Button" onclick="qActivate(<%=index+1%>)" disabled> Activate </button>
+              <% } %>
+
             <% } %>
             <br /><br /><br />
 

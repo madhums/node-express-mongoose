@@ -166,7 +166,12 @@ function updateStatus() {
         }
         else {
           elem = `${index+1}. <span id="q${index+1}Status" style="color: #ff0000"><strong>false</strong></span> `
-          elem += `<button id="q${index+1}Button" onclick="qActivate(${index+1})"> Activate </button><br><br><br>`
+
+          if(data.isQuizOnline)
+            elem += `<button id="q${index+1}Button" onclick="qActivate(${index+1})"> Activate </button><br><br><br>`
+          else {
+            elem += `<button id="q${index+1}Button" onclick="qActivate(${index+1})" disabled> Activate </button><br><br><br>`
+          }
         }
 
         $("#quizReadyStatus").append(elem)
