@@ -361,7 +361,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
       if(quizReady[nextQuiz]) {
 
         clearInterval(quizInterval)
-        shootTheQuestion(quiz, ids, nextQuiz, quizLength)
+        shootTheQuestion(quiz, ids, nextQuiz, totalQuiz)
 
       }
 
