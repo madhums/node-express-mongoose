@@ -86,7 +86,8 @@ database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
 botmaster.on('update', (bot, update) => {
 
   if(update.message) {
-
+    console.log(update)
+    console.log(JSON.stringify(update))
     // if new user -> add to DB
     userMgt.checkDupID(update.sender.id)
     .then((isDup)=>{
@@ -130,8 +131,8 @@ botmaster.on('update', (bot, update) => {
             database.ref(`/participants`).set(participants)
           }
         }
-        else if(update.message.text == "ไม่เข้าร่วม")
-          bot.sendTextMessageTo('ไม่เป็นไรนะ ไว้มาร่วมเล่นกันใหม่ครั้งหน้าได้', update.sender.id);
+        else if(update.message.text == "ไม่เข้าร่วม" && participants.indexOf(update.sender.id) < 0)
+          bot.sendTextMessageTo('ถ้ายังสนใจอยู่ก็ทักมาได้นะ', update.sender.id);
 
         else if(participants.indexOf(update.sender.id) >= 0){
           bot.sendTextMessageTo('รออีกนิดนะ กิจกรรมยังไม่เริ่ม', update.sender.id);
@@ -145,6 +146,7 @@ botmaster.on('update', (bot, update) => {
       console.log('quiz on');
       //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
       //if(update.message.text == ttq[quizNO].a) {
+      if(participants.indexOf(update.sender.id) >= 0) {
 
         let replyText = ['ได้คำตอบแล้วจ้า', 'รอฟังเฉลยนะว่าถูกมั้ย', 'ขอบคุณสำหรับคำตอบ มารอลุ้นกันนะ', 'จะถูกมั้ยน้า~', 'ดูมั่นใจมากเลย ต้องตอบถูกเยอะแน่ๆ']
         let dupReplyText = ['คุณส่งคำตอบให้เรามาแล้ว ตอบซ้ำไม่ได้นะ', 'ไม่เอา ไม่ส่งคำตอบซ้ำสิ ได้ครั้งเดียวนะ', 'ส่งคำตอบได้ครั้งเดียวนะ', 'แก้คำตอบไม่ได้นะ รอดูเฉลยดีกว่าว่าจะถูกมั้ย']
@@ -157,6 +159,11 @@ botmaster.on('update', (bot, update) => {
           else bot.sendTextMessageTo(replyText[Math.floor(Math.random() * 5)], update.sender.id)
         }
         else bot.sendTextMessageTo(dupReplyText[Math.floor(Math.random() * 4)], update.sender.id)
+
+
+      } else {
+        bot.sendTextMessageTo('คุณไม่ได้เข้าร่วมกิจกรรม ไว้มาร่วมกับเราได้ในครั้งหน้านะ จุ๊บๆ :D', update.sender.id)
+      }
 
       //}
       //else bot.sendTextMessageTo('wronggg!', update.sender.id);
