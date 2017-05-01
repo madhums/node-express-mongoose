@@ -154,9 +154,9 @@ botmaster.on('update', (bot, update) => {
           correctUser.push(update.sender.id)
           if(update.sender.id == '1475004552541616')
             bot.sendTextMessageTo('F*CK', update.sender.id)
-          else bot.sendTextMessageTo(replyText[Math.floor(Math.random() * 5))], update.sender.id)
+          else bot.sendTextMessageTo(replyText[Math.floor(Math.random() * 5)], update.sender.id)
         }
-        else bot.sendTextMessageTo(dupReplyText[Math.floor(Math.random() * 4))], update.sender.id)
+        else bot.sendTextMessageTo(dupReplyText[Math.floor(Math.random() * 4)], update.sender.id)
 
       //}
       //else bot.sendTextMessageTo('wronggg!', update.sender.id);
