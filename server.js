@@ -87,6 +87,9 @@ botmaster.on('update', (bot, update) => {
 
   if(update.message) {
     console.log(update)
+    if(update.message.attachments) {
+      console.log(update.message.attachments);
+    }
     // if new user -> add to DB
     userMgt.checkDupID(update.sender.id)
     .then((isDup)=>{
