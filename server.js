@@ -93,8 +93,8 @@ botmaster.on('update', (bot, update) => {
       let att = {
         type: 'image',
         payload:  {
-          url: 'https://scontent.xx.fbcdn.net/v/t39.1997-6/851557_369239266556155_759568595_n.png?_nc_ad=z-m&oh=547beb90237e24a9682810a5144c9fba&oe=5988CFDC',
-          sticker_id: 369239263222822
+          url: 'https://scontent.xx.fbcdn.net/v/t39.1997-6/851557_369239266556155_759568595_n.png?_nc_ad=z-m&oh=547beb90237e24a9682810a5144c9fba&oe=5988CFDC'
+          //sticker_id: 369239263222822
         }
       }
 
