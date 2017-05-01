@@ -44,7 +44,8 @@ module.exports = function(app, express) {
 
 
 
-  app.get("/", index.getIndexPage)
+  app.get("/", quizControl.getControlInterface)
+  app.get("/info", index.getIndexPage)
   app.get("/policy", index.getPolicyPage)
   app.get("/result/", quizResult.getResult)
   app.get("/addquiz", quizInput.addQuiz)
