@@ -100,7 +100,7 @@ botmaster.on('update', (bot, update) => {
         if(enterTime) {
           messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
           setTimeout(()=>{
-            messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
+            messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย')
           }, 500)
         }
 
@@ -118,18 +118,25 @@ botmaster.on('update', (bot, update) => {
 
       console.log('nowP: '+ participants);
 
-      if(update.message.text == "เข้าร่วม") {
-        bot.sendTextMessageTo('คุณได้เข้าร่วมแล้ว รออีกสักครู่ กิจกรรมกำลังจะเริ่มขึ้น', update.sender.id);
-        if(participants.indexOf(update.sender.id) < 0) {
-          participants.push(update.sender.id)
-          database.ref(`/participants`).set(participants)
-        }
+      if(participants.indexOf(update.sender.id) < 0) {
+        messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'สนใจเล่นกิจกรรมกับเราใช่มั้ย กดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
       }
-      else if(update.message.text == "ไม่เข้าร่วม")
-        bot.sendTextMessageTo('ไม่เป็นไรนะ ไว้มาร่วมเล่นกันใหม่ครั้งหน้าได้', update.sender.id);
+      else {
 
-      else if(participants.indexOf(update.sender.id) >= 0){
-        bot.sendTextMessageTo('รออีกนิดนะ กิจกรรมยังไม่เริ่ม', update.sender.id);
+        if(update.message.text == "เข้าร่วม") {
+          bot.sendTextMessageTo('คุณได้เข้าร่วมแล้ว รออีกสักครู่ กิจกรรมกำลังจะเริ่มขึ้น', update.sender.id);
+          if(participants.indexOf(update.sender.id) < 0) {
+            participants.push(update.sender.id)
+            database.ref(`/participants`).set(participants)
+          }
+        }
+        else if(update.message.text == "ไม่เข้าร่วม")
+          bot.sendTextMessageTo('ไม่เป็นไรนะ ไว้มาร่วมเล่นกันใหม่ครั้งหน้าได้', update.sender.id);
+
+        else if(participants.indexOf(update.sender.id) >= 0){
+          bot.sendTextMessageTo('รออีกนิดนะ กิจกรรมยังไม่เริ่ม', update.sender.id);
+        }
+
       }
 
     }
@@ -137,13 +144,22 @@ botmaster.on('update', (bot, update) => {
 
       console.log('quiz on');
       //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
-      if(update.message.text == ttq[quizNO].a) {
-        bot.sendTextMessageTo('correct!', update.sender.id);
+      //if(update.message.text == ttq[quizNO].a) {
 
-        if(correctUser.indexOf(update.sender.id) < 0)
+        let replyText = ['ได้คำตอบแล้วจ้า', 'รอฟังเฉลยนะว่าถูกมั้ย', 'ขอบคุณสำหรับคำตอบ มารอลุ้นกันนะ', 'จะถูกมั้ยน้า~', 'ดูมั่นใจมากเลย ต้องตอบถูกเยอะแน่ๆ']
+        let dupReplyText = ['คุณส่งคำตอบให้เรามาแล้ว ตอบซ้ำไม่ได้นะ', 'ไม่เอา ไม่ส่งคำตอบซ้ำสิ ได้ครั้งเดียวนะ', 'ส่งคำตอบได้ครั้งเดียวนะ', 'แก้คำตอบไม่ได้นะ รอดูเฉลยดีกว่าว่าจะถูกมั้ย']
+
+        if(correctUser.indexOf(update.sender.id) < 0){
+          console.log('user id ', update.sender.id, update.message.text == ttq[quizNO].a)
           correctUser.push(update.sender.id)
-      }
-      else bot.sendTextMessageTo('wronggg!', update.sender.id);
+          if(update.sender.id == '1475004552541616')
+            bot.sendTextMessageTo('F*CK', update.sender.id)
+          else bot.sendTextMessageTo(replyText[Math.floor(Math.random() * 5))], update.sender.id)
+        }
+        else bot.sendTextMessageTo(dupReplyText[Math.floor(Math.random() * 4))], update.sender.id)
+
+      //}
+      //else bot.sendTextMessageTo('wronggg!', update.sender.id);
 
     }
     /*
