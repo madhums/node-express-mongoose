@@ -118,7 +118,7 @@ botmaster.on('update', (bot, update) => {
 
       console.log('nowP: '+ participants);
 
-      if(participants.indexOf(update.sender.id) < 0) {
+      if(update.message.text != "เข้าร่วม" && participants.indexOf(update.sender.id) < 0) {
         messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'สนใจเล่นกิจกรรมกับเราใช่มั้ย กดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
       }
       else {
