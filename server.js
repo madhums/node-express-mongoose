@@ -86,28 +86,7 @@ database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
 botmaster.on('update', (bot, update) => {
 
   if(update.message) {
-    console.log(update)
-    if(update.message.attachments) {
-      console.log(update.message.attachments);
 
-      let att = {
-        type: 'image',
-        payload:  {
-          url: 'https://scontent.xx.fbcdn.net/v/t39.1997-6/851557_369239266556155_759568595_n.png?_nc_ad=z-m&oh=547beb90237e24a9682810a5144c9fba&oe=5988CFDC',
-          sticker_id: 369239263222822
-        }
-      }
-
-      let tempA = []
-      tempA.push(att)
-
-      let msg = {
-        sticker_id: 369239263222822,
-        attachments: tempA
-      }
-
-      bot.sendMessageTo(msg, update.sender.id)
-    }
     // if new user -> add to DB
     userMgt.checkDupID(update.sender.id)
     .then((isDup)=>{
@@ -187,6 +166,12 @@ botmaster.on('update', (bot, update) => {
 
       //}
       //else bot.sendTextMessageTo('wronggg!', update.sender.id);
+
+    }
+    else if(update.message.attachments.length > 0) {
+
+      if(update.message.attachments[0].payload.sticker_id == "369239263222822")
+        bot.sendTextMessageTo('(y)', update.sender.id)
 
     }
     /*
