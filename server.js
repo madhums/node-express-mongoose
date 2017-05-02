@@ -195,15 +195,18 @@ botmaster.on('update', (bot, update) => {
       //else bot.sendTextMessageTo('wronggg!', update.sender.id);
 
     }
-    else if(update.message.attachments.length > 0) {
+    else if(update.message.quick_reply) {
 
-      if(update.message.attachments[0].payload.sticker_id == "369239263222822")
-        bot.sendTextMessageTo('(y)', update.sender.id)
-
-    } else if(update.message.quick_reply.payload) {
       let ans = update.message.quick_reply.payload
       console.log('got payload from quick reply : \n');
       console.log(ans);
+
+    } else if(update.message.attachments) {
+
+      if(update.message.attachments.length > 0)
+        if(update.message.attachments[0].payload.sticker_id == "369239263222822")
+          bot.sendTextMessageTo('(y)', update.sender.id)
+
     }
     /*
       {
