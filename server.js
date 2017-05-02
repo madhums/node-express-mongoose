@@ -162,9 +162,10 @@ botmaster.on('update', (bot, update) => {
       }
 
     }
-    else if(isQuizOnline) {
+    else if(isQuizOnline && update.message.quick_reply.payload) {
 
       console.log('quiz on');
+
       //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
       //if(update.message.text == ttq[quizNO].a) {
       if(participants.indexOf(update.sender.id) >= 0) {
@@ -199,6 +200,10 @@ botmaster.on('update', (bot, update) => {
       if(update.message.attachments[0].payload.sticker_id == "369239263222822")
         bot.sendTextMessageTo('(y)', update.sender.id)
 
+    } else if(update.message.quick_reply.payload) {
+      let ans = update.message.quick_reply.payload
+      console.log('got payload from quick reply : \n');
+      console.log(ans);
     }
     /*
       {
