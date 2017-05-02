@@ -87,6 +87,27 @@ botmaster.on('update', (bot, update) => {
 
   if(update.message) {
 
+    if(update.message.text == 'wantQP') {
+
+      let msg = {
+        text: 'yeah',
+        quick_replies: [
+          {
+            content_type: 'text',
+            title: 'textToBeSeen1',
+            payload: 'textToBeUsedAsPayLoad___________________LONG_LONG_LONG_LONG_TEXT_LONGLONGLONG'
+          },
+          {
+            content_type: 'text',
+            title: 'textToBeSeen2',
+            payload: 'textToBeUsedAsPayLoad2___________________LONG_LONG_LONG_LONG_TEXT_LONGLONGLONG'
+          }
+        ]
+      }
+
+      bot.sendMessageTo(msg, update.sender.id)
+
+    }
     // if new user -> add to DB
     userMgt.checkDupID(update.sender.id)
     .then((isDup)=>{
@@ -155,7 +176,7 @@ botmaster.on('update', (bot, update) => {
 
           if(update.message.text == ttq[quizNO].a)
             correctUser.push(update.sender.id)
-            
+
           if(update.sender.id == '1475004552541616')
             bot.sendTextMessageTo('F*CK', update.sender.id)
           else bot.sendTextMessageTo(replyText[Math.floor(Math.random() * 5)], update.sender.id)
