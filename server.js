@@ -86,7 +86,7 @@ database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
 botmaster.on('update', (bot, update) => {
 
   if(update.message) {
-
+    console.log('___enter message');
     if(update.message.text == 'wantQP') {
 
       let msg = {
@@ -235,6 +235,7 @@ botmaster.on('update', (bot, update) => {
   }
   else if(update.postback){
 
+    console.log('___enter postback');
     console.log(JSON.stringify(update));
 
     if(update.postback.payload == "userPressedGetStarted") {
@@ -290,7 +291,10 @@ botmaster.on('update', (bot, update) => {
     */
 
   }
-
+  else {
+    console.log('something else');
+    console.log(JSON.stringify(update));
+  }
 
   //}
 
