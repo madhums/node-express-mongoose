@@ -151,6 +151,9 @@ botmaster.on('update', (bot, update) => {
 
         let ans = update.message.quick_reply.payload
 
+        console.log('text = ' + update.message.text);
+        console.log('answer from payload : ' + ans);
+
         if(participants.indexOf(update.sender.id) >= 0) {
 
           let replyText = ['ได้คำตอบแล้วจ้า', 'รอฟังเฉลยนะว่าถูกมั้ย', 'ขอบคุณสำหรับคำตอบ มารอลุ้นกันนะ', 'จะถูกมั้ยน้า~', 'ดูมั่นใจมากเลย ต้องตอบถูกเยอะแน่ๆ']
@@ -391,6 +394,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
       'payload': choice
     })
 
+    console.log('choice = ' + choice);
   })
 
   /*
