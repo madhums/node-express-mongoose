@@ -86,29 +86,7 @@ database.ref(`/users`).on('child_added', (childSnapshot, prevChildKey) => {
 botmaster.on('update', (bot, update) => {
 
   if(update.message) {
-    console.log('___enter message\n\n');
-    console.log(JSON.stringify(update));
-    if(update.message.text == 'wantQP') {
 
-      let msg = {
-        text: 'yeah',
-        quick_replies: [
-          {
-            content_type: 'text',
-            title: 'textToBeUsedAsPayLoad___________________LONG_LONG_LONG_LONG_TEXT_LONGLONGLONG',
-            payload: 'textToBeUsedAsPayLoad___________________LONG_LONG_LONG_LONG_TEXT_LONGLONGLONG'
-          },
-          {
-            content_type: 'text',
-            title: 'textToBeUsedAsPayLoad2___________________LONG_LONG_LONG_LONG_TEXT_LONGLONGLONG',
-            payload: 'textToBeUsedAsPayLoad2___________________LONG_LONG_LONG_LONG_TEXT_LONGLONGLONG'
-          }
-        ]
-      }
-
-      bot.sendMessageTo(msg, update.sender.id)
-
-    }
     // if new user -> add to DB
     userMgt.checkDupID(update.sender.id)
     .then((isDup)=>{
@@ -162,40 +140,50 @@ botmaster.on('update', (bot, update) => {
       }
 
     }
-    else if(isQuizOnline && update.message.quick_reply.payload) {
+    else if(isQuizOnline && update.message.quick_reply) {
 
       console.log('quiz on');
 
       //bot.sendTextMessageTo('it is quiz time!', update.sender.id);
       //if(update.message.text == ttq[quizNO].a) {
-      if(participants.indexOf(update.sender.id) >= 0) {
 
-        let replyText = ['ได้คำตอบแล้วจ้า', 'รอฟังเฉลยนะว่าถูกมั้ย', 'ขอบคุณสำหรับคำตอบ มารอลุ้นกันนะ', 'จะถูกมั้ยน้า~', 'ดูมั่นใจมากเลย ต้องตอบถูกเยอะแน่ๆ']
-        let dupReplyText = ['คุณส่งคำตอบให้เรามาแล้ว ตอบซ้ำไม่ได้นะ', 'ไม่เอา ไม่ส่งคำตอบซ้ำสิ ได้ครั้งเดียวนะ', 'ส่งคำตอบได้ครั้งเดียวนะ', 'แก้คำตอบไม่ได้นะ รอดูเฉลยดีกว่าว่าจะถูกมั้ย']
+      if(update.message.quick_reply.payload) {
 
-        if(correctUser.indexOf(update.sender.id) < 0) {
-          console.log('user id ', update.sender.id, update.message.text == ttq[quizNO].a)
+        let ans = update.message.quick_reply.payload
 
-          if(update.message.text == ttq[quizNO].a)
-            correctUser.push(update.sender.id)
+        if(participants.indexOf(update.sender.id) >= 0) {
 
-          if(update.sender.id == '1475004552541616')
-            bot.sendTextMessageTo('F*CK', update.sender.id)
-          else bot.sendTextMessageTo(replyText[Math.floor(Math.random() * 5)], update.sender.id)
+          let replyText = ['ได้คำตอบแล้วจ้า', 'รอฟังเฉลยนะว่าถูกมั้ย', 'ขอบคุณสำหรับคำตอบ มารอลุ้นกันนะ', 'จะถูกมั้ยน้า~', 'ดูมั่นใจมากเลย ต้องตอบถูกเยอะแน่ๆ']
+          let dupReplyText = ['คุณส่งคำตอบให้เรามาแล้ว ตอบซ้ำไม่ได้นะ', 'ไม่เอา ไม่ส่งคำตอบซ้ำสิ ได้ครั้งเดียวนะ', 'ส่งคำตอบได้ครั้งเดียวนะ', 'แก้คำตอบไม่ได้นะ รอดูเฉลยดีกว่าว่าจะถูกมั้ย']
 
+          if(correctUser.indexOf(update.sender.id) < 0) {
+            console.log('user id ', update.sender.id, update.message.text == ttq[quizNO].a)
+
+            if(ans == ttq[quizNO].a)
+              correctUser.push(update.sender.id)
+
+            if(update.sender.id == '1475004552541616')
+              bot.sendTextMessageTo('F*CK', update.sender.id)
+            else bot.sendTextMessageTo(replyText[Math.floor(Math.random() * 5)], update.sender.id)
+
+          }
+          else bot.sendTextMessageTo(dupReplyText[Math.floor(Math.random() * 4)], update.sender.id)
+
+
+        } else {
+          bot.sendTextMessageTo('คุณไม่ได้เข้าร่วมกิจกรรม ไว้มาร่วมกับเราได้ในครั้งหน้านะ จุ๊บๆ :D', update.sender.id)
         }
-        else bot.sendTextMessageTo(dupReplyText[Math.floor(Math.random() * 4)], update.sender.id)
 
-
-      } else {
-        bot.sendTextMessageTo('คุณไม่ได้เข้าร่วมกิจกรรม ไว้มาร่วมกับเราได้ในครั้งหน้านะ จุ๊บๆ :D', update.sender.id)
       }
 
       //}
       //else bot.sendTextMessageTo('wronggg!', update.sender.id);
 
-    }
-    else if(update.message.quick_reply) {
+    } else if(isQuizOnline && participants.indexOf(update.sender.id) < 0) {
+
+      bot.sendTextMessageTo('คุณไม่ได้เข้าร่วมกิจกรรม ไว้มาร่วมกับเราได้ในครั้งหน้านะ จุ๊บๆ :D', update.sender.id)
+
+    } else if(update.message.quick_reply) {
 
       let ans = update.message.quick_reply.payload
       console.log('got payload from quick reply : \n');
@@ -383,6 +371,8 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   console.log('enter shooting : ' + currentQuiz);
   quizNO = currentQuiz
 
+  bot.sendMessageTo(msg, update.sender.id)
+
   let buttons = []
   quiz[currentQuiz].choices.forEach((choice) => {
     /*
@@ -392,7 +382,15 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
       'payload': choice
     })
     */
-    buttons.push(choice)
+
+    //buttons.push(choice)
+
+    buttons.push({
+      'content_type': 'text',
+      'title': choice,
+      'payload': choice
+    })
+
   })
 
   /*
@@ -406,9 +404,15 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   }
   */
 
+  let msg = {
+    text: quiz[currentQuiz].q,
+    quick_replies: buttons
+  }
+
   ids.map((id)=>{
     //messengerBot.sendAttachmentTo(buttonTemplate, id)
-    messengerBot.sendDefaultButtonMessageTo(buttons, id, quiz[currentQuiz].q)
+    messengerBot.sendMessageTo(msg, id)
+    //messengerBot.sendDefaultButtonMessageTo(buttons, id, quiz[currentQuiz].q)
   })
 
   if(currentQuiz < totalQuiz) {
