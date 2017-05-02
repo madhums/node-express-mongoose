@@ -150,12 +150,16 @@ botmaster.on('update', (bot, update) => {
         let replyText = ['ได้คำตอบแล้วจ้า', 'รอฟังเฉลยนะว่าถูกมั้ย', 'ขอบคุณสำหรับคำตอบ มารอลุ้นกันนะ', 'จะถูกมั้ยน้า~', 'ดูมั่นใจมากเลย ต้องตอบถูกเยอะแน่ๆ']
         let dupReplyText = ['คุณส่งคำตอบให้เรามาแล้ว ตอบซ้ำไม่ได้นะ', 'ไม่เอา ไม่ส่งคำตอบซ้ำสิ ได้ครั้งเดียวนะ', 'ส่งคำตอบได้ครั้งเดียวนะ', 'แก้คำตอบไม่ได้นะ รอดูเฉลยดีกว่าว่าจะถูกมั้ย']
 
-        if(correctUser.indexOf(update.sender.id) < 0){
+        if(correctUser.indexOf(update.sender.id) < 0) {
           console.log('user id ', update.sender.id, update.message.text == ttq[quizNO].a)
-          correctUser.push(update.sender.id)
+
+          if(update.message.text == ttq[quizNO].a)
+            correctUser.push(update.sender.id)
+            
           if(update.sender.id == '1475004552541616')
             bot.sendTextMessageTo('F*CK', update.sender.id)
           else bot.sendTextMessageTo(replyText[Math.floor(Math.random() * 5)], update.sender.id)
+
         }
         else bot.sendTextMessageTo(dupReplyText[Math.floor(Math.random() * 4)], update.sender.id)
 
