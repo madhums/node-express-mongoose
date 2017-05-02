@@ -8,6 +8,8 @@ exports.addQuiz = function(req, res) {
 
 exports.processForm = function(req, res) {
 
+  console.log('processform');
+
   let tempNum = 0
   let q = []
   let choices = []
