@@ -65,7 +65,7 @@ module.exports = function(app, express) {
   app.get("/getAllQuestions", quizAPIs.getAllQuestions)
   app.get("/getParticipantsScore", quizAPIs.getParticipantsScore)
 
-  app.post("/processQuizForm", jsonParser, urlencodedParser, quizInput.processForm)
+  app.post("/processQuizForm", /*jsonParser, urlencodedParser,*/ quizInput.processForm)
 
   app.get("/*", (req, res) => { res.render("404") } )
 
