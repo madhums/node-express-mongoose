@@ -95,12 +95,12 @@ botmaster.on('update', (bot, update) => {
         quick_replies: [
           {
             content_type: 'text',
-            title: 'textToBeSeen1',
+            title: 'textToBeUsedAsPayLoad___________________LONG_LONG_LONG_LONG_TEXT_LONGLONGLONG',
             payload: 'textToBeUsedAsPayLoad___________________LONG_LONG_LONG_LONG_TEXT_LONGLONGLONG'
           },
           {
             content_type: 'text',
-            title: 'textToBeSeen2',
+            title: 'textToBeUsedAsPayLoad2___________________LONG_LONG_LONG_LONG_TEXT_LONGLONGLONG',
             payload: 'textToBeUsedAsPayLoad2___________________LONG_LONG_LONG_LONG_TEXT_LONGLONGLONG'
           }
         ]
