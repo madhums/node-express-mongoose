@@ -118,7 +118,7 @@ botmaster.on('update', (bot, update) => {
 
       console.log('nowP: '+ participants);
 
-      if(update.message.text != "เข้าร่วม" && participants.indexOf(update.sender.id) < 0) {
+      if(update.message.text != "เข้าร่วม" && update.message.text != "ไม่เข้าร่วม" && participants.indexOf(update.sender.id) < 0) {
         messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], update.sender.id, 'สนใจเล่นกิจกรรมกับเราใช่มั้ย กดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
       }
       else {
@@ -151,16 +151,13 @@ botmaster.on('update', (bot, update) => {
 
         let ans = update.message.quick_reply.payload
 
-        console.log('text = ' + update.message.text);
-        console.log('answer from payload : ' + ans);
-
         if(participants.indexOf(update.sender.id) >= 0) {
 
           let replyText = ['ได้คำตอบแล้วจ้า', 'รอฟังเฉลยนะว่าถูกมั้ย', 'ขอบคุณสำหรับคำตอบ มารอลุ้นกันนะ', 'จะถูกมั้ยน้า~', 'ดูมั่นใจมากเลย ต้องตอบถูกเยอะแน่ๆ']
           let dupReplyText = ['คุณส่งคำตอบให้เรามาแล้ว ตอบซ้ำไม่ได้นะ', 'ไม่เอา ไม่ส่งคำตอบซ้ำสิ ได้ครั้งเดียวนะ', 'ส่งคำตอบได้ครั้งเดียวนะ', 'แก้คำตอบไม่ได้นะ รอดูเฉลยดีกว่าว่าจะถูกมั้ย']
 
           if(correctUser.indexOf(update.sender.id) < 0) {
-            console.log('user id ', update.sender.id, update.message.text == ttq[quizNO].a)
+            console.log('user id ', update.sender.id, ans == ttq[quizNO].a)
 
             if(ans == ttq[quizNO].a)
               correctUser.push(update.sender.id)
