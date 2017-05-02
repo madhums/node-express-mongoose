@@ -206,7 +206,7 @@ exports.getParticipantsScore = function(req, res) {
       })
     }
 
-    return result.sort( (a,b)=> { eturn (a.point < b.point) ? 1 : ( (b.point < a.point) ? -1 : 0 ) })
+    return result.sort( (a,b)=> { return (a.point < b.point) ? 1 : ( (b.point < a.point) ? -1 : 0 ) })
 
   })
   .then((result)=>{
