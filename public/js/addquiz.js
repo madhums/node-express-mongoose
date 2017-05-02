@@ -22,6 +22,7 @@ function createQuizBox() {
         newQuestion.id = 'q' + num
         newQuestion.name = 'q' + num
         newQuestion.type = 'text'
+        newQuestion.size = 50
 
       newQuestionDiv.appendChild(newQuestion)
       newQuestionDiv.appendChild(document.createElement('br'))
@@ -42,6 +43,7 @@ function createQuizBox() {
           choice1.id = 'q' + num + 'c1'
           choice1.name = 'q' + num + 'c1'
           choice1.type = 'text'
+          choice1.size = 50
 
         choice1Div.appendChild(choice1)
         choice1Div.appendChild(document.createElement('br'))
@@ -56,6 +58,7 @@ function createQuizBox() {
           choice2.id = 'q' + num + 'c2'
           choice2.name = 'q' + num + 'c2'
           choice2.type = 'text'
+          choice2.size = 50
 
         choice2Div.appendChild(choice2)
         choice2Div.appendChild(document.createElement('br'))
@@ -70,6 +73,7 @@ function createQuizBox() {
           choice3.id = 'q' + num + 'c3'
           choice3.name = 'q' + num + 'c3'
           choice3.type = 'text'
+          choice3.size = 50
 
         choice3Div.appendChild(choice3)
         choice3Div.appendChild(document.createElement('br'))
@@ -84,6 +88,7 @@ function createQuizBox() {
           choice4.id = 'q' + num + 'c4'
           choice4.name = 'q' + num + 'c4'
           choice4.type = 'text'
+          choice4.size = 50
 
         choice4Div.appendChild(choice4)
         choice4Div.appendChild(document.createElement('br'))
