@@ -18,7 +18,7 @@ exports.processForm = function(req, res) {
   for(let i = 1; i <= length; i ++) {
 
     choices = []
-    for(let j = 1; j <= 3; j++) {
+    for(let j = 1; j <= 4; j++) {
       choices.push(req.body[`q${i}c${j}`])
     }
 
@@ -30,8 +30,8 @@ exports.processForm = function(req, res) {
 
   }
 
-  //database.ref("/participants").set([])
-  //database.ref("/quiz").set(q)
+  database.ref("/participants").set([])
+  database.ref("/quiz").set(q)
   res.send('บันทึกชุดคำถามเรียบร้อย')
 
 }

@@ -18,7 +18,7 @@ module.exports = function(app, express) {
   app.set('views', './app/views');
   app.set('view engine', 'ejs');
 
-  let allowedHeader = ["http://localhost:3000", "https://messengerchatbot-f6775.firebaseapp.com"]
+  let allowedHeader = ["http://localhost:3000", "https://dsmbot.herokuapp.com", "https://messengerchatbot-f6775.firebaseapp.com"]
   app.use(function(req, res, next) {
 
     var origin = req.get('origin');
