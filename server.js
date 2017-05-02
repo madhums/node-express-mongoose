@@ -371,7 +371,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   console.log('enter shooting : ' + currentQuiz);
   quizNO = currentQuiz
 
-  bot.sendMessageTo(msg, update.sender.id)
+  //bot.sendMessageTo(msg, update.sender.id)
 
   let buttons = []
   quiz[currentQuiz].choices.forEach((choice) => {
