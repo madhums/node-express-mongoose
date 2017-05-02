@@ -74,6 +74,20 @@ function createQuizBox() {
         choice3Div.appendChild(choice3)
         choice3Div.appendChild(document.createElement('br'))
 
+        //choice 4
+        let choice4Div = document.createElement('div')
+        choice4Div.id = 'choice4Divq' + num
+        choice4Div.style = 'padding: 0px 0px 0px 10px;'
+        choice4Div.innerHTML = 'ตัวเลือกที่ 4 : '
+
+          let choice4 = document.createElement('input');
+          choice4.id = 'q' + num + 'c4'
+          choice4.name = 'q' + num + 'c4'
+          choice4.type = 'text'
+
+        choice4Div.appendChild(choice4)
+        choice4Div.appendChild(document.createElement('br'))
+
         //answer
         let answerDiv = document.createElement('div')
         answerDiv.id = 'q' + num + 'answer'
@@ -93,6 +107,7 @@ function createQuizBox() {
       choiceDiv.appendChild(choice1Div)
       choiceDiv.appendChild(choice2Div)
       choiceDiv.appendChild(choice3Div)
+      choiceDiv.appendChild(choice4Div)
       choiceDiv.appendChild(answerDiv)
 
     newDiv.appendChild(choiceDiv)
