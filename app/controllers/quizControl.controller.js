@@ -14,10 +14,8 @@ exports.getControlInterface = function(req, res) {
 }
 
 exports.changeReadyToStart = function(req, res) {
-  let value = req.query.value
-  if(value == 'true')
-    readyToStart = true
 
+  readyToStart = true
   console.log('quizcontrol: ' + readyToStart);
   res.json({'status': 'done'})
 }
