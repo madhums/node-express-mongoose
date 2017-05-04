@@ -116,51 +116,34 @@ botmaster.on('update', (bot, update) => {
 
 
     // if enterTime on -> open for users to particate quiz
-    if(enterTime && update.message.quick_reply) {
+    if(enterTime) {
 
-      if(update.message.quick_reply.payload) {
-        if(update.message.quick_reply.payload == 'โสด')
+      console.log('nowP: '+ participants);
+
+      if(update.message.text == "โสดอยู่" || update.message.text == "ไม่โสดแล้ว") {
+        if(update.message.text == 'โสดอยู่')
           singlePerson.push(update.sender.id)
 
         bot.sendTextMessageTo('ขอบคุณสำหรับคำตอบจ้า เตรียมตัวเล่นเกมกับเราได้เลย', update.sender.id)
       }
-
-    }
-    else if(enterTime) {
-
-      console.log('nowP: '+ participants);
-
-      if(update.message.text != "เข้าร่วม" && update.message.text != "ไม่เข้าร่วม" && participants.indexOf(update.sender.id) < 0) {
+      else if(update.message.text != "เข้าร่วม" && update.message.text != "ไม่เข้าร่วม" && participants.indexOf(update.sender.id) < 0) {
         messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], update.sender.id, 'สนใจเล่นกิจกรรมกับเราใช่มั้ย กดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
       }
       else {
 
         if(update.message.text == "เข้าร่วม") {
+
           bot.sendTextMessageTo('คุณได้เข้าร่วมแล้ว รออีกสักครู่ กิจกรรมกำลังจะเริ่มขึ้น', update.sender.id);
           if(participants.indexOf(update.sender.id) < 0) {
             participants.push(update.sender.id)
             database.ref(`/participants`).set(participants)
 
             setTimeout(()=>{
-
-              let msg = {
-                text: 'ช่วยทำแบบสอบถามนิดนึง ตอนนี้โสดอยู่รึเปล่า?',
-                quick_replies: [
-                  {
-                    'content_type': 'text',
-                    'title': 'โสด',
-                    'payload': 'โสด'
-                  },
-                  {
-                    'content_type': 'text',
-                    'title': 'ไม่โสด',
-                    'payload': 'ไม่โสด'
-                  }
-                ]
-              }
-
-              bot.sendMessageTo(msg, update.sender.id)
-
+              messengerBot.sendDefaultButtonMessageTo(
+                ['โสดอยู่', 'ไม่โสดแล้ว'],
+                update.sender.id,
+                'ช่วยทำแบบสอบถามนิดนึง ตอนนี้โสดอยู่รึเปล่า?'
+              );
             }, 1000)
 
           }
@@ -199,9 +182,9 @@ botmaster.on('update', (bot, update) => {
               database.ref(`/quiz/${quizNO}/correctUsers`).set(correctUser)
             }
 
-            if(update.sender.id == '1475004552541616')
+            /*if(update.sender.id == '1475004552541616')
               bot.sendTextMessageTo('F*CK', update.sender.id)
-            else bot.sendTextMessageTo(replyText[Math.floor(Math.random() * 5)], update.sender.id)
+            else */bot.sendTextMessageTo(replyText[Math.floor(Math.random() * 5)], update.sender.id)
 
           }
           else bot.sendTextMessageTo(dupReplyText[Math.floor(Math.random() * 4)], update.sender.id)
