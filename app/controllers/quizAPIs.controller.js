@@ -79,6 +79,49 @@ exports.getAllParticipantsInfo = function(req, res) {
 
 }
 
+exports.getAllSingleUsers = function(req, res) {
+
+  let singleUsersInfo = []
+  database.ref('/singleUsers').once('value')
+  .then((snapshot) => {
+
+    singleUsersInfo = snapshot.val()
+    return database.ref('/users').once('value')
+
+  })
+  .then((snapshot) => {
+
+    let users = snapshot.val()
+    let tempSingleUsersInfo = singleUsersInfo
+    singleUsersInfo = []
+
+    tempSingleUsersInfo.forEach((key)=> {
+      singleUsersInfo.push({
+        'id': key,
+        'name': users[key].firstName + ' ' + users[key].lastName,
+        'gender': users[key].gender,
+        'profilePic': users[key].profilePic
+      })
+    })
+
+    res.json({
+      'error': null,
+      'singleUsersInfo': participantsInfo
+    })
+
+  })
+  .catch((error)=>{
+
+    console.log(`there's an error [getAllParticipantsInfo] : ${error}`);
+    res.json({
+      'error': error,
+      'singleUsersInfo': participantsInfo
+    })
+
+  })
+
+}
+
 
 exports.getAllQuestions = function(req, res) {
 
@@ -152,53 +195,58 @@ exports.getAllQuestions = function(req, res) {
 
 exports.getCorrectUsersInfo = function(req, res) {
 
-  if(req.query.quizNO) {
+  if(req.query.quizNO && quizReady) {
 
-    let quizNO = req.query.quizNO
-    let correctUsersInfo = []
-    database.ref(`/quiz/${quizNO}/correctUsers`).once('value')
-    .then((snapshot) => {
+    let quizNO = req.query.quizNO - 1
 
-      correctUsersInfo = snapshot.val()
-      return database.ref('/users').once('value')
+    if(quizNO >= 0 && quizNO < quizReady.length) {
 
-    })
-    .then((snapshot) => {
+      let correctUsersInfo = []
+      database.ref(`/quiz/${quizNO}/correctUsers`).once('value')
+      .then((snapshot) => {
 
-      let users = snapshot.val()
-      let tempCorrectUsersInfo = correctUsersInfo
-      correctUsersInfo = []
+        correctUsersInfo = snapshot.val()
+        return database.ref('/users').once('value')
 
-      tempCorrectUsersInfo.forEach((key)=> {
-        correctUsersInfo.push({
-          'id': key,
-          'name': users[key].firstName + ' ' + users[key].lastName,
-          'gender': users[key].gender,
-          'profilePic': users[key].profilePic
+      })
+      .then((snapshot) => {
+
+        let users = snapshot.val()
+        let tempCorrectUsersInfo = correctUsersInfo
+        correctUsersInfo = []
+
+        tempCorrectUsersInfo.forEach((key)=> {
+          correctUsersInfo.push({
+            'id': key,
+            'name': users[key].firstName + ' ' + users[key].lastName,
+            'gender': users[key].gender,
+            'profilePic': users[key].profilePic
+          })
         })
+
+        res.json({
+          'error': null,
+          'correctUsersInfo': correctUsersInfo
+        })
+
+      })
+      .catch((error)=>{
+
+        console.log(`there's an error [getAllParticipantsInfo] : ${error}`);
+        res.json({
+          'error': error,
+          'correctUsersInfo': participantsInfo
+        })
+
       })
 
-      res.json({
-        'error': null,
-        'usersInfo': correctUsersInfo
-      })
-
-    })
-    .catch((error)=>{
-
-      console.log(`there's an error [getAllParticipantsInfo] : ${error}`);
-      res.json({
-        'error': error,
-        'participantsInfo': participantsInfo
-      })
-
-    })
+    }
 
   }
   else {
     res.json({
-      'error': 'quiz no ',
-      'participantsInfo': participantsInfo
+      'error': 'please specify quiz no.',
+      'correctUsersInfo': participantsInfo
     })
   }
 
@@ -261,7 +309,11 @@ exports.getParticipantsScore = function(req, res) {
       })
     }
 
-    return result.sort( (a,b)=> { return (a.point < b.point) ? 1 : ( (b.point < a.point) ? -1 : 0 ) })
+    result.sort( (a,b)=> { return (a.point < b.point) ? 1 : ( (b.point < a.point) ? -1 : 0 ) })
+
+    let topScore = result[0].point
+    let winners = result.filter((user) => return user.point == topScore)
+    return winners
 
   })
   .then((result)=>{
