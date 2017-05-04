@@ -159,8 +159,10 @@ botmaster.on('update', (bot, update) => {
           if(correctUser.indexOf(update.sender.id) < 0) {
             console.log('user id ', update.sender.id, ans == ttq[quizNO].a)
 
-            if(ans == ttq[quizNO].a)
+            if(ans == ttq[quizNO].a){
               correctUser.push(update.sender.id)
+              database.ref(`/quiz/${quizNO}/correctUsers`).set(correctUser)
+            }
 
             if(update.sender.id == '1475004552541616')
               bot.sendTextMessageTo('F*CK', update.sender.id)
@@ -428,7 +430,6 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
       if(quizReady[nextQuiz]) {
 
         clearInterval(quizInterval)
-        database.ref(`/quiz/${currentQuiz}/correctUsers`).set(correctUser)
         shootTheQuestion(quiz, ids, nextQuiz, totalQuiz)
 
       }
