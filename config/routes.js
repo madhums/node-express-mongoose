@@ -5,6 +5,7 @@
  */
 
 const home = require('../app/controllers/home');
+const login = require('../app/controllers/login');
 
 /**
  * Expose
@@ -13,6 +14,11 @@ const home = require('../app/controllers/home');
 module.exports = function (app, passport) {
 
   app.get('/', home.index);
+  app.get('/login', login.index);
+
+  app.get('/home', home.main);
+
+  app.post('/authenticate',login.authenticate);
 
   /**
    * Error handling

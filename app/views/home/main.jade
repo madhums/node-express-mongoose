@@ -1,0 +1,221 @@
+//
+   Created by knyamagoudar on 5/3/17.
+
+
+doctype html
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        // The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags
+        meta(name='description', content='')
+        meta(name='author', content='')
+        link(rel='icon', href='../../favicon.ico')
+        title Dashboard Template for Bootstrap
+        // Bootstrap core CSS
+        link(href='/css/bootstrap.min.css', rel='stylesheet')
+        // IE10 viewport hack for Surface/desktop Windows 8 bug
+        link(href='../../assets/css/ie10-viewport-bug-workaround.css', rel='stylesheet')
+        // Custom styles for this template
+        link(href='/css/dashboard.css', rel='stylesheet')
+        // Just for debugging purposes. Don't actually copy these 2 lines!
+        //if lt IE 9
+          script(src='../../assets/js/ie8-responsive-file-warning.js')
+        //script(src='../../assets/js/ie-emulation-modes-warning.js')
+        // HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries
+        //if lt IE 9
+          script(src='https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js')
+          script(src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js')
+    body
+        nav.navbar.navbar-inverse.navbar-fixed-top
+            .container-fluid
+                .navbar-header
+                    button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#navbar', aria-expanded='false', aria-controls='navbar')
+                        span.sr-only Toggle navigation
+                        span.icon-bar
+                        span.icon-bar
+                        span.icon-bar
+                    a.navbar-brand(href='#') Project name
+                #navbar.navbar-collapse.collapse
+                    ul.nav.navbar-nav.navbar-right
+                        li
+                            a(href='#') Dashboard
+                        li
+                            a(href='#') Settings
+                        li
+                            a(href='#') Profile
+                        li
+                            a(href='#') Help
+                    form.navbar-form.navbar-right
+                        input.form-control(type='text', placeholder='Search...')
+        .container-fluid
+            .row
+                .col-sm-3.col-md-2.sidebar
+                    ul.nav.nav-sidebar
+                        li.active
+                            a(href='#')
+                                | Overview
+                                span.sr-only (current)
+                        li
+                            a(href='#') Reports
+                        li
+                            a(href='#') Analytics
+                        li
+                            a(href='#') Export
+                    ul.nav.nav-sidebar
+                        li
+                            a(href='') Nav item
+                        li
+                            a(href='') Nav item again
+                        li
+                            a(href='') One more nav
+                        li
+                            a(href='') Another nav item
+                        li
+                            a(href='') More navigation
+                    ul.nav.nav-sidebar
+                        li
+                            a(href='') Nav item again
+                        li
+                            a(href='') One more nav
+                        li
+                            a(href='') Another nav item
+                .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+                    h1.page-header Dashboard
+                    .row.placeholders
+                        .col-xs-6.col-sm-3.placeholder
+                            img.img-responsive(src='data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', width='200', height='200', alt='Generic placeholder thumbnail')
+                            h4 Label
+                            span.text-muted Something else
+                        .col-xs-6.col-sm-3.placeholder
+                            img.img-responsive(src='data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', width='200', height='200', alt='Generic placeholder thumbnail')
+                            h4 Label
+                            span.text-muted Something else
+                        .col-xs-6.col-sm-3.placeholder
+                            img.img-responsive(src='data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', width='200', height='200', alt='Generic placeholder thumbnail')
+                            h4 Label
+                            span.text-muted Something else
+                        .col-xs-6.col-sm-3.placeholder
+                            img.img-responsive(src='data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', width='200', height='200', alt='Generic placeholder thumbnail')
+                            h4 Label
+                            span.text-muted Something else
+                    h2.sub-header Section title
+                    .table-responsive
+                        table.table.table-striped
+                            thead
+                                tr
+                                    th #
+                                    th Header
+                                    th Header
+                                    th Header
+                                    th Header
+                            tbody
+                                tr
+                                    td 1,001
+                                    td Lorem
+                                    td ipsum
+                                    td dolor
+                                    td sit
+                                tr
+                                    td 1,002
+                                    td amet
+                                    td consectetur
+                                    td adipiscing
+                                    td elit
+                                tr
+                                    td 1,003
+                                    td Integer
+                                    td nec
+                                    td odio
+                                    td Praesent
+                                tr
+                                    td 1,003
+                                    td libero
+                                    td Sed
+                                    td cursus
+                                    td ante
+                                tr
+                                    td 1,004
+                                    td dapibus
+                                    td diam
+                                    td Sed
+                                    td nisi
+                                tr
+                                    td 1,005
+                                    td Nulla
+                                    td quis
+                                    td sem
+                                    td at
+                                tr
+                                    td 1,006
+                                    td nibh
+                                    td elementum
+                                    td imperdiet
+                                    td Duis
+                                tr
+                                    td 1,007
+                                    td sagittis
+                                    td ipsum
+                                    td Praesent
+                                    td mauris
+                                tr
+                                    td 1,008
+                                    td Fusce
+                                    td nec
+                                    td tellus
+                                    td sed
+                                tr
+                                    td 1,009
+                                    td augue
+                                    td semper
+                                    td porta
+                                    td Mauris
+                                tr
+                                    td 1,010
+                                    td massa
+                                    td Vestibulum
+                                    td lacinia
+                                    td arcu
+                                tr
+                                    td 1,011
+                                    td eget
+                                    td nulla
+                                    td Class
+                                    td aptent
+                                tr
+                                    td 1,012
+                                    td taciti
+                                    td sociosqu
+                                    td ad
+                                    td litora
+                                tr
+                                    td 1,013
+                                    td torquent
+                                    td per
+                                    td conubia
+                                    td nostra
+                                tr
+                                    td 1,014
+                                    td per
+                                    td inceptos
+                                    td himenaeos
+                                    td Curabitur
+                                tr
+                                    td 1,015
+                                    td sodales
+                                    td ligula
+                                    td in
+                                    td libero
+        //
+          Bootstrap core JavaScript
+          ==================================================
+        // Placed at the end of the document so the pages load faster
+        script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js')
+        //script.
+            window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\\/script>')
+        script(src='/js/bootstrap.min.js')
+        // Just to make our placeholder images work. Don't actually copy the next line!
+        //script(src='/js/vendor/holder.min.js')
+        // IE10 viewport hack for Surface/desktop Windows 8 bug
+        //script(src='../../assets/js/ie10-viewport-bug-workaround.js')
