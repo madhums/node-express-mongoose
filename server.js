@@ -64,6 +64,8 @@ let participants = []
 let quizNO = 0
 let ttq = null
 
+let singlePerson = []
+
 // event listener for participants and new user
 
 database.ref(`/participants`).on('child_added', (childSnapshot, prevChildKey) => {
@@ -114,7 +116,17 @@ botmaster.on('update', (bot, update) => {
 
 
     // if enterTime on -> open for users to particate quiz
-    if(enterTime) {
+    if(enterTime && update.message.quick_reply) {
+
+      if(update.message.quick_reply.payload) {
+        if(update.message.quick_reply.payload == 'โสด')
+          singlePerson.push(update.sender.id)
+
+        bot.sendTextMessageTo('ขอบคุณสำหรับคำตอบจ้า เตรียมตัวเล่นเกมกับเราได้เลย', update.sender.id)
+      }
+
+    }
+    else if(enterTime) {
 
       console.log('nowP: '+ participants);
 
@@ -128,6 +140,29 @@ botmaster.on('update', (bot, update) => {
           if(participants.indexOf(update.sender.id) < 0) {
             participants.push(update.sender.id)
             database.ref(`/participants`).set(participants)
+
+            setTimeout(()=>{
+
+              let msg = {
+                text: 'ช่วยทำแบบสอบถามนิดนึง ตอนนี้โสดอยู่รึเปล่า?',
+                quick_replies: [
+                  {
+                    'content_type': 'text',
+                    'title': 'โสด',
+                    'payload': 'โสด'
+                  },
+                  {
+                    'content_type': 'text',
+                    'title': 'ไม่โสด',
+                    'payload': 'ไม่โสด'
+                  }
+                ]
+              }
+
+              bot.sendMessageTo(msg, update.sender.id)
+
+            }, 1000)
+
           }
         }
         else if(update.message.text == "ไม่เข้าร่วม" && participants.indexOf(update.sender.id) < 0)
@@ -562,6 +597,8 @@ function startQuiz() {
                 console.log('ALLID: ' + allIDs);
                 console.log('P_ID: ' + participants);
                 enterTime = false
+
+                database.ref(`/singleUsers`).set(singlePerson)
 
                 if(participants.length > 0) startQuizTime(quiz, participants)
                 else {
