@@ -312,7 +312,7 @@ exports.getParticipantsScore = function(req, res) {
     result.sort( (a,b)=> { return (a.point < b.point) ? 1 : ( (b.point < a.point) ? -1 : 0 ) })
 
     let topScore = result[0].point
-    let winners = result.filter((user) => return user.point == topScore)
+    let winners = result.filter((user) => { return user.point == topScore })
     return winners
 
   })
