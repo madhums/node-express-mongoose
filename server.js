@@ -518,6 +518,7 @@ function startQuiz() {
 
   clearInterval(checkStart)
   let quizPromise = Promise.resolve(prepareQuiz())
+  database.ref(`/participants`).set([])
 
   quizPromise.then((quiz) => {
 
