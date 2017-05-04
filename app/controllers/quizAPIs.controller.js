@@ -246,7 +246,7 @@ exports.getCorrectUsersInfo = function(req, res) {
   else {
     res.json({
       'error': 'please specify quiz no.',
-      'correctUsersInfo': correctUsersInfo
+      'correctUsersInfo': []
     })
   }
 
