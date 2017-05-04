@@ -60,6 +60,7 @@ module.exports = function(app, express) {
   app.get("/controlRoom", quizControl.getControlInterface)
 
   // API for front-end
+  app.get.("/getCorrecUsers", quizAPIs.getCorrectUsersInfo)
   app.get("/getAllUsersInfo", quizAPIs.getAllUsersInfo)
   app.get("/getAllParticipantsInfo", quizAPIs.getAllParticipantsInfo)
   app.get("/getAllQuestions", quizAPIs.getAllQuestions)

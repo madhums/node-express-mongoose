@@ -150,6 +150,61 @@ exports.getAllQuestions = function(req, res) {
 }
 
 
+exports.getCorrectUsersInfo = function(req, res) {
+
+  if(req.query.quizNO) {
+
+    let quizNO = req.query.quizNO
+    let correctUsersInfo = []
+    database.ref(`/quiz/${quizNO}/correctUsers`).once('value')
+    .then((snapshot) => {
+
+      correctUsersInfo = snapshot.val()
+      return database.ref('/users').once('value')
+
+    })
+    .then((snapshot) => {
+
+      let users = snapshot.val()
+      let tempCorrectUsersInfo = correctUsersInfo
+      correctUsersInfo = []
+
+      tempCorrectUsersInfo.forEach((key)=> {
+        correctUsersInfo.push({
+          'id': key,
+          'name': users[key].firstName + ' ' + users[key].lastName,
+          'gender': users[key].gender,
+          'profilePic': users[key].profilePic
+        })
+      })
+
+      res.json({
+        'error': null,
+        'usersInfo': correctUsersInfo
+      })
+
+    })
+    .catch((error)=>{
+
+      console.log(`there's an error [getAllParticipantsInfo] : ${error}`);
+      res.json({
+        'error': error,
+        'participantsInfo': participantsInfo
+      })
+
+    })
+
+  }
+  else {
+    res.json({
+      'error': 'quiz no ',
+      'participantsInfo': participantsInfo
+    })
+  }
+
+}
+
+
 exports.getParticipantsScore = function(req, res) {
 
   let result = new Object()
