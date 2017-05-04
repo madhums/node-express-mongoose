@@ -244,10 +244,23 @@ exports.getCorrectUsersInfo = function(req, res) {
 
   }
   else {
-    res.json({
-      'error': 'please specify quiz no.',
-      'correctUsersInfo': []
-    })
+
+    if(!quizReady){
+
+      res.json({
+        'error': 'quiz not started yet',
+        'correctUsersInfo': []
+      })
+
+    } else {
+
+      res.json({
+        'error': 'please specify quiz no.',
+        'correctUsersInfo': []
+      })
+
+    }
+
   }
 
 }
