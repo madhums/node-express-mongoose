@@ -106,7 +106,7 @@ exports.getAllSingleUsers = function(req, res) {
 
     res.json({
       'error': null,
-      'singleUsersInfo': participantsInfo
+      'singleUsersInfo': singleUsersInfo
     })
 
   })
@@ -115,7 +115,7 @@ exports.getAllSingleUsers = function(req, res) {
     console.log(`there's an error [getAllParticipantsInfo] : ${error}`);
     res.json({
       'error': error,
-      'singleUsersInfo': participantsInfo
+      'singleUsersInfo': singleUsersInfo
     })
 
   })
@@ -235,7 +235,7 @@ exports.getCorrectUsersInfo = function(req, res) {
         console.log(`there's an error [getAllParticipantsInfo] : ${error}`);
         res.json({
           'error': error,
-          'correctUsersInfo': participantsInfo
+          'correctUsersInfo': correctUsersInfo
         })
 
       })
@@ -246,7 +246,7 @@ exports.getCorrectUsersInfo = function(req, res) {
   else {
     res.json({
       'error': 'please specify quiz no.',
-      'correctUsersInfo': participantsInfo
+      'correctUsersInfo': correctUsersInfo
     })
   }
 
