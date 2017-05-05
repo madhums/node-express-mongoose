@@ -470,11 +470,13 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
         readyToStart = false
         database.ref(`/quiz/${currentQuiz}/correctUsers`).set(correctUser)
 
+        //fetch('https//')
+
         ids.map((id)=>{
 
           messengerBot.sendTextMessageTo('กิจกรรมจบแล้ว ขอบคุณทุกท่านที่มาร่วมเล่นกับเรา :D', id)
           setTimeout(()=>{
-            messengerBot.sendTextMessageTo('คุณสามารดูผลคะแนนได้ที่ https://dsmbot.herokuapp.com/result', id)
+            messengerBot.sendTextMessageTo(`คุณได้คะแนนรวม ${} คะแนน เก่งมากเลย` , id)
           },3000)
 
         })
@@ -525,6 +527,7 @@ userMgt.getAllSubscribedID(function(err, ids){
 // database.ref("/staging/readyToStart").on('value',(readyToStartSnapshot)=>{
 //   if(readyToStartSnapshot.val()) console.log('ready: ' + readyToStartSnapshot.val());
 // })
+database.ref(`/participants`).set([])
 
 let checkStart = setInterval(()=>{
   console.log('readyToStart : ' + readyToStart);
@@ -536,7 +539,6 @@ function startQuiz() {
 
   clearInterval(checkStart)
   let quizPromise = Promise.resolve(prepareQuiz())
-  database.ref(`/participants`).set([])
 
   quizPromise.then((quiz) => {
 
