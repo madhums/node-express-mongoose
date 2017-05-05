@@ -270,6 +270,7 @@ exports.getParticipantsScore = function(req, res) {
 
   let result = new Object()
   let quizLength = 0
+  let onlyWinner = (req.query.winner == 'true')
 
   database.ref('/participants').once('value')
   .then((snapshot)=>{
@@ -326,7 +327,8 @@ exports.getParticipantsScore = function(req, res) {
 
     let topScore = result[0].point
     let winners = result.filter((user) => { return user.point == topScore })
-    return winners
+    if(onlyWinner) return winners
+    else return result
 
   })
   .then((result)=>{
