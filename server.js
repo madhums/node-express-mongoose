@@ -391,6 +391,7 @@ function startQuizTime(quiz, ids) {
 function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   //bot.sendTextMessageTo(quiz[currentQuiz].q, update.sender.id);
   correctUser = []
+  database.ref(`/quiz/${currentQuiz}/correctUsers`).set(correctUser)
   console.log('enter shooting : ' + currentQuiz);
   quizNO = currentQuiz
 
@@ -451,7 +452,6 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
       if(quizReady[nextQuiz]) {
 
         clearInterval(quizInterval)
-        database.ref(`/quiz/${currentQuiz}/correctUsers`).set(correctUser)
         shootTheQuestion(quiz, ids, nextQuiz, totalQuiz)
 
       }
