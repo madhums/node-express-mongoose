@@ -362,6 +362,8 @@ async function prepareQuiz() {
 
 function startQuizTime(quiz, ids) {
 
+  database.ref(`/singleUsers`).set(singlePerson)
+  
   isQuizOnline = true
   console.log('start quiz length ' + quiz.length);
   let quizLength = quiz.length - 1
@@ -582,8 +584,6 @@ function startQuiz() {
                 console.log('ALLID: ' + allIDs);
                 console.log('P_ID: ' + participants);
                 enterTime = false
-
-                database.ref(`/singleUsers`).set(singlePerson)
 
                 if(participants.length > 0) startQuizTime(quiz, participants)
                 else {
