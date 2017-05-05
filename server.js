@@ -476,7 +476,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
 
           messengerBot.sendTextMessageTo('กิจกรรมจบแล้ว ขอบคุณทุกท่านที่มาร่วมเล่นกับเรา :D', id)
           setTimeout(()=>{
-            messengerBot.sendTextMessageTo(`คุณได้คะแนนรวม ${} คะแนน เก่งมากเลย` , id)
+            messengerBot.sendTextMessageTo(`คุณได้คะแนนรวม x คะแนน เก่งมากเลย` , id)
           },3000)
 
         })
