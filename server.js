@@ -363,7 +363,7 @@ async function prepareQuiz() {
 function startQuizTime(quiz, ids) {
 
   database.ref(`/singleUsers`).set(singlePerson)
-  
+
   isQuizOnline = true
   console.log('start quiz length ' + quiz.length);
   let quizLength = quiz.length - 1
@@ -472,15 +472,21 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
         readyToStart = false
         database.ref(`/quiz/${currentQuiz}/correctUsers`).set(correctUser)
 
-        //fetch('https//')
+        fetch('https://dsmbot.herokuapp.com/getParticipantsScore')
+        .then((res) => { return res.json() })
+        .then((data) => {
 
-        ids.map((id)=>{
+          ids.map((id)=>{
 
-          messengerBot.sendTextMessageTo('กิจกรรมจบแล้ว ขอบคุณทุกท่านที่มาร่วมเล่นกับเรา :D', id)
-          setTimeout(()=>{
-            messengerBot.sendTextMessageTo(`คุณได้คะแนนรวม x คะแนน เก่งมากเลย` , id)
-          },3000)
+            messengerBot.sendTextMessageTo('กิจกรรมจบแล้ว ขอบคุณทุกท่านที่มาร่วมเล่นกับเรา :D', id)
+            setTimeout(()=>{
+              messengerBot.sendTextMessageTo(`คุณได้คะแนนรวม ${data.result[id]} คะแนน เก่งมากเลย` , id)
+            },3000)
 
+          })
+
+        }).catch((error)=>{
+          console.log(`fetch error : ${error}`);
         })
 
       }

@@ -65,6 +65,7 @@ module.exports = function(app, express) {
   app.get("/getAllUsersInfo", quizAPIs.getAllUsersInfo)
   app.get("/getAllParticipantsInfo", quizAPIs.getAllParticipantsInfo)
   app.get("/getAllQuestions", quizAPIs.getAllQuestions)
+  app.get("/getParticipantsScoreObject", quizAPIs.getParticipantsScoreObject)
   app.get("/getParticipantsScore", quizAPIs.getParticipantsScore)
 
   app.post("/processQuizForm", jsonParser, urlencodedParser, quizInput.processForm)

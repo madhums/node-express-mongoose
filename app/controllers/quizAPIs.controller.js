@@ -352,3 +352,64 @@ exports.getParticipantsScore = function(req, res) {
   })
 
 }
+
+
+exports.getParticipantsScoreObject = function(req, res) {
+
+  let result = new Object()
+  let quizLength = 0
+
+  database.ref('/participants').once('value')
+  .then((snapshot)=>{
+
+    let UIDs = snapshot.val()
+    if(UIDs) {
+      for(let i = 0; i < UIDs.length; i++) {
+        result[UIDs[i]] = 0
+      }
+      return database.ref('/quiz').once('value')
+    }
+    else throw 'no participants'
+
+  })
+  .then((quizSnapshot)=>{
+
+    let quiz = quizSnapshot.val()
+    let allCorrectUsers = []
+    quizLength = quiz.length
+
+    allCorrectUsers = quiz.map((q)=>{
+      return q.correctUsers
+    })
+    console.log('b4 allU foreach');
+    allCorrectUsers.forEach((userByOrder)=>{
+      if(userByOrder) {
+        userByOrder.forEach((uid)=>{
+          if(result.hasOwnProperty(uid))
+            result[uid]++
+        })
+      }
+    })
+
+    return result
+
+  })
+  .then((result)=>{
+
+    res.json({
+      error: null,
+      result: result
+    })
+
+  })
+  .catch((error)=>{
+
+    console.log('error found: ' + error);
+    res.json({
+      error: error,
+      result: result
+    })
+
+  })
+
+}
