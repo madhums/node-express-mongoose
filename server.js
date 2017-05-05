@@ -120,13 +120,15 @@ botmaster.on('update', (bot, update) => {
 
       console.log('nowP: '+ participants);
 
+      /*
       if(update.message.text == "โสดอยู่" || update.message.text == "ไม่โสดแล้ว") {
         if(update.message.text == 'โสดอยู่')
           singlePerson.push(update.sender.id)
 
         bot.sendTextMessageTo('ขอบคุณสำหรับคำตอบจ้า เตรียมตัวเล่นเกมกับเราได้เลย', update.sender.id)
       }
-      else if(update.message.text != "เข้าร่วม" && update.message.text != "ไม่เข้าร่วม" && participants.indexOf(update.sender.id) < 0) {
+      else*/
+      if(update.message.text != "เข้าร่วม" && update.message.text != "ไม่เข้าร่วม" && participants.indexOf(update.sender.id) < 0) {
         messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], update.sender.id, 'สนใจเล่นกิจกรรมกับเราใช่มั้ย กดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
       }
       else {
@@ -137,7 +139,7 @@ botmaster.on('update', (bot, update) => {
           if(participants.indexOf(update.sender.id) < 0) {
             participants.push(update.sender.id)
             database.ref(`/participants`).set(participants)
-
+            /*
             setTimeout(()=>{
               messengerBot.sendDefaultButtonMessageTo(
                 ['โสดอยู่', 'ไม่โสดแล้ว'],
@@ -145,7 +147,7 @@ botmaster.on('update', (bot, update) => {
                 'ช่วยทำแบบสอบถามนิดนึง ตอนนี้โสดอยู่รึเปล่า?'
               );
             }, 1000)
-
+            */
           }
         }
         else if(update.message.text == "ไม่เข้าร่วม" && participants.indexOf(update.sender.id) < 0)
