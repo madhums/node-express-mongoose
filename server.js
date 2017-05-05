@@ -472,7 +472,7 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
         readyToStart = false
         database.ref(`/quiz/${currentQuiz}/correctUsers`).set(correctUser)
 
-        fetch('https://dsmbot.herokuapp.com/getParticipantsScore')
+        fetch('https://dsmbot.herokuapp.com/getParticipantsScoreObject')
         .then((res) => { return res.json() })
         .then((data) => {
 
@@ -625,7 +625,14 @@ function startQuiz() {
 
 //})
 
+fetch('https://dsmbot.herokuapp.com/getParticipantsScoreObject')
+.then((res) => { return res.json() })
+.then((data) => {
+  console.log(JSON.stringify(data));
+})
+.catch((error)=>{
 
+})
 /*
 getAllID(function(err, list){
   if(err) console.log(err);
