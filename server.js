@@ -179,9 +179,8 @@ botmaster.on('update', (bot, update) => {
 
             if(ans == ttq[quizNO].a){
               correctUser.push(update.sender.id)
-              database.ref(`/quiz/${quizNO}/correctUsers`).set(correctUser)
             }
-
+            database.ref(`/quiz/${quizNO}/correctUsers`).set(correctUser)
             /*if(update.sender.id == '1475004552541616')
               bot.sendTextMessageTo('F*CK', update.sender.id)
             else */bot.sendTextMessageTo(replyText[Math.floor(Math.random() * 5)], update.sender.id)
@@ -625,14 +624,6 @@ function startQuiz() {
 
 //})
 
-fetch('https://dsmbot.herokuapp.com/getParticipantsScoreObject')
-.then((res) => { return res.json() })
-.then((data) => {
-  console.log(JSON.stringify(data));
-})
-.catch((error)=>{
-
-})
 /*
 getAllID(function(err, list){
   if(err) console.log(err);
