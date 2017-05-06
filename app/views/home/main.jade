@@ -36,17 +36,22 @@ html(lang='en')
                         span.icon-bar
                         span.icon-bar
                         span.icon-bar
-                    a.navbar-brand(href='#') Project name
+                    a.navbar-brand(href='#') Big Data Analytics in Healthcare
                 #navbar.navbar-collapse.collapse
                     ul.nav.navbar-nav.navbar-right
                         li
                             a(href='#') Dashboard
-                        li
-                            a(href='#') Settings
-                        li
-                            a(href='#') Profile
-                        li
-                            a(href='#') Help
+                        li.dropdown
+                            a.dropdown-toggle(data-toggle='dropdown', href='#')
+                                | Profile 
+                                span.caret
+                            ul.dropdown-menu
+                                li
+                                    a(href='#') My Profile
+                                li
+                                  a(href='#') Settings
+                                li
+                                  a(href='#') Sign out
                     form.navbar-form.navbar-right
                         input.form-control(type='text', placeholder='Search...')
         .container-fluid
@@ -62,25 +67,13 @@ html(lang='en')
                         li
                             a(href='#') Analytics
                         li
-                            a(href='#') Export
-                    ul.nav.nav-sidebar
+                            a(href='#') Add Patient
                         li
-                            a(href='') Nav item
+                            a(href='') View Patient
                         li
-                            a(href='') Nav item again
-                        li
-                            a(href='') One more nav
-                        li
-                            a(href='') Another nav item
-                        li
-                            a(href='') More navigation
-                    ul.nav.nav-sidebar
-                        li
-                            a(href='') Nav item again
-                        li
-                            a(href='') One more nav
-                        li
-                            a(href='') Another nav item
+                            a(href='') Update Patient
+                        
+                   
                 .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
                     h1.page-header Dashboard
                     .row.placeholders
