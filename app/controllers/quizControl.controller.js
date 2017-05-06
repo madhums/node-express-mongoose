@@ -54,6 +54,14 @@ exports.activateQ = function(req, res) {
 
 }
 
+
+export.endAnswerTime = function(req, res) {
+
+  canAnswer = false
+  res.json({ 'status': 'done' })
+
+}
+
 exports.endQuizNow = function(req, res) {
   isQuizEnd = true
   res.json({'status': 'done'})
@@ -61,11 +69,12 @@ exports.endQuizNow = function(req, res) {
 
 exports.getAllStatus = function(req, res) {
   res.json({
+    'readyToStart': readyToStart,
     'enterTime' : enterTime,
+    'openedAtLeastOneTime': openedAtLeastOneTime,
     'isQuizOnline': isQuizOnline,
     'quizReady': quizReady,
-    'readyToStart': readyToStart,
-    'openedAtLeastOneTime': openedAtLeastOneTime,
+    'canAnswer': canAnswer
     'isQuizEnd': isQuizEnd
   })
 }

@@ -29,6 +29,7 @@ openedAtLeastOneTime = false
 isQuizOnline = false
 readyToStart = false
 isQuizEnd = false
+canAnswer = false
 
 quizReady = null // will be assigned as ARRAY
 
@@ -179,13 +180,20 @@ botmaster.on('update', (bot, update) => {
           if(correctUser.indexOf(update.sender.id) < 0) {
             console.log('user id ', update.sender.id, ans == ttq[quizNO].a)
 
-            if(ans == ttq[quizNO].a){
-              correctUser.push(update.sender.id)
+            if(canAnswer) {
+
+              if(ans == ttq[quizNO].a){
+                correctUser.push(update.sender.id)
+              }
+              database.ref(`/quiz/${quizNO}/correctUsers`).set(correctUser)
+              /*if(update.sender.id == '1475004552541616')
+                bot.sendTextMessageTo('F*CK', update.sender.id)
+              else */
+              bot.sendTextMessageTo(replyText[Math.floor(Math.random() * 5)], update.sender.id)
+
             }
-            database.ref(`/quiz/${quizNO}/correctUsers`).set(correctUser)
-            /*if(update.sender.id == '1475004552541616')
-              bot.sendTextMessageTo('F*CK', update.sender.id)
-            else */bot.sendTextMessageTo(replyText[Math.floor(Math.random() * 5)], update.sender.id)
+            else bot.sendTextMessageTo('ตอบช้าไปหน่อยนะ หมดเวลาตอบข้อนี้แล้วจ้า', update.sender.id)
+
 
           }
           else bot.sendTextMessageTo(dupReplyText[Math.floor(Math.random() * 4)], update.sender.id)
@@ -390,6 +398,7 @@ function startQuizTime(quiz, ids) {
 
 function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
   //bot.sendTextMessageTo(quiz[currentQuiz].q, update.sender.id);
+  canAnswer = true
   correctUser = []
   database.ref(`/quiz/${currentQuiz}/correctUsers`).set(correctUser)
   console.log('enter shooting : ' + currentQuiz);

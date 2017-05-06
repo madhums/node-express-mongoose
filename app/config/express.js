@@ -54,6 +54,7 @@ module.exports = function(app, express) {
   app.get("/getAllStatus", quizControl.getAllStatus)
   app.get("/justStartTheQuiz", quizControl.startQuiz)
   app.get("/activateQ", quizControl.activateQ)
+  app.get("/closeAnswerTime", quizControl.endAnswerTime)
   app.get("/endQuizNow", quizControl.endQuizNow)
   app.get("/changeReadyToStart", quizControl.changeReadyToStart)
   app.get("/changeEnterStatus", quizControl.changeEnterStatus)
