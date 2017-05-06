@@ -16,3 +16,15 @@ exports.main = function (req, res) {
     title: 'Node Express Mongoose Boilerplate'
   });
 };
+
+exports.addPatient = function (req, res) {
+  res.render('home/addPatient', {
+    title: 'Node Express Mongoose Boilerplate'
+  });
+};
+
+exports.dashboard = function (req, res) {
+  res.render('home/dashboard', {
+    title: 'Node Express Mongoose Boilerplate'
+  });
+};

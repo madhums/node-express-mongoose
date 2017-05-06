@@ -17,6 +17,8 @@ module.exports = function (app, passport) {
   app.get('/login', login.index);
 
   app.get('/home', home.main);
+  app.get('/addPatient',home.addPatient);
+  app.get('/dashboard',home.dashboard);
 
   app.post('/authenticate',login.authenticate);
 
