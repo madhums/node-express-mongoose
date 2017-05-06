@@ -55,7 +55,7 @@ exports.activateQ = function(req, res) {
 }
 
 
-export.endAnswerTime = function(req, res) {
+exports.endAnswerTime = function(req, res) {
 
   canAnswer = false
   res.json({ 'status': 'done' })
