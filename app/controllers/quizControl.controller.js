@@ -74,7 +74,7 @@ exports.getAllStatus = function(req, res) {
     'openedAtLeastOneTime': openedAtLeastOneTime,
     'isQuizOnline': isQuizOnline,
     'quizReady': quizReady,
-    'canAnswer': canAnswer
+    'canAnswer': canAnswer,
     'isQuizEnd': isQuizEnd
   })
 }
