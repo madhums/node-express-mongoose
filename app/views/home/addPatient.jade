@@ -1,13 +1,52 @@
 //
    Created by knyamagoudar on 5/6/17.
+.form-group.row
+  label.col-2.col-form-label(for='example-search-input') Age
+  .col-10
+    input#example-search-input.form-control(type='search', value='')
+.form-group.row
+  label.col-2.col-form-label(for='example-email-input') Sex
+  .col-10
+    input#example-email-input.form-control(type='email', value='')
+.form-group.row
+  label.col-2.col-form-label(for='example-search-input') Number Inpatient
+  .col-10
+    input#example-search-input.form-control(type='search', value='')
+.form-group.row
+  label.col-2.col-form-label(for='example-search-input') Emergency Number
+  .col-10
+    input#example-search-input.form-control(type='search', value='')
+.form-group.row
+  label.col-2.col-form-label(for='example-search-input') Diagnosis Number
+  .col-10
+    input#example-search-input.form-control(type='search', value='')
+.form-group.row
+  label.col-2.col-form-label(for='example-search-input') Number Outpatient
+  .col-10
+    input#example-search-input.form-control(type='search', value='')
+.form-group.row
+  label.col-2.col-form-label(for='example-text-input') Diabetes Medicine
+  .col-10
+    input#example-text-input.form-control(type='text', value='')
+.form-group.row
+  label.col-2.col-form-label(for='example-date-input') Date
+  .col-10
+    input#example-date-input.form-control(type='date', value='')
+.form-group.row
+  label.col-2.col-form-label(for='example-time-input') Time 
+  .col-10
+    input#example-time-input.form-control(type='time', value='')
+.form-group.row
+  label.col-2.col-form-label(for='example-tel-input') Number of Medications
+  .col-10
+    input#example-med-input.form-control(type='med', value='')
+.form-group.row
+  label.col-2.col-form-label(for='example-tel-input') Number of Procedures
+  .col-10
+    input#example-proc-input.form-control(type='proc', value='')
+.form-group.row
+  label.col-2.col-form-label(for='example-tel-input') Number of Lab Procedures
+  .col-10
+    input#example-lab-input.form-control(type='lab', value='')
 
-.div
-    .form
-        form.register-form
-            input(type='text', placeholder='name')
-            input(type='password', placeholder='password')
-            input(type='text', placeholder='email address')
-            button create
-            p.message
-                | Already registered?
-                a(href='#') Sign In
+button.btn.btn-primary(type='submit') Submit
