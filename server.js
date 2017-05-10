@@ -559,7 +559,7 @@ function startQuiz() {
   .then((snapshot)=>{
 
     let save = snapshot.val()
-    if(save) { // there's save
+    if(save && !save._isQuizEnd && save._isQuizOnline) { // there's save
       console.log('there is save');
       savedState = true
 
