@@ -1,7 +1,3 @@
-/**
- * Module dependencies
- */
-
 require('dotenv').config();
 const Botmaster = require('botmaster')
 const express = require('express');
@@ -64,6 +60,9 @@ let allIDs = []
 let participants = []
 let quizNO = 0
 let ttq = null
+
+let savedState = false
+let saveData = null
 
 let singlePerson = []
 
@@ -355,20 +354,6 @@ let quiz = nodeSchedule.scheduleJob('1 30 9 * * *', function(){
 })
 */
 
-async function prepareQuiz() {
-
-  try {
-    let a = await database.ref('quiz').once('value')
-    return a.val()
-  }
-  catch(error) {
-    console.log('get quiz error');
-    console.log(error);
-  }
-
-}
-
-
 function startQuizTime(quiz, ids) {
 
   database.ref(`/singleUsers`).set(singlePerson)
@@ -426,17 +411,6 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
 
     console.log('choice = ' + choice);
   })
-
-  /*
-  let buttonTemplate = {
-    'type': 'template',
-    'payload':{
-      'template_type': 'button',
-      'text': quiz[currentQuiz].q,
-      'buttons': buttons
-    }
-  }
-  */
 
   let msg = {
     text: quiz[currentQuiz].q,
@@ -510,43 +484,24 @@ function shootTheQuestion(quiz, ids, currentQuiz, totalQuiz) {
 }
 
 //console.log(quiz.length);
+//-----------------------------------------------------------------------------
+
+async function prepareQuiz() {
+
+  try {
+    let a = await database.ref('quiz').once('value')
+    return a.val()
+  }
+  catch(error) {
+    console.log('get quiz error');
+    console.log(error);
+  }
+
+}
+
 
 console.log('after quiz request');
 
-// let weatherReporter = nodeSchedule.scheduleJob('0 0 5,11,17,23 * * *', function(){
-//   userMgt.getAllID(function(err, list){
-//     if(err) console.log(err);
-//     else if(list) {
-//       console.log(list);
-//
-//       list.map((a) => {
-//         weatherAPI.getReport(function(err, result){
-//           if(err) console.log(err);
-//           else messengerBot.sendTextMessageTo(result, a);
-//         })
-//       })
-//
-//     }
-//   })
-// })
-
-/*
-messengerProfileAPI.getUserInfo('1432315113461939', function(err, info){
-  messengerBot.sendTextMessageTo('bot started!', '1432315113461939');
-  messengerBot.sendTextMessageTo(`สวัสดี ${info.first_name}`, '1432315113461939');
-})
-*/
-/*
-userMgt.getAllSubscribedID(function(err, ids){
-  if(err) console.log(err);
-  else console.log('success');
-})
-*/
-
-// database.ref("/staging/readyToStart").on('value',(readyToStartSnapshot)=>{
-//   if(readyToStartSnapshot.val()) console.log('ready: ' + readyToStartSnapshot.val());
-// })
-database.ref(`/participants`).set([])
 
 let checkStart = setInterval(()=>{
   console.log('readyToStart : ' + readyToStart);
@@ -557,10 +512,97 @@ let checkStart = setInterval(()=>{
 function startQuiz() {
 
   clearInterval(checkStart)
-  let quizPromise = Promise.resolve(prepareQuiz())
+  //let quizPromise = Promise.resolve(prepareQuiz())
 
+  database.ref('quiz').once('value')
+  .then((snapshot)=>{
+    let qValue = snapshot.val()
+    ttq = qValue
+
+    return database.ref('save').once('value')
+  })
+  .then((snapshot)=>{
+
+    let save = snapshot.val()
+    if(save) { // there's save
+      console.log('there is save');
+      savedState = true
+      saveData = save
+
+    }
+    else {
+      console.log('no save found, resetting participants');
+      database.ref(`/participants`).set([])
+    }
+
+    userMgt.getAllID(function(err, list){
+      if(err) console.log(err);
+      else if(list) {
+        allIDs = list
+        //enterTime = true
+
+        let checkEnterTime = setInterval(()=>{
+
+          console.log('enterTime : ' + enterTime);
+          console.log('allIDs : ' + allIDs);
+
+          if(enterTime) {
+          //------ enterTime = true
+            clearInterval(checkEnterTime)
+
+            console.log('parti : ' + allIDs);
+
+            allIDs.map((id)=>{
+              messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
+              setTimeout(()=>{
+                messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
+              }, 500)
+            })
+
+            console.log('CLOCK STARTED');
+
+            let checkStartTheQuiz = setInterval(()=>{
+
+              console.log('now opening for enter');
+              //setTimeout(()=>{
+              if(isQuizOnline) {
+
+                clearInterval(checkStartTheQuiz)
+                console.log('ALLID: ' + allIDs);
+                console.log('P_ID: ' + participants);
+                enterTime = false
+
+                if(participants.length > 0) startQuizTime(quiz, participants)
+                else {
+
+                  allIDs.map((id)=>{
+                    messengerBot.sendTextMessageTo('เสียใจ ไม่มีใครเล่นด้วยเลย :(', id)
+                  })
+                  console.log('no one want to play quiz');
+
+                }
+
+              }
+              //}, 30000) //300000
+
+            }, 5000)
+
+          //------end enterTime = true
+          }
+
+        }, 2000)
+
+      }
+    })
+
+
+  })
+
+
+/*
   quizPromise.then((quiz) => {
 
+    database.ref(`/participants`).set([])
     ttq = quiz
     quizReady = new Array(ttq.length).fill(false)
     console.log(`quizready = ${quizReady}`);
@@ -629,6 +671,7 @@ function startQuiz() {
 
 
   })
+*/
 
 }
 

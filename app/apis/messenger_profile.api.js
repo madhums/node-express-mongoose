@@ -14,7 +14,6 @@ exports.getUserInfo = function(uid, cb) {
     });
 
     response.on("end", function (err) {
-      console.log(`profile api : ${JSON.parse(buffer)}`);
       if(err) return cb('get user info err: ' + err, null)
       if(buffer) {
         return cb(null, JSON.parse(buffer))
