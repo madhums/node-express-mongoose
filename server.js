@@ -518,7 +518,8 @@ function startQuiz() {
   .then((snapshot)=>{
     let qValue = snapshot.val()
     ttq = qValue
-
+    quizReady = new Array(ttq.length).fill(false)
+    
     return database.ref('save').once('value')
   })
   .then((snapshot)=>{
