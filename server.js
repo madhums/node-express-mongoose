@@ -530,11 +530,45 @@ let autoSave = setInterval(() => {
 }, 1000)
 
 
+//---------------- start at this line
+database.ref('save').once('value')
+.then((snapshot)=>{
 
-let checkStart = setInterval(()=>{
-  console.log('readyToStart : ' + readyToStart);
-  if(readyToStart) startQuiz()
-}, 7000)
+  let save = snapshot.val()
+  if(save && !save._isQuizEnd && save._isQuizOnline) { // there's save
+    console.log('there is save');
+    savedState = true
+
+    ttq = save._ttq
+    participants = save._participants
+    quizNO = save._quizNO
+    enterTime = save._enterTime
+    openedAtLeastOneTime = save._openedAtLeastOneTime
+    isQuizOnline = save._isQuizOnline
+    quizReady = save._quizReady
+    readyToStart = save._readyToStart
+    isQuizEnd = save._isQuizEnd
+    canAnswer = save._canAnswer
+
+    console.log('save loaded');
+  }
+  else {
+    console.log('no save found, resetting participants');
+    database.ref(`/participants`).set([])
+  }
+
+  //--- if there's save, will go straight to startQuiz()
+
+  let checkStart = setInterval(()=>{
+    console.log('readyToStart : ' + readyToStart);
+    if(readyToStart || savedState) startQuiz()
+  }, 7000)
+
+
+})
+.catch((error) => {
+  console.log('fetch save error: ' + error);
+})
 
 
 function startQuiz() {
@@ -546,193 +580,97 @@ function startQuiz() {
   .then((snapshot)=>{
 
     quiz = snapshot.val()
-    quiz = quiz.map((q) => {
-      q.correctUsers = []
-      return q
-    })
 
-    database.ref(`quiz`).set(quiz)
-    ttq = quiz
-    quizReady = new Array(ttq.length).fill(false)
+    //check if there's save
+    if(savedState) {
 
-    return database.ref('save').once('value')
+      quiz = quiz.map((q, index) => {
+        q.correctUsers = ttq[index].correctUsers
+        return q
+      })
 
-  })
-  .then((snapshot)=>{
+      console.log('start quiz length ' + quiz.length);
+      let quizLength = ttq.length - 1
 
-    let save = snapshot.val()
-    if(save && !save._isQuizEnd && save._isQuizOnline) { // there's save
-      console.log('there is save');
-      savedState = true
+      shootTheQuestion(ttq, participants, quizNO, quizLength)
+      console.log('end start quiz');
 
-      ttq = save._ttq
-      participants = save._participants
-      quizNO = save._quizNO
-      enterTime = save._enterTime
-      openedAtLeastOneTime = save._openedAtLeastOneTime
-      isQuizOnline = save._isQuizOnline
-      quizReady = save._quizReady
-      readyToStart = save._readyToStart
-      isQuizEnd = save._isQuizEnd
-      canAnswer = save._canAnswer
-
-      console.log('save loaded');
     }
-    else {
-      console.log('no save found, resetting participants');
-      database.ref(`/participants`).set([])
-    }
+    else { // if no save found, just start over
 
-    userMgt.getAllID(function(err, list){
-      if(err) console.log(err);
-      else if(list) {
-        allIDs = list
-        //enterTime = true
+      quiz = quiz.map((q) => {
+        q.correctUsers = []
+        return q
+      })
 
-        let checkEnterTime = setInterval(()=>{
+      database.ref(`quiz`).set(quiz)
 
-          console.log('enterTime : ' + enterTime);
-          console.log('allIDs : ' + allIDs);
+      ttq = quiz
+      quizReady = new Array(ttq.length).fill(false)
 
-          if(enterTime || savedState) {
-          //------ enterTime = true
-            clearInterval(checkEnterTime)
+      userMgt.getAllID(function(err, list){
+        if(err) console.log(err);
+        else if(list) {
+          allIDs = list
+          //enterTime = true
 
-            console.log('parti : ' + allIDs);
+          let checkEnterTime = setInterval(()=>{
 
-            if(!savedState) {
+            console.log('enterTime : ' + enterTime);
+            console.log('allIDs : ' + allIDs);
 
-              allIDs.map((id)=>{
-                messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
-                setTimeout(()=>{
-                  messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
-                }, 500)
-              })
+            if(enterTime ) {
+            //------ enterTime = true
+              clearInterval(checkEnterTime)
 
-              console.log('CLOCK STARTED');
+              console.log('parti : ' + allIDs);
 
-              let checkStartTheQuiz = setInterval(()=>{
+                allIDs.map((id)=>{
+                  messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
+                  setTimeout(()=>{
+                    messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
+                  }, 500)
+                })
 
-                console.log('now opening for enter');
-                //setTimeout(()=>{
-                if(isQuizOnline) {
+                console.log('CLOCK STARTED');
 
-                  clearInterval(checkStartTheQuiz)
-                  console.log('ALLID: ' + allIDs);
-                  console.log('P_ID: ' + participants);
-                  enterTime = false
+                let checkStartTheQuiz = setInterval(()=>{
 
-                  if(participants.length > 0) startQuizTime(ttq, participants)
-                  else {
+                  console.log('now opening for enter');
+                  //setTimeout(()=>{
+                  if(isQuizOnline) {
 
-                    allIDs.map((id)=>{
-                      messengerBot.sendTextMessageTo('เสียใจ ไม่มีใครเล่นด้วยเลย :(', id)
-                    })
-                    console.log('no one want to play quiz');
+                    clearInterval(checkStartTheQuiz)
+                    console.log('ALLID: ' + allIDs);
+                    console.log('P_ID: ' + participants);
+                    enterTime = false
+
+                    if(participants.length > 0) startQuizTime(ttq, participants)
+                    else {
+
+                      allIDs.map((id)=>{
+                        messengerBot.sendTextMessageTo('เสียใจ ไม่มีใครเล่นด้วยเลย :(', id)
+                      })
+                      console.log('no one want to play quiz');
+
+                    }
 
                   }
+                  //}, 30000) //300000
 
-                }
-                //}, 30000) //300000
+                }, 5000)
 
-              }, 5000)
-
-            } else {
-
-              console.log('start quiz length ' + quiz.length);
-              let quizLength = ttq.length - 1
-
-              shootTheQuestion(ttq, participants, quizNO, quizLength)
-              console.log('end start quiz');
-
+            //------end enterTime = true
             }
 
+          }, 2000)
 
-          //------end enterTime = true
-          }
+        }
+      })
 
-        }, 2000)
-
-      }
-    })
-
+    }
 
   })
-
-
-/*
-  quizPromise.then((quiz) => {
-
-    database.ref(`/participants`).set([])
-    ttq = quiz
-    quizReady = new Array(ttq.length).fill(false)
-    console.log(`quizready = ${quizReady}`);
-
-    userMgt.getAllID(function(err, list){
-      if(err) console.log(err);
-      else if(list) {
-        allIDs = list
-        //enterTime = true
-
-        let checkEnterTime = setInterval(()=>{
-
-          console.log('enterTime : ' + enterTime);
-          console.log('allIDs : ' + allIDs);
-
-          if(enterTime) {
-          //------ enterTime = true
-            clearInterval(checkEnterTime)
-
-            console.log('parti : ' + allIDs);
-
-            allIDs.map((id)=>{
-              messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
-              setTimeout(()=>{
-                messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
-              }, 500)
-            })
-
-            console.log('CLOCK STARTED');
-
-            let checkStartTheQuiz = setInterval(()=>{
-
-              console.log('now opening for enter');
-              //setTimeout(()=>{
-              if(isQuizOnline) {
-
-                clearInterval(checkStartTheQuiz)
-                console.log('ALLID: ' + allIDs);
-                console.log('P_ID: ' + participants);
-                enterTime = false
-
-                if(participants.length > 0) startQuizTime(quiz, participants)
-                else {
-
-                  allIDs.map((id)=>{
-                    messengerBot.sendTextMessageTo('เสียใจ ไม่มีใครเล่นด้วยเลย :(', id)
-                  })
-                  console.log('no one want to play quiz');
-
-                }
-
-              }
-              //}, 30000) //300000
-
-            }, 5000)
-
-          //------end enterTime = true
-          }
-
-        }, 2000)
-
-
-
-      }
-    })
-
-
-  })
-*/
 
 }
 
