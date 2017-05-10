@@ -524,7 +524,7 @@ let autoSave = setInterval(() => {
     database.ref(`save`).set(toBeSaved)
 
   } else if(isQuizEnd) {
-    database.ref(`save`).set([]])
+    database.ref(`save`).set([])
   }
 
 }, 1000)
