@@ -185,6 +185,7 @@ botmaster.on('update', (bot, update) => {
                 correctUser.push(update.sender.id)
               }
               database.ref(`/quiz/${quizNO}/correctUsers`).set(correctUser)
+              ttq[quizNO].correctUsers = correctUser
               /*if(update.sender.id == '1475004552541616')
                 bot.sendTextMessageTo('F*CK', update.sender.id)
               else */
@@ -514,6 +515,7 @@ let autoSave = setInterval(() => {
       _enterTime : enterTime,
       _openedAtLeastOneTime : openedAtLeastOneTime,
       _isQuizOnline : isQuizOnline,
+      _quizReady : quizReady,
       _readyToStart : readyToStart,
       _isQuizEnd : isQuizEnd,
       _canAnswer : canAnswer,
@@ -541,8 +543,14 @@ function startQuiz() {
   database.ref('quiz').once('value')
   .then((snapshot)=>{
     quiz = snapshot.val()
+    quiz = quiz.map((q) => {
+      q.correctUsers = []
+      return q
+    })
     ttq = quiz
     quizReady = new Array(ttq.length).fill(false)
+
+    database.ref(`quiz`).set(quiz)
 
     return database.ref('save').once('value')
   })
@@ -553,6 +561,7 @@ function startQuiz() {
       console.log('there is save');
       savedState = true
       saveData = save
+      console.log(saveData)
 
     }
     else {
