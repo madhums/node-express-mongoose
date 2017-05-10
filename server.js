@@ -512,14 +512,14 @@ let checkStart = setInterval(()=>{
 function startQuiz() {
 
   clearInterval(checkStart)
+  let quiz = null
   //let quizPromise = Promise.resolve(prepareQuiz())
-
   database.ref('quiz').once('value')
   .then((snapshot)=>{
-    let qValue = snapshot.val()
-    ttq = qValue
+    quiz = snapshot.val()
+    ttq = quiz
     quizReady = new Array(ttq.length).fill(false)
-    
+
     return database.ref('save').once('value')
   })
   .then((snapshot)=>{
@@ -573,7 +573,7 @@ function startQuiz() {
                 console.log('P_ID: ' + participants);
                 enterTime = false
 
-                if(participants.length > 0) startQuizTime(quiz, participants)
+                if(participants.length > 0) startQuizTime(ttq, participants)
                 else {
 
                   allIDs.map((id)=>{
