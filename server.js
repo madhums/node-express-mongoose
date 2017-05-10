@@ -563,16 +563,16 @@ function startQuiz() {
       console.log('there is save');
       savedState = true
 
-      ttq : save._ttq,
-      participants : save._participants,
-      quizNO : save._quizNO,
-      enterTime : save._enterTime,
-      openedAtLeastOneTime : save._openedAtLeastOneTime,
-      isQuizOnline : save._isQuizOnline,
-      quizReady : save._quizReady,
-      readyToStart : save._readyToStart,
-      isQuizEnd : save._isQuizEnd,
-      canAnswer : save._canAnswer,
+      ttq = save._ttq
+      participants = save._participants
+      quizNO = save._quizNO
+      enterTime = save._enterTime
+      openedAtLeastOneTime = save._openedAtLeastOneTime
+      isQuizOnline = save._isQuizOnline
+      quizReady = save._quizReady
+      readyToStart = save._readyToStart
+      isQuizEnd = save._isQuizEnd
+      canAnswer = save._canAnswer
 
       console.log('save loaded');
     }
