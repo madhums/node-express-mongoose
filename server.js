@@ -531,6 +531,9 @@ let autoSave = setInterval(() => {
 
 
 //---------------- start at this line
+
+let checkStart = null
+
 database.ref('save').once('value')
 .then((snapshot)=>{
 
@@ -559,7 +562,7 @@ database.ref('save').once('value')
 
   //--- if there's save, will go straight to startQuiz()
 
-  let checkStart = setInterval(()=>{
+  checkStart = setInterval(()=>{
     console.log('readyToStart : ' + readyToStart);
     if(readyToStart || savedState) startQuiz()
   }, 7000)
