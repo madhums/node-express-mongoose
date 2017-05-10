@@ -354,6 +354,7 @@ let quiz = nodeSchedule.scheduleJob('1 30 9 * * *', function(){
 })
 */
 
+
 function startQuizTime(quiz, ids) {
 
   database.ref(`/singleUsers`).set(singlePerson)
@@ -501,6 +502,29 @@ async function prepareQuiz() {
 
 
 console.log('after quiz request');
+
+let autoSave = setInterval(() => {
+
+  if(isQuizOnline && !isQuizEnd) {
+
+    let toBeSaved = {
+      _ttq : ttq,
+      _participants : participants,
+      _quizNO : quizNO,
+      _enterTime : enterTime,
+      _openedAtLeastOneTime : openedAtLeastOneTime,
+      _isQuizOnline : isQuizOnline,
+      _readyToStart : readyToStart,
+      _isQuizEnd : isQuizEnd,
+      _canAnswer : canAnswer,
+    }
+
+    database.ref(`save`).set(toBeSaved)
+
+  }
+
+}, 1000)
+
 
 
 let checkStart = setInterval(()=>{
