@@ -358,7 +358,7 @@ let quiz = nodeSchedule.scheduleJob('1 30 9 * * *', function(){
 
 function startQuizTime(quiz, ids) {
 
-  database.ref(`/singleUsers`).set(singlePerson)
+  //database.ref(`/singleUsers`).set(singlePerson)
 
   isQuizOnline = true
   console.log('start quiz length ' + quiz.length);
@@ -542,17 +542,19 @@ function startQuiz() {
   //let quizPromise = Promise.resolve(prepareQuiz())
   database.ref('quiz').once('value')
   .then((snapshot)=>{
+
     quiz = snapshot.val()
     quiz = quiz.map((q) => {
       q.correctUsers = []
       return q
     })
+
+    database.ref(`quiz`).set(quiz)
     ttq = quiz
     quizReady = new Array(ttq.length).fill(false)
 
-    database.ref(`quiz`).set(quiz)
-
     return database.ref('save').once('value')
+
   })
   .then((snapshot)=>{
 
@@ -560,9 +562,19 @@ function startQuiz() {
     if(save) { // there's save
       console.log('there is save');
       savedState = true
-      saveData = save
-      console.log(saveData)
 
+      ttq : save._ttq,
+      participants : save._participants,
+      quizNO : save._quizNO,
+      enterTime : save._enterTime,
+      openedAtLeastOneTime : save._openedAtLeastOneTime,
+      isQuizOnline : save._isQuizOnline,
+      quizReady : save._quizReady,
+      readyToStart : save._readyToStart,
+      isQuizEnd : save._isQuizEnd,
+      canAnswer : save._canAnswer,
+
+      console.log('save loaded');
     }
     else {
       console.log('no save found, resetting participants');
@@ -580,46 +592,59 @@ function startQuiz() {
           console.log('enterTime : ' + enterTime);
           console.log('allIDs : ' + allIDs);
 
-          if(enterTime) {
+          if(enterTime || savedState) {
           //------ enterTime = true
             clearInterval(checkEnterTime)
 
             console.log('parti : ' + allIDs);
 
-            allIDs.map((id)=>{
-              messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
-              setTimeout(()=>{
-                messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
-              }, 500)
-            })
+            if(!savedState) {
 
-            console.log('CLOCK STARTED');
+              allIDs.map((id)=>{
+                messengerBot.sendTextMessageTo('กิจกรรมกำลังจะเริ่มในไม่ช้า', id)
+                setTimeout(()=>{
+                  messengerBot.sendDefaultButtonMessageTo(['เข้าร่วม', 'ไม่เข้าร่วม'], id, 'ผู้สนใจสามารถกดเข้าร่วมได้ตามปุ่มด้านล่างนี้เลย');
+                }, 500)
+              })
 
-            let checkStartTheQuiz = setInterval(()=>{
+              console.log('CLOCK STARTED');
 
-              console.log('now opening for enter');
-              //setTimeout(()=>{
-              if(isQuizOnline) {
+              let checkStartTheQuiz = setInterval(()=>{
 
-                clearInterval(checkStartTheQuiz)
-                console.log('ALLID: ' + allIDs);
-                console.log('P_ID: ' + participants);
-                enterTime = false
+                console.log('now opening for enter');
+                //setTimeout(()=>{
+                if(isQuizOnline) {
 
-                if(participants.length > 0) startQuizTime(ttq, participants)
-                else {
+                  clearInterval(checkStartTheQuiz)
+                  console.log('ALLID: ' + allIDs);
+                  console.log('P_ID: ' + participants);
+                  enterTime = false
 
-                  allIDs.map((id)=>{
-                    messengerBot.sendTextMessageTo('เสียใจ ไม่มีใครเล่นด้วยเลย :(', id)
-                  })
-                  console.log('no one want to play quiz');
+                  if(participants.length > 0) startQuizTime(ttq, participants)
+                  else {
+
+                    allIDs.map((id)=>{
+                      messengerBot.sendTextMessageTo('เสียใจ ไม่มีใครเล่นด้วยเลย :(', id)
+                    })
+                    console.log('no one want to play quiz');
+
+                  }
 
                 }
+                //}, 30000) //300000
 
-              }
-              //}, 30000) //300000
+              }, 5000)
 
-            }, 5000)
+            } else {
+
+              console.log('start quiz length ' + quiz.length);
+              let quizLength = ttq.length - 1
+
+              shootTheQuestion(ttq, participants, quizNO, quizLength)
+              console.log('end start quiz');
+
+            }
+
 
           //------end enterTime = true
           }
