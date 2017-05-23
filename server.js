@@ -33,6 +33,7 @@ let correctUser = []
 
 app.listen(port, () => {
   console.log('Express app started on port ' + port);
+  console.log('Q&A bot running');
 });
 
 const messengerSettings = {
