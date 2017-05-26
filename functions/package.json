@@ -1,0 +1,15 @@
+{
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "dependencies": {
+    "axios": "^0.16.1",
+    "botmaster": "^2.3.1",
+    "express": "4.15.0",
+    "firebase": "^3.7.0",
+    "firebase-admin": "~4.2.1",
+    "firebase-functions": "^0.5.7",
+    "node-fetch": "^1.6.3",
+    "node-schedule": "^1.2.3"
+  },
+  "private": true
+}

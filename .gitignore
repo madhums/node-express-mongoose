@@ -2,3 +2,5 @@ node_modules
 npm-debug.log
 .env
 lab/testCode.js
+functions/credential/facebookKey.json
+functions/credential/serviceAccountKey.json
