@@ -35,20 +35,20 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest((req, res) =>
 
   if(req.method == "GET") {
 
-    console.log('GET Requested');
+    //console.log('GET Requested');
 
     if (req.query['hub.mode'] === 'subscribe' &&
         req.query['hub.verify_token'] === "HelloMarkFromFirebase") {
-      console.log("Validating webhook");
+      //console.log("Validating webhook");
       res.status(200).send(req.query['hub.challenge']);
     } else {
-      console.error("Failed validation. Make sure the validation tokens match.");
+      //console.error("Failed validation. Make sure the validation tokens match.");
       res.sendStatus(403);
     }
   }
   else if(req.method == "POST") {
 
-    console.log('POST Requested');
+    //console.log('POST Requested');
 
     var data = req.body;
 
@@ -60,7 +60,7 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest((req, res) =>
         var pageID = entry.id;
         var timeOfEvent = entry.time;
 
-        console.log(`entry : ${JSON.stringify(entry)}`);
+        //console.log(`entry : ${JSON.stringify(entry)}`);
 
         // Iterate over each messaging event
         entry.messaging.forEach(function(event) {
@@ -92,9 +92,9 @@ function receivedMessage(event) {
   let timeOfMessage = event.timestamp;
   let message = event.message;
 
-  console.log("Received message for user %d and page %d at %d with message:",
-    senderID, recipientID, timeOfMessage);
-  console.log(JSON.stringify(message));
+  //console.log("Received message for user %d and page %d at %d with message:",
+    //senderID, recipientID, timeOfMessage);
+  //console.log(JSON.stringify(message));
 
   let messageId = message.mid;
 
@@ -132,14 +132,34 @@ function receivedMessage(event) {
 
 function addNewUser(newUserId) {
 
-  let userName = userManagementAPI.recordNewUserID(newUserId)
-  let texts = [
-    `สวัสดี คุณ ${userName}`,
-    `ขณะนี้ไม่มีกิจกรรมใดดำเนินอยู่ ถ้ามีกิจกรรมเมื่อไร ทางเราจะติดต่อกลับไปนะ`
-  ]
-  sendCascadeMessage(newUserId, texts)
+  sendTextMessage(newUserId, "is this fast enough?");
+  userManagementAPI.recordNewUserID(newUserId)
+  messengerAPI.sendTypingOn(newUserId)
+  messengerAPI.callProfileAPI(newUserId)
+  .then(profile => {
+
+    let texts = [
+      `สวัสดี คุณ ${profile.first_name} ${profile.last_name}`,
+      `ขณะนี้ไม่มีกิจกรรมใดดำเนินอยู่ ถ้ามีกิจกรรมเมื่อไร ทางเราจะติดต่อกลับไปนะ`
+    ]
+    sendCascadeMessage(newUserId, texts)
+
+  })
+  .catch(error => {
+    console.log(`error : ${error}`);
+  })
+
 
 }
+
+exports.sendAll = functions.https.onRequest((req, res) => {
+  userManagementAPI.getAllID()
+  .then(allID => {
+    allID.forEach((id)=>{
+      sendTextMessage(id, 'YOLO')
+    })
+  })
+})
 
 function sendTextMessage(recipientId, messageText) {
   let messageData = {
@@ -155,10 +175,9 @@ function sendTextMessage(recipientId, messageText) {
   callSendAPI(messageData);
 }
 
-
 function callSendAPI(messageData) {
 
-  console.log(`message data : ${JSON.stringify(messageData)}`);
+  //console.log(`message data : ${JSON.stringify(messageData)}`);
 
   axios({
     method: 'POST',
@@ -192,7 +211,7 @@ function callSendAPI(messageData) {
   })
   .catch(error => {
     console.log(`error : ${error}`)
-    console.log(`axios send message failed`);
+    //console.log(`axios send message failed`);
   })
 
 }
@@ -256,6 +275,7 @@ function greeting(userId) {
 
 }
 
+/*
 exports.testDB = functions.https.onRequest((req, res) => {
 
   console.log('enter testDB');
@@ -288,7 +308,7 @@ exports.getWords = functions.https.onRequest((req, res) => {
 
 })
 
-
+*/
 // let nodeSchedule = require('node-schedule');
 // let rerunner = nodeSchedule.scheduleJob('*/5 * * * * *', function(){
 //   console.log('running');

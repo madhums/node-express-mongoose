@@ -4,3 +4,4 @@ npm-debug.log
 lab/testCode.js
 functions/credential/facebookKey.json
 functions/credential/serviceAccountKey.json
+lab/package.json

@@ -14,6 +14,7 @@
     "test": "./node_modules/.bin/cross-env NODE_ENV=test ./node_modules/.bin/babel-tape-runner test/test-*.js"
   },
   "dependencies": {
+    "axios": "^0.16.1",
     "body-parser": "1.17.0",
     "botmaster": "^2.3.1",
     "co": "~4.6.0",

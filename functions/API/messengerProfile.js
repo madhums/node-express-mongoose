@@ -20,6 +20,36 @@ module.exports = function(axios) {
 
   }
 
+  //--------
+
+  module.sendTypingOn = function(userId) {
+
+    let typeOn = {
+      recipient: {
+        id: userId
+      },
+      sender_action: "typing_on"
+    }
+
+    axios({
+      method: 'POST',
+      url: `https://graph.facebook.com/v2.6/me/messages`,
+      params: {
+        'access_token': facebookSecret.pageToken
+      },
+      data: typeOn
+    })
+    .then(res => {
+      if(res.status == 200)
+        console.log(`successfully send typing`)
+      else throw `${res.status}`
+    })
+    .catch(error => {
+      console.log(`send typing on failed : ${error}`);
+    })
+
+  }
+
   return module
 
 }
