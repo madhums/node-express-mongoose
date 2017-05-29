@@ -1,0 +1,23 @@
+doctype html
+html(lang="en")
+    include ../includes/head.jade
+.body
+    .login-page
+        .form
+            form.register-form
+                input(type='text', placeholder='name')
+                input(type='password', placeholder='password')
+                input(type='text', placeholder='email address')
+                button create
+                p.message
+                    | Already registered?
+                    a(href='#') Sign In
+            form.login-form
+                input(id='name', type='text', placeholder='username')
+                input(id='password', type='password', placeholder='password')
+                button(id='login') login
+                p.message
+                    | Not registered?
+                    a(href='#') Create an account
+    include ../includes/footer.jade
+    include ../includes/foot.jade
