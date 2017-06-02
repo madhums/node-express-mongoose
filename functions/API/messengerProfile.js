@@ -1,13 +1,12 @@
-//const axios = require('axios')
-let facebookSecret = require("../credential/facebookKey.json")
 
-module.exports = function(axios) {
+
+module.exports = function(axios, messengerENV) {
 
   let module = {}
 
   module.callProfileAPI = function(userId) {
 
-    return axios(`https://graph.facebook.com/v2.6/${userId}?fields=first_name,last_name,profile_pic,timezone,gender&access_token=${facebookSecret.pageToken}`)
+    return axios(`https://graph.facebook.com/v2.6/${userId}?fields=first_name,last_name,profile_pic,timezone,gender&access_token=${messengerENV.page_token}`)
     .then(res => {
       if(res.status == 200)
         return res.data // first_name, last_name, gender, profile_pic, timezone
@@ -35,7 +34,7 @@ module.exports = function(axios) {
       method: 'POST',
       url: `https://graph.facebook.com/v2.6/me/messages`,
       params: {
-        'access_token': facebookSecret.pageToken
+        'access_token': messengerENV.page_token
       },
       data: typeOn
     })

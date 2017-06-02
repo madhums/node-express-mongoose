@@ -4,22 +4,9 @@
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/madhums/node-express-mongoose?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Gittip](https://img.shields.io/gratipay/madhums.svg?style=flat)](https://www.gratipay.com/madhums/)
 
-## Node Express Mongoose
+## Facebook Messenger Bot based on Node.js, hosted with Google Firebase
 
-A boilerplate application for building web apps using express, mongoose and passport.
+A Facebook Messenger chatbot build with Node.js environment. The bot used vanilla Messenger Platform API to interact with users. Entire project is hosted on Google Firebase service to make this project serverless.
 
-Read the [wiki](https://github.com/madhums/node-express-mongoose/wiki) to understand how the application is structured.
-
-## Usage
-
-    $ git clone https://github.com/madhums/node-express-mongoose.git
-    $ cd node-express-mongoose
-    $ npm install
-    $ cp .env.example .env
-    $ npm start
-
-Checkout the [apps that are built using this approach](https://github.com/madhums/node-express-mongoose/wiki/Apps-built-using-this-approach)
-
-## License
-
-MIT
+## Developer
+Nontapat Piyamongkol (astider), contact: astider@gmail.com

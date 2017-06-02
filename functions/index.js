@@ -3,14 +3,16 @@ const admin = require('firebase-admin')
 const firebase = require('firebase')
 //const express = require('express')
 //const port = 3002;
+const env = functions.config().quizshow
 const axios = require('axios')
 
+console.log(`env = ${JSON.stringify(env)}`);
+
 let serviceAccount = require("./credential/serviceAccountKey.json")
-let facebookSecret = require("./credential/facebookKey.json")
 
 const firebaseConfig = {
   credential: admin.credential.cert(serviceAccount),
-  apiKey: 'AIzaSyAShU7XQD5ji6DDf7PY__EUGb9LwvukrNU',
+  apiKey: env.firebase.api_key,//'AIzaSyAShU7XQD5ji6DDf7PY__EUGb9LwvukrNU',
   authDomain: "codelab-a8367.firebaseapp.com",
   databaseURL: "https://codelab-a8367.firebaseio.com/",
   storageBucket: "codelab-a8367.appspot.com",
@@ -18,17 +20,25 @@ const firebaseConfig = {
 }
 //firebase.initializeApp(firebaseConfig)
 admin.initializeApp(firebaseConfig)
+serviceAccount = null
 const db = admin.database()
 
-const messengerAPI = require("./API/messengerProfile.js")(axios)
+const messengerAPI = require("./API/messengerProfile.js")(axios, env.messenger)
 const userManagementAPI = require("./API/userManagement.js")(axios, db, messengerAPI)
 
-// Create and Deploy Your First Cloud Functions
-// https://firebase.google.com/docs/functions/write-firebase-functions
+quizPack = null
+currentQuiz = 0
+fireQuiz = null
 
-exports.helloWorld = functions.https.onRequest((req, res) => {
- res.send("Hello from Firebase!");
-});
+//----------------------- Cloud Functions ------------------------
+
+exports.getQuizStatus = functions.https.onRequest((req, res) => {
+  res.json({
+    quizLength: quizPack.length,
+    quiz: quizPack,
+    currentQuiz: currentQuiz
+  })
+})
 
 
 exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest((req, res) => {
@@ -38,7 +48,7 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest((req, res) =>
     //console.log('GET Requested');
 
     if (req.query['hub.mode'] === 'subscribe' &&
-        req.query['hub.verify_token'] === "HelloMarkFromFirebase") {
+        req.query['hub.verify_token'] === env.messenger.verify_token) {
       //console.log("Validating webhook");
       res.status(200).send(req.query['hub.challenge']);
     } else {
@@ -132,7 +142,6 @@ function receivedMessage(event) {
 
 function addNewUser(newUserId) {
 
-  sendTextMessage(newUserId, "is this fast enough?");
   userManagementAPI.recordNewUserID(newUserId)
   messengerAPI.sendTypingOn(newUserId)
   messengerAPI.callProfileAPI(newUserId)
@@ -152,14 +161,69 @@ function addNewUser(newUserId) {
 
 }
 
-exports.sendAll = functions.https.onRequest((req, res) => {
+exports.sendRequest = functions.https.onRequest((req, res) => {
+
   userManagementAPI.getAllID()
   .then(allID => {
     allID.forEach((id)=>{
       sendTextMessage(id, 'YOLO')
     })
+    res.send(`sent`)
   })
+  .catch(error => {
+    res.send(`sendRequest : ${error}`)
+  })
+
 })
+
+exports.sendQuiz = functions.https.onRequest((req, res) => {
+
+  let qno = currentQuiz
+
+  if(req.query.next)
+    qno = currentQuiz + 1
+
+  let quickReplyChoices = []
+
+  quickReplyChoices = quizPack[qno].choices.map(choice => {
+    return {
+      "content_type":"text",
+      "title": choice,
+      "payload": choice
+    }
+  })
+
+  let quizMessage = {
+      "text": quizPack[qno].q,
+      "quick_replies": quickReplyChoices
+    }
+
+  userManagementAPI.getAllID()
+  .then(allID => {
+    allID.forEach((id)=>{
+      sendQuizMessage(id, quizMessage)
+    })
+    res.send(`sent`)
+  })
+  .catch(error => {
+    res.send(`sendRequest : ${error}`)
+  })
+
+})
+
+function sendQuizMessage(recipientId, quizMessage) {
+
+  let messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: quizMessage
+  }
+
+  callSendAPI(messageData);
+}
+
+
 
 function sendTextMessage(recipientId, messageText) {
   let messageData = {
@@ -178,12 +242,12 @@ function sendTextMessage(recipientId, messageText) {
 function callSendAPI(messageData) {
 
   //console.log(`message data : ${JSON.stringify(messageData)}`);
-
+  console.log(`env.messenger.page_token = ${env.messenger.page_token}`);
   axios({
     method: 'POST',
     url: 'https://graph.facebook.com/v2.6/me/messages',
     params: {
-      'access_token': facebookSecret.pageToken
+      'access_token': env.messenger.page_token
     },
     data: messageData
   })
@@ -210,7 +274,7 @@ function callSendAPI(messageData) {
 
   })
   .catch(error => {
-    console.log(`error : ${error}`)
+    console.log(`send API : ${error}`)
     //console.log(`axios send message failed`);
   })
 
@@ -275,41 +339,64 @@ function greeting(userId) {
 
 }
 
-/*
-exports.testDB = functions.https.onRequest((req, res) => {
 
-  console.log('enter testDB');
-  if(req.query.text) {
-    let text = req.query.text
-    db.ref(`/words`).push({text: text})
-    .then(snapshot => {
-      res.redirect(303, snapshot.ref)
-    })
-  }
-  else res.status(500).send('invalid call')
-
-})
-
-
-exports.getWords = functions.https.onRequest((req, res) => {
-
-  db.ref(`/words/`).once('value')
-  .then(snapshot => {
-
-    let obj = snapshot.val()
-    let word = []
-
-    for(key in obj) {
-      word.push(obj[key])
-    }
-
-    res.json({ 'word': word })
-  })
-
-})
-
-*/
 // let nodeSchedule = require('node-schedule');
 // let rerunner = nodeSchedule.scheduleJob('*/5 * * * * *', function(){
 //   console.log('running');
 // });
+
+//----------------- initialize --------------
+
+//---------- get currentQuiz from DB ---------
+db.ref(`currentQuiz`).once(`value`)
+.then(snapshot => {
+  console.log(`Loading currentQuiz`)
+  let quiznum = parseInt(snapshot.val())
+  if(!isNaN(quiznum)) {
+    currentQuiz = quiznum
+    console.log(`currentQuiz loaded!`)
+  }
+  else throw `currentQuiz is not a number : ${quiznum}`
+})
+.catch(error => {
+  console.log(`GET CURRENTQUIZ ERROR: ${error}`);
+})
+
+//------------------- firebase event handler ------------------
+
+
+//----------------- Load Quiz ------------------
+db.ref(`quizLoaded`).on('value', (snapshot) => {
+
+  console.log(`Loading quiz...`)
+
+  if(snapshot.val()) {
+
+    db.ref(`quiz`).once('value')
+    .then(snapshot => {
+      quizPack = snapshot.val()
+      console.log(`Quiz loaded!`)
+    })
+    .catch(error => {
+      console.log(`load quiz error: ${error}`)
+    })
+
+    db.ref(`quizLoaded`).off('value')
+
+  }
+
+})
+
+//---------------- Fire Quiz --------------------
+db.ref(`currentQuiz`).on('value', (currentQuizSnapshot) => {
+  fireQuiz = currentQuizSnapshot.val()
+})
+
+//------------- update question (quiz) --------------
+
+db.ref(`quiz`).on('child_changed', (childSnapshot) => {
+  if(quizPack) {
+    quizPack[childSnapshot.key] = childSnapshot.val()
+    console.log(`quiz updated`)
+  }
+})
