@@ -6,8 +6,6 @@ const firebase = require('firebase')
 const env = functions.config().quizshow
 const axios = require('axios')
 
-console.log(`env = ${JSON.stringify(env)}`);
-
 let serviceAccount = require("./credential/serviceAccountKey.json")
 
 const firebaseConfig = {
@@ -26,27 +24,40 @@ const db = admin.database()
 const messengerAPI = require("./API/messengerProfile.js")(axios, env.messenger)
 const userManagementAPI = require("./API/userManagement.js")(axios, db, messengerAPI)
 
+playing = false
+
 quizPack = null
-currentQuiz = 0
-fireQuiz = null
+currentQuiz = -1 // -1 mean not fired once
+fireQuizAt = null
+
+participants = {}
+canEnter = false
+canAnswer = false
+
+let answerTemplate = null
+
+// let answerTemplate = Array(10).fill({
+//   ans: '',
+//   correct: false,
+//   at: 0
+// })
+
+db.ref(`playing`).set(playing)
+db.ref(`canAnswer`).set(canAnswer)
+db.ref(`canEnter`).set(canEnter)
+
+db.ref(`currentQuiz`).set(currentQuiz)
+db.ref(`fireQuizAt`).set(fireQuizAt)
+
+db.ref(`participants`).set({})
 
 //----------------------- Cloud Functions ------------------------
-
-exports.getQuizStatus = functions.https.onRequest((req, res) => {
-  res.json({
-    quizLength: quizPack.length,
-    quiz: quizPack,
-    currentQuiz: currentQuiz
-  })
-})
-
 
 exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest((req, res) => {
 
   if(req.method == "GET") {
 
     //console.log('GET Requested');
-
     if (req.query['hub.mode'] === 'subscribe' &&
         req.query['hub.verify_token'] === env.messenger.verify_token) {
       //console.log("Validating webhook");
@@ -59,9 +70,7 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest((req, res) =>
   else if(req.method == "POST") {
 
     //console.log('POST Requested');
-
     var data = req.body;
-
     // Make sure this is a page subscription
     if (data.object === 'page') {
 
@@ -69,8 +78,6 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest((req, res) =>
       data.entry.forEach(function(entry) {
         var pageID = entry.id;
         var timeOfEvent = entry.time;
-
-        //console.log(`entry : ${JSON.stringify(entry)}`);
 
         // Iterate over each messaging event
         entry.messaging.forEach(function(event) {
@@ -94,79 +101,65 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest((req, res) =>
 
 })
 
+exports.setCanEnter = functions.https.onRequest((req, res) => {
+  if(req.query.status.toLowerCase() === 'open')
+    db.ref(`canEnter`).set(true)
+  else if(req.query.status.toLowerCase() === 'close')
+    db.ref(`canEnter`).set(false)
 
-function receivedMessage(event) {
+  res.send(`set canEnter to ${req.query.status}`)
+})
 
-  let senderID = event.sender.id;
-  let recipientID = event.recipient.id;
-  let timeOfMessage = event.timestamp;
-  let message = event.message;
+exports.setCanAnswer = functions.https.onRequest((req, res) => {
+  if(req.query.status.toLowerCase() === 'open')
+    db.ref(`canAnswer`).set(true)
+  else if(req.query.status.toLowerCase() === 'close')
+    db.ref(`canAnswer`).set(false)
 
-  //console.log("Received message for user %d and page %d at %d with message:",
-    //senderID, recipientID, timeOfMessage);
-  //console.log(JSON.stringify(message));
+  res.send(`set canAnswer to ${req.query.status}`)
+})
 
-  let messageId = message.mid;
-
-  let messageText = message.text;
-  let messageAttachments = message.attachments;
-
-  if (messageText) {
-
-    // If we receive a text message, check to see if it matches a keyword
-    // and send back the example. Otherwise, just echo the text we received.
-    switch (messageText.toLowerCase()) {
-
-      case 'hello':
-      case 'hi':
-      case 'hey':
-      case 'yo':
-        greeting(senderID)
-        break;
-
-      case 'wanna see nh':
-        reportMeNicehashStat()
-        break;
-
-      case 'all id':
-        userManagementAPI.getAllID()
-        break;
-
-      default:
-        addNewUser(senderID)
-    }
-  } else if (messageAttachments) {
-    sendTextMessage(senderID, "Message with attachment received");
-  }
-}
-
-function addNewUser(newUserId) {
-
-  userManagementAPI.recordNewUserID(newUserId)
-  messengerAPI.sendTypingOn(newUserId)
-  messengerAPI.callProfileAPI(newUserId)
-  .then(profile => {
-
-    let texts = [
-      `สวัสดี คุณ ${profile.first_name} ${profile.last_name}`,
-      `ขณะนี้ไม่มีกิจกรรมใดดำเนินอยู่ ถ้ามีกิจกรรมเมื่อไร ทางเราจะติดต่อกลับไปนะ`
-    ]
-    sendCascadeMessage(newUserId, texts)
-
+exports.getQuizStatus = functions.https.onRequest((req, res) => {
+  res.json({
+    currentQuiz: currentQuiz,
+    quizLength: quizPack.length,
+    quiz: quizPack
   })
-  .catch(error => {
-    console.log(`error : ${error}`);
+})
+
+
+exports.getParticipants = functions.https.onRequest((req, res) => {
+  res.json({
+    participants: participants
   })
+})
 
-
-}
 
 exports.sendRequest = functions.https.onRequest((req, res) => {
 
+  db.ref(`canEnter`).set(true)
   userManagementAPI.getAllID()
   .then(allID => {
     allID.forEach((id)=>{
-      sendTextMessage(id, 'YOLO')
+
+      let inviteMessage = {
+            "text": 'แชทชิงโชค กำลังจะเริ่มในไม่ช้า ต้องการเข้าร่วมเล่นด้วยหรือไม่?',
+            "quick_replies": [
+              {
+                "content_type":"text",
+                "title": 'เข้าร่วม',
+                "payload": 'เข้าร่วม'
+              },
+              {
+                "content_type":"text",
+                "title": 'ไม่เข้าร่วม',
+                "payload": 'ไม่เข้าร่วม'
+              }
+            ]
+          }
+
+      sendQuickReplies(id, inviteMessage)
+
     })
     res.send(`sent`)
   })
@@ -175,57 +168,86 @@ exports.sendRequest = functions.https.onRequest((req, res) => {
   })
 
 })
+
+
 
 exports.sendQuiz = functions.https.onRequest((req, res) => {
 
-  let qno = currentQuiz
+  if(currentQuiz == -1) db.ref(`playing`).set(true)
 
-  if(req.query.next)
-    qno = currentQuiz + 1
+  let oldc = currentQuiz
+  if(req.query.next) {
+    db.ref(`currentQuiz`).set(currentQuiz+1)
+    console.log(`update currentQuiz to ${oldc+1} // is it : ${currentQuiz}`);
+  }
 
-  let quickReplyChoices = []
+  if(currentQuiz > quizPack.length || currentQuiz < 0) res.json({ 'error': 'quiz no. out of bound'})
+  else {
 
-  quickReplyChoices = quizPack[qno].choices.map(choice => {
-    return {
-      "content_type":"text",
-      "title": choice,
-      "payload": choice
-    }
-  })
+    db.ref(`canAnswer`).set(true)
 
-  let quizMessage = {
-      "text": quizPack[qno].q,
-      "quick_replies": quickReplyChoices
-    }
+    let quickReplyChoices = []
 
-  userManagementAPI.getAllID()
-  .then(allID => {
-    allID.forEach((id)=>{
-      sendQuizMessage(id, quizMessage)
+    quickReplyChoices = quizPack[currentQuiz].choices.map(choice => {
+      return {
+        "content_type":"text",
+        "title": choice,
+        "payload": choice
+      }
     })
-    res.send(`sent`)
+
+    let quizMessage = {
+          "text": quizPack[currentQuiz].q,
+          "quick_replies": quickReplyChoices
+        }
+
+    fireQuizAt[currentQuiz] = (new Date()).getTime()
+    db.ref(`fireQuizAt`).set(fireQuizAt)
+
+    Object.keys(participants).forEach(id => {
+      sendQuickReplies(id, quizMessage)
+    })
+
+    //res.send(`sent quiz NO. ${currentQuiz} : ${quizPack[currentQuiz].q}`)
+    res.json({
+      'error': null,
+      'qno': currentQuiz,
+      'q': quizPack[currentQuiz].q,
+      'choices': quizPack[currentQuiz].choices
+    })
+
+  }
+
+})
+
+exports.sendResult = functions.https.onRequest((req, res) => {
+
+  Object.keys(participants).forEach(id => {
+    sendTextMessage(id, `กิจกรรมจบแล้ว ยินดีด้วย คุณได้คะแนนรวม ${participants[id].point} คะแนน`)
   })
-  .catch(error => {
-    res.send(`sendRequest : ${error}`)
+
+  res.json({
+    'error': null
   })
 
 })
 
-function sendQuizMessage(recipientId, quizMessage) {
+////////////////////////////////////////////////////////////////////// f(x)
+
+function sendQuickReplies(recipientId, quickReplies) {
 
   let messageData = {
     recipient: {
       id: recipientId
     },
-    message: quizMessage
+    message: quickReplies
   }
 
   callSendAPI(messageData);
 }
 
-
-
 function sendTextMessage(recipientId, messageText) {
+
   let messageData = {
     recipient: {
       id: recipientId
@@ -242,7 +264,6 @@ function sendTextMessage(recipientId, messageText) {
 function callSendAPI(messageData) {
 
   //console.log(`message data : ${JSON.stringify(messageData)}`);
-  console.log(`env.messenger.page_token = ${env.messenger.page_token}`);
   axios({
     method: 'POST',
     url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -285,60 +306,150 @@ function sendCascadeMessage(id, textArray) {
   textArray.forEach((m) => {
     setTimeout(()=>{
       sendTextMessage(id, m)
-    }, 500)
+    }, 666)
   })
 
 }
 
-function reportMeNicehashStat() {
+function addNewUser(newUserId) {
 
-  axios('https://api.nicehash.com/api?method=stats.provider&addr=35onBA7oCbf32AhowFP8zaJLFy7qK4FMRy')
-  .then(res => {
-
-    let data = res.data
-    let siaSpeed = 0
-
-    let balance = data.result.stats.reduce((sum, value) => {
-
-      if(value.algo == 27)
-        siaSpeed = parseFloat(value.accepted_speed)
-
-      return sum + parseFloat(value.balance)
-    }, 0.0)
-
-    let texts =[
-      `Current Speed: ${parseInt(siaSpeed*1000)/1000} GH/s`,
-      `Unpaid Balance: ${balance}`
-    ]
-
-    sendCascadeMessage('1432315113461939', texts)
-  })
-  .catch(error => {
-    console.log(`report nh balance error : ${error}`);
-  })
-
-}
-
-
-function greeting(userId) {
-
-  messengerAPI.callProfileAPI(userId)
+  userManagementAPI.recordNewUserID(newUserId)
+  messengerAPI.sendTypingOn(newUserId)
+  messengerAPI.callProfileAPI(newUserId)
   .then(profile => {
 
-    // profile.first_name
-    // profile.last_name
-    // profile.gender
-    // profile.profile_pic
-    // profile.timezone
-    sendTextMessage(userId, `Hello ${profile.first_name}`)
+    if(playing || canEnter) {
+
+      let inviteMessage = {
+            "text": 'แชทชิงโชค กำลังจะเริ่มในไม่ช้า ต้องการเข้าร่วมเล่นด้วยหรือไม่?',
+            "quick_replies": [
+              {
+                "content_type":"text",
+                "title": 'เข้าร่วม',
+                "payload": 'เข้าร่วม'
+              },
+              {
+                "content_type":"text",
+                "title": 'ไม่เข้าร่วม',
+                "payload": 'ไม่เข้าร่วม'
+              }
+            ]
+          }
+
+      sendQuickReplies(newUserId, inviteMessage)
+
+    }
+    else {
+
+      let texts = [
+        `สวัสดี คุณ ${profile.first_name} ${profile.last_name}`,
+        `ขณะนี้ไม่มีกิจกรรมใดดำเนินอยู่ ถ้ามีกิจกรรมเมื่อไร ทางเราจะติดต่อกลับไปนะ`
+      ]
+      sendCascadeMessage(newUserId, texts)
+
+    }
 
   })
   .catch(error => {
-    console.log(`greeting error : ${error}`)
+    console.log(`error : ${error}`);
   })
+
 
 }
 
+
+function receivedMessage(event) {
+
+  let senderID = event.sender.id;
+  let recipientID = event.recipient.id;
+  let timeOfMessage = event.timestamp;
+  let message = event.message;
+
+  //console.log("Received message for user %d and page %d at %d with message:",
+    //senderID, recipientID, timeOfMessage);
+  //console.log(JSON.stringify(message));
+
+  let messageId = message.mid;
+  let messageText = message.text;
+  let messageQRPayload = (message.quick_reply) ? message.quick_reply.payload : null
+  let messageAttachments = message.attachments;
+
+  // ------- USER ANSWER
+  if(playing && messageQRPayload && participants[senderID] && currentQuiz > -1) {
+
+    if(!canAnswer) sendTextMessage(senderID, `หมดเวลาตอบข้อนี้แล้วจ้า`)
+    else {
+
+      participants[senderID].answerPack[currentQuiz].ans = messageQRPayload
+      participants[senderID].answerPack[currentQuiz].at = (new Date()).getTime()
+
+      if(messageQRPayload == quizPack[currentQuiz].a) {
+        //sendTextMessage(senderID, `correct`)
+        participants[senderID].answerPack[currentQuiz].correct = true
+        participants[senderID].point++
+
+      }
+
+      //else sendTextMessage(senderID, `wrong, answer is ${quizPack[currentQuiz].a}`)
+      sendTextMessage(senderID, `ได้คำตอบแล้วจ้า~`)
+      db.ref(`participants`).set(participants)
+
+    }
+
+  }
+  // ------- USER ENTER
+  else if(messageQRPayload == 'เข้าร่วม' && !participants[senderID] && canEnter) {
+
+    console.log(`in the khaoruam // id : ${senderID}`)
+
+    participants[senderID] = {
+      point: 0,
+      answerPack: answerTemplate
+    }
+
+    console.log(`new parti: ${JSON.stringify(participants[senderID])}`)
+    db.ref(`participants`).set(participants)
+
+    if(playing) {
+
+      let quizMessage = {
+            "text": quizPack[currentQuiz].q,
+            "quick_replies": quizPack[currentQuiz].choices.map(choice => {
+              return {
+                "content_type":"text",
+                "title": choice,
+                "payload": choice
+              }
+            })
+          }
+
+      sendQuickReplies(senderID, quizMessage)
+
+    }
+    else sendTextMessage(senderID, 'โอเค~ รออีกแป๊บนะ กิจกรรมใกล้จะเริ่มแล้ว')
+
+  }
+  // ------- USER MESSAGE NORMALLY
+  else if (messageText) {
+
+    // If we receive a text message, check to see if it matches a keyword
+    // and send back the example. Otherwise, just echo the text we received.
+    if(!participants[senderID]) {
+      addNewUser(senderID)
+    }
+    else {
+      if(playing)
+        sendTextMessage(senderID, `ตอบซ้ำไม่ได้นะ`)
+      else if(canEnter)
+        sendTextMessage(senderID, `รอสักครู่นะ กิจกรรมยังไม่เริ่ม`)
+    }
+
+  } else if (messageAttachments) {
+    console.log(JSON.stringify(message))
+    console.log(`Message with attachment received`)
+    //sendTextMessage(senderID, "Message with attachment received");
+  }
+}
 
 // let nodeSchedule = require('node-schedule');
 // let rerunner = nodeSchedule.scheduleJob('*/5 * * * * *', function(){
@@ -348,10 +459,14 @@ function greeting(userId) {
 //----------------- initialize --------------
 
 //---------- get currentQuiz from DB ---------
+
+/*
 db.ref(`currentQuiz`).once(`value`)
 .then(snapshot => {
+
   console.log(`Loading currentQuiz`)
   let quiznum = parseInt(snapshot.val())
+
   if(!isNaN(quiznum)) {
     currentQuiz = quiznum
     console.log(`currentQuiz loaded!`)
@@ -361,11 +476,23 @@ db.ref(`currentQuiz`).once(`value`)
 .catch(error => {
   console.log(`GET CURRENTQUIZ ERROR: ${error}`);
 })
+*/
 
 //------------------- firebase event handler ------------------
 
 
-//----------------- Load Quiz ------------------
+db.ref(`canEnter`).on('value', snapshot => {
+  canEnter = snapshot.val()
+})
+
+db.ref(`canAnswer`).on('value', snapshot => {
+  canAnswer = snapshot.val()
+})
+
+db.ref(`playing`).on('value', snapshot => {
+  playing = snapshot.val()
+})
+
 db.ref(`quizLoaded`).on('value', (snapshot) => {
 
   console.log(`Loading quiz...`)
@@ -374,8 +501,16 @@ db.ref(`quizLoaded`).on('value', (snapshot) => {
 
     db.ref(`quiz`).once('value')
     .then(snapshot => {
+
       quizPack = snapshot.val()
       console.log(`Quiz loaded!`)
+      fireQuizAt = Array(quizPack.length).fill(0)
+      answerTemplate = Array(quizPack.length).fill({
+        ans: '',
+        correct: false,
+        at: 0
+      })
+
     })
     .catch(error => {
       console.log(`load quiz error: ${error}`)
@@ -389,7 +524,8 @@ db.ref(`quizLoaded`).on('value', (snapshot) => {
 
 //---------------- Fire Quiz --------------------
 db.ref(`currentQuiz`).on('value', (currentQuizSnapshot) => {
-  fireQuiz = currentQuizSnapshot.val()
+  currentQuiz = currentQuizSnapshot.val()
+  //fireQuiz =
 })
 
 //------------- update question (quiz) --------------
@@ -399,4 +535,18 @@ db.ref(`quiz`).on('child_changed', (childSnapshot) => {
     quizPack[childSnapshot.key] = childSnapshot.val()
     console.log(`quiz updated`)
   }
+})
+
+//------------- update participants -------------------
+
+db.ref(`participants`).on('child_added', (childSnapshot) => {
+  console.log()
+  participants[childSnapshot.key] = childSnapshot.val()
+  console.log(`participants updated`)
+})
+
+db.ref(`participants`).on('child_changed', (childSnapshot) => {
+  console.log()
+  participants[childSnapshot.key] = childSnapshot.val()
+  console.log(`participants updated`)
 })
