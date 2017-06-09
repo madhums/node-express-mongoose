@@ -4,6 +4,7 @@
   "dependencies": {
     "axios": "^0.16.1",
     "botmaster": "^2.3.1",
+    "cors": "^2.8.3",
     "express": "4.15.0",
     "firebase": "^3.9.0",
     "firebase-admin": "~4.2.1",

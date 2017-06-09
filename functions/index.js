@@ -1,7 +1,10 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin')
 const firebase = require('firebase')
-//const express = require('express')
+const cors = require('cors')({
+  origin: 'http://localhost:3000'
+});
+
 //const port = 3002;
 const env = functions.config().quizshow
 const axios = require('axios')
@@ -30,6 +33,7 @@ quizPack = null
 currentQuiz = -1 // -1 mean not fired once
 fireQuizAt = null
 
+allUsers = {}
 participants = {}
 canEnter = false
 canAnswer = false
@@ -102,134 +106,268 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest((req, res) =>
 })
 
 exports.setCanEnter = functions.https.onRequest((req, res) => {
-  if(req.query.status.toLowerCase() === 'open')
-    db.ref(`canEnter`).set(true)
-  else if(req.query.status.toLowerCase() === 'close')
-    db.ref(`canEnter`).set(false)
+  cors(req, res, () => {
 
-  res.send(`set canEnter to ${req.query.status}`)
+    if(req.query.status.toLowerCase() === 'open')
+      db.ref(`canEnter`).set(true)
+    else if(req.query.status.toLowerCase() === 'close')
+      db.ref(`canEnter`).set(false)
+
+    //res.send(`set canEnter to ${req.query.status}`)
+    res.json({
+      error: null,
+      status: 'ok'
+    })
+
+  })
+
 })
 
 exports.setCanAnswer = functions.https.onRequest((req, res) => {
-  if(req.query.status.toLowerCase() === 'open')
-    db.ref(`canAnswer`).set(true)
-  else if(req.query.status.toLowerCase() === 'close')
-    db.ref(`canAnswer`).set(false)
+  cors(req, res, () => {
 
-  res.send(`set canAnswer to ${req.query.status}`)
+    if(req.query.status.toLowerCase() === 'open')
+      db.ref(`canAnswer`).set(true)
+    else if(req.query.status.toLowerCase() === 'close')
+      db.ref(`canAnswer`).set(false)
+
+    //res.send(`set canAnswer to ${req.query.status}`)
+    res.json({
+      error: null,
+      status: 'ok'
+    })
+
+  })
 })
 
 exports.getQuizStatus = functions.https.onRequest((req, res) => {
-  res.json({
-    currentQuiz: currentQuiz,
-    quizLength: quizPack.length,
-    quiz: quizPack
+  cors(req, res, () => {
+
+    res.json({
+      currentQuiz: currentQuiz,
+      quizLength: (quizPack) ? quizPack.length : 0,
+      quiz: quizPack
+    })
+
   })
 })
-
 
 exports.getParticipants = functions.https.onRequest((req, res) => {
-  res.json({
-    participants: participants
+  cors(req, res, () => {
+
+    res.json({
+      participants: participants
+    })
+
   })
 })
 
+exports.getinramusers = functions.https.onRequest((req, res) => {
+  cors(req, res, () => {
+
+    res.json({
+      allUsers: allUsers
+    })
+
+  })
+})
+
+exports.showRandomCorrectUsers = functions.https.onRequest((req, res) => {
+  cors(req, res, () => {
+
+    let targetQuizNo = parseInt(req.query.quizno)
+
+    if(targetQuizNo > -1 || targetQuizNo < quizPack.length) {
+
+      let correctUsers = Object.keys(participants).map(key => {
+
+        if(participants[key].answerPack[targetQuizNo].correct) {
+          return {
+            id : key,
+            firstName: participants[key].firstName,
+            lastName: participants[key].lastName,
+            profilePic: participants[key].profilePic,
+            answerTime: participants[key].answerPack[targetQuizNo].at
+          }
+        }
+
+      })
+
+      correctUsers = correctUsers.filter(n => { return n != undefined });
+
+      let range = correctUsers.length
+      let sortCorrectUsers = []
+
+      if(range <= 25 ) {
+
+        if(range > 1)
+          sortCorrectUsers = correctUsers.sort((a, b) => { return a.answerTime - b.answerTime })
+        else
+          sortCorrectUsers = correctUsers
+
+        console.log(`sortCorrectUsers : ${sortCorrectUsers}`)
+
+        res.json({
+          error: null,
+          correctUsers: sortCorrectUsers
+        })
+
+      }
+      else {
+
+        let array = correctUsers
+        for (let i = array.length - 1; i > 0; i--) {
+
+          let j = Math.floor(Math.random() * (i + 1));
+          let temp = array[i];
+          array[i] = array[j];
+          array[j] = temp;
+
+        }
+
+        res.json({
+          error: null,
+          correctUsers: array
+        })
+
+      }
+
+    }
+    else res.json({
+      error: `quiz no. incorrect`,
+      text: `you requested quiz number ${targetQuizNo}
+            but current quiz number is ${currentQuiz} and quiz length is ${quizPack.length}`
+    })
+
+  })
+})
 
 exports.sendRequest = functions.https.onRequest((req, res) => {
+  cors(req, res, () => {
 
-  db.ref(`canEnter`).set(true)
-  userManagementAPI.getAllID()
-  .then(allID => {
-    allID.forEach((id)=>{
+    db.ref(`canEnter`).set(true)
+    userManagementAPI.getAllID()
+    .then(allID => {
+      allID.forEach((id)=>{
 
-      let inviteMessage = {
-            "text": 'แชทชิงโชค กำลังจะเริ่มในไม่ช้า ต้องการเข้าร่วมเล่นด้วยหรือไม่?',
-            "quick_replies": [
-              {
-                "content_type":"text",
-                "title": 'เข้าร่วม',
-                "payload": 'เข้าร่วม'
-              },
-              {
-                "content_type":"text",
-                "title": 'ไม่เข้าร่วม',
-                "payload": 'ไม่เข้าร่วม'
-              }
-            ]
-          }
+        let inviteMessage = {
+              "text": 'แชทชิงโชค กำลังจะเริ่มในไม่ช้า ต้องการเข้าร่วมเล่นด้วยหรือไม่?',
+              "quick_replies": [
+                {
+                  "content_type":"text",
+                  "title": 'เข้าร่วม',
+                  "payload": 'เข้าร่วม'
+                },
+                {
+                  "content_type":"text",
+                  "title": 'ไม่เข้าร่วม',
+                  "payload": 'ไม่เข้าร่วม'
+                }
+              ]
+            }
 
-      sendQuickReplies(id, inviteMessage)
+        sendQuickReplies(id, inviteMessage)
 
+      })
+      res.send(`sent`)
     })
-    res.send(`sent`)
-  })
-  .catch(error => {
-    res.send(`sendRequest : ${error}`)
-  })
+    .catch(error => {
+      res.send(`sendRequest : ${error}`)
+    })
 
+  })
 })
-
-
 
 exports.sendQuiz = functions.https.onRequest((req, res) => {
 
-  if(currentQuiz == -1) db.ref(`playing`).set(true)
+  cors(req, res, () => {
 
-  let oldc = currentQuiz
-  if(req.query.next) {
-    db.ref(`currentQuiz`).set(currentQuiz+1)
-    console.log(`update currentQuiz to ${oldc+1} // is it : ${currentQuiz}`);
-  }
+    if(currentQuiz == -1) db.ref(`playing`).set(true)
 
-  if(currentQuiz > quizPack.length || currentQuiz < 0) res.json({ 'error': 'quiz no. out of bound'})
-  else {
+    let oldc = currentQuiz
+    if(req.query.next == 'true') {
+      db.ref(`currentQuiz`).set(currentQuiz+1)
+      console.log(`update currentQuiz to ${oldc+1} // is it : ${currentQuiz}`);
+    }
 
-    db.ref(`canAnswer`).set(true)
+    if(!quizPack || currentQuiz > quizPack.length || currentQuiz < 0 ) {
 
-    let quickReplyChoices = []
+      if(quizPack)
+        res.json({ 'error': 'quiz no. out of bound'}) 
+      else
+        res.json({ 'error': 'quiz not ready, try again later'})
+    }
+    else {
 
-    quickReplyChoices = quizPack[currentQuiz].choices.map(choice => {
-      return {
-        "content_type":"text",
-        "title": choice,
-        "payload": choice
-      }
-    })
+      db.ref(`canAnswer`).set(true)
 
-    let quizMessage = {
-          "text": quizPack[currentQuiz].q,
-          "quick_replies": quickReplyChoices
+      let answerTime = (req.query.timer) ? parseInt(req.query.timer)+5 : 65
+      let quickReplyChoices = []
+
+      quickReplyChoices = quizPack[currentQuiz].choices.map(choice => {
+        return {
+          "content_type":"text",
+          "title": choice,
+          "payload": choice
         }
+      })
 
-    fireQuizAt[currentQuiz] = (new Date()).getTime()
-    db.ref(`fireQuizAt`).set(fireQuizAt)
+      let quizMessage = {
+            "text": quizPack[currentQuiz].q,
+            "quick_replies": quickReplyChoices
+          }
 
-    Object.keys(participants).forEach(id => {
-      sendQuickReplies(id, quizMessage)
-    })
+      fireQuizAt[currentQuiz] = (new Date()).getTime()
+      db.ref(`fireQuizAt`).set(fireQuizAt)
 
-    //res.send(`sent quiz NO. ${currentQuiz} : ${quizPack[currentQuiz].q}`)
-    res.json({
-      'error': null,
-      'qno': currentQuiz,
-      'q': quizPack[currentQuiz].q,
-      'choices': quizPack[currentQuiz].choices
-    })
+      Object.keys(participants).forEach(id => {
+        sendQuickReplies(id, quizMessage)
+      })
 
-  }
+      setTimeout(()=>{
+        db.ref(`canAnswer`).set(false)
+      }, answerTime*1000) //convert to millisecs
 
+      //res.send(`sent quiz NO. ${currentQuiz} : ${quizPack[currentQuiz].q}`)
+      res.json({
+        'error': null,
+        'qno': currentQuiz,
+        'q': quizPack[currentQuiz].q,
+        'choices': quizPack[currentQuiz].choices
+      })
+
+    }
+
+  })
+})
+
+exports.addQuiz = functions.https.onRequest((req, res) => {
+  cors(req, res, () => {
+
+    if(req.method == 'POST') {
+      db.ref(`quiz`).set(req.body.quiz)
+    }
+
+    res.end()
+
+  })
 })
 
 exports.sendResult = functions.https.onRequest((req, res) => {
+  cors(req, res, () => {
 
-  Object.keys(participants).forEach(id => {
-    sendTextMessage(id, `กิจกรรมจบแล้ว ยินดีด้วย คุณได้คะแนนรวม ${participants[id].point} คะแนน`)
+    db.ref(`canEnter`).set(false)
+    db.ref(`playing`).set(false)
+
+    Object.keys(participants).forEach(id => {
+      sendTextMessage(id, `กิจกรรมจบแล้ว ยินดีด้วย คุณได้คะแนนรวม ${participants[id].point} คะแนน`)
+    })
+
+    res.json({
+      'error': null
+    })
+
   })
-
-  res.json({
-    'error': null
-  })
-
 })
 
 ////////////////////////////////////////////////////////////////////// f(x)
@@ -357,7 +495,6 @@ function addNewUser(newUserId) {
 
 }
 
-
 function receivedMessage(event) {
 
   let senderID = event.sender.id;
@@ -410,7 +547,7 @@ function receivedMessage(event) {
     console.log(`new parti: ${JSON.stringify(participants[senderID])}`)
     db.ref(`participants`).set(participants)
 
-    if(playing) {
+    if(playing && canAnswer) {
 
       let quizMessage = {
             "text": quizPack[currentQuiz].q,
@@ -493,6 +630,7 @@ db.ref(`playing`).on('value', snapshot => {
   playing = snapshot.val()
 })
 
+
 db.ref(`quizLoaded`).on('value', (snapshot) => {
 
   console.log(`Loading quiz...`)
@@ -522,6 +660,8 @@ db.ref(`quizLoaded`).on('value', (snapshot) => {
 
 })
 
+
+
 //---------------- Fire Quiz --------------------
 db.ref(`currentQuiz`).on('value', (currentQuizSnapshot) => {
   currentQuiz = currentQuizSnapshot.val()
@@ -537,16 +677,58 @@ db.ref(`quiz`).on('child_changed', (childSnapshot) => {
   }
 })
 
+// -------------- user data --------------
+
+db.ref(`users`).once('value')
+.then(snapshot => {
+
+  let users = snapshot.val()
+
+  for(key in users) {
+    allUsers[users[key].fbid] = {
+      'fullName': users[key].firstName + ' ' + users[key].lastName,
+      'firstName': users[key].firstName,
+      'lastName': users[key].lastName,
+      'profilePic': users[key].profilePic
+    }
+  }
+
+  console.log(`users data loaded!`)
+
+})
+.catch(error => {
+  console.log(``)
+})
+
+
+db.ref(`users`).on('child_added', (childSnapshot) => {
+  allUsers[childSnapshot.val().fbid] = {
+    'fullName': childSnapshot.val().firstName + ' ' + childSnapshot.val().lastName,
+    'firstName': childSnapshot.val().firstName,
+    'lastName': childSnapshot.val().lastName,
+    'profilePic': childSnapshot.val().profilePic
+  }
+  console.log(`users update [${childSnapshot.val().fbid}]`)
+})
+
 //------------- update participants -------------------
 
 db.ref(`participants`).on('child_added', (childSnapshot) => {
   console.log()
   participants[childSnapshot.key] = childSnapshot.val()
+  participants[childSnapshot.key].firstName = allUsers[childSnapshot.key].firstName
+  participants[childSnapshot.key].lastName = allUsers[childSnapshot.key].lastName
+  participants[childSnapshot.key].profilePic = allUsers[childSnapshot.key].profilePic
   console.log(`participants updated`)
+
 })
 
 db.ref(`participants`).on('child_changed', (childSnapshot) => {
-  console.log()
   participants[childSnapshot.key] = childSnapshot.val()
   console.log(`participants updated`)
+})
+
+db.ref(`participants`).on('child_removed', (oldChildSnapshot) => {
+  participants = {}
+  console.log(`participants reset`)
 })
