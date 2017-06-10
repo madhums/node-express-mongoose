@@ -282,7 +282,7 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
 
   cors(req, res, () => {
 
-    if(currentQuiz == -1) db.ref(`playing`).set(true)
+    if(!playing) db.ref(`playing`).set(true)
 
     let oldc = currentQuiz
     if(req.query.next == 'true') {
@@ -290,10 +290,10 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
       console.log(`update currentQuiz to ${oldc+1} // is it : ${currentQuiz}`);
     }
 
-    if(!quizPack || currentQuiz > quizPack.length || currentQuiz < 0 ) {
+    if(!quizPack || !participants || currentQuiz > quizPack.length || currentQuiz < 0 ) {
 
       if(quizPack)
-        res.json({ 'error': 'quiz no. out of bound'}) 
+        res.json({ 'error': 'quiz no. out of bound'})
       else
         res.json({ 'error': 'quiz not ready, try again later'})
     }
