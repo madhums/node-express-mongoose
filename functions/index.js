@@ -287,12 +287,12 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
     if(!playing) db.ref(`playing`).set(true)
 
     let oldc = currentQuiz
-    if(req.query.next == 'true') {
+    if(req.query.next == 'true' && (currentQuiz < quizPack.length) ) {
       db.ref(`currentQuiz`).set(currentQuiz+1)
       console.log(`update currentQuiz to ${oldc+1} // is it : ${currentQuiz}`);
     }
 
-    if(!quizPack || !participants || currentQuiz > quizPack.length || currentQuiz < 0 ) {
+    if(!quizPack || !participants || currentQuiz > quizPack.length - 1 || currentQuiz < 0 ) {
 
       if(quizPack)
         res.json({ 'error': 'quiz no. out of bound'})
@@ -365,6 +365,31 @@ exports.sendResult = functions.https.onRequest((req, res) => {
     Object.keys(participants).forEach(id => {
       sendTextMessage(id, `กิจกรรมจบแล้ว ยินดีด้วย คุณได้คะแนนรวม ${participants[id].point} คะแนน`)
     })
+
+    res.json({
+      'error': null
+    })
+
+  })
+})
+
+exports.restart = functions.https.onRequest((req, res) => {
+  cors(req, res, () => {
+
+    clearTimeout(timeout)
+
+    quizPack = null
+    currentQuiz = -1 // -1 mean not fired once
+    fireQuizAt = null
+
+    allUsers = {}
+    participants = {}
+
+    db.ref(`canEnter`).set(false)
+    db.ref(`canAnswer`).set(false)
+    db.ref(`playing`).set(false)
+    db.ref(`participants`).set(null)
+
 
     res.json({
       'error': null
