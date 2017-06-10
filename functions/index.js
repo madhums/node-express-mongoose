@@ -38,6 +38,8 @@ participants = {}
 canEnter = false
 canAnswer = false
 
+timeout = null
+
 let answerTemplate = null
 
 // let answerTemplate = Array(10).fill({
@@ -299,6 +301,7 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
     }
     else {
 
+      clearTimeout(timeout)
       db.ref(`canAnswer`).set(true)
 
       let answerTime = (req.query.timer) ? parseInt(req.query.timer)+5 : 65
@@ -324,7 +327,7 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
         sendQuickReplies(id, quizMessage)
       })
 
-      setTimeout(()=>{
+      timeout = setTimeout(()=>{
         db.ref(`canAnswer`).set(false)
       }, answerTime*1000) //convert to millisecs
 
