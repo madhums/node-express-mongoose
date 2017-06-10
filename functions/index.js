@@ -179,6 +179,12 @@ exports.showRandomCorrectUsers = functions.https.onRequest((req, res) => {
 
     let targetQuizNo = parseInt(req.query.quizno)
 
+    let answerAmout = 0
+    let answerRate = quizPack[targetQuizNo].choices.reduce((obj, choiceValue) => {
+      obj[choiceValue] = 0
+      return obj
+    }, {})
+
     if(targetQuizNo > -1 || targetQuizNo < quizPack.length) {
 
       let correctUsers = Object.keys(participants).map(key => {
@@ -193,9 +199,18 @@ exports.showRandomCorrectUsers = functions.https.onRequest((req, res) => {
           }
         }
 
+        if(participants[key].answerPack[targetQuizNo].ans.length > 0) {
+          answerAmout++
+          answerRate[participants[key].answerPack[targetQuizNo].ans]++
+        }
+
       })
 
-      correctUsers = correctUsers.filter(n => { return n != undefined });
+      correctUsers = correctUsers.filter(n => { return n != undefined })
+
+      for(key in answerRate) {
+        answerRate[key] = Math.round(answerRate[key] / answerAmout * 100)
+      }
 
       let range = correctUsers.length
       let sortCorrectUsers = []
@@ -211,6 +226,7 @@ exports.showRandomCorrectUsers = functions.https.onRequest((req, res) => {
 
         res.json({
           error: null,
+          answerRate: answerRate,
           correctUsers: sortCorrectUsers
         })
 
@@ -229,6 +245,7 @@ exports.showRandomCorrectUsers = functions.https.onRequest((req, res) => {
 
         res.json({
           error: null,
+          answerRate: answerRate,
           correctUsers: array
         })
 
@@ -242,6 +259,43 @@ exports.showRandomCorrectUsers = functions.https.onRequest((req, res) => {
     })
 
   })
+})
+
+exports.getTopUsers = functions.https.onRequest((req, res) => {
+
+  if(!fireQuizAt) res.json({error: 'no quiz sent OR no sent time collected'})
+
+  let candidate = Object.keys(participants).map(key => {
+
+      let timeUsedBeforeAnswer = participants[key].answerPack.reduce((collector, ansDetail, idx) => {
+        return collector + (ansDetail.at - fireQuizAt[idx])
+      }, 0)
+
+      return {
+        id : key,
+        firstName: participants[key].firstName,
+        lastName: participants[key].lastName,
+        profilePic: participants[key].profilePic,
+        point: participants[key].point,
+        totalTimeUsed: timeUsedBeforeAnswer
+      }
+
+  })
+
+  let topUsers = candidate.sort((a, b) => {
+    if(b.point - a.point == 0) return a.totalTimeUsed - b.totalTimeUsed
+    else return b.point - a.point
+  })
+
+  if(topUsers.length > 10) {
+    topUsers = topUsers.splice(0, 10)
+  }
+
+  res.json({
+    error: null,
+    topUsers: topUsers
+  })
+
 })
 
 exports.sendRequest = functions.https.onRequest((req, res) => {
