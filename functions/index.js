@@ -69,7 +69,7 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest((req, res) =>
       //console.log("Validating webhook");
       res.status(200).send(req.query['hub.challenge']);
     } else {
-      //console.error("Failed validation. Make sure the validation tokens match.");
+      console.error("Failed validation. Make sure the validation tokens match.");
       res.sendStatus(403);
     }
   }
@@ -90,7 +90,7 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest((req, res) =>
           if (event.message) {
             receivedMessage(event);
           } else {
-            console.log("Webhook received unknown event: ", event);
+            console.log("Webhook received unknown event: ")//, event);
           }
         });
       });
@@ -148,6 +148,7 @@ exports.getQuizStatus = functions.https.onRequest((req, res) => {
     res.json({
       currentQuiz: currentQuiz,
       quizLength: (quizPack) ? quizPack.length : 0,
+      fireQuizAt: fireQuizAt,
       quiz: quizPack
     })
 
@@ -264,10 +265,12 @@ exports.showRandomCorrectUsers = functions.https.onRequest((req, res) => {
 exports.getTopUsers = functions.https.onRequest((req, res) => {
 
   if(!fireQuizAt) res.json({error: 'no quiz sent OR no sent time collected'})
+  else {
 
-  let candidate = Object.keys(participants).map(key => {
+    let candidate = Object.keys(participants).map(key => {
 
       let timeUsedBeforeAnswer = participants[key].answerPack.reduce((collector, ansDetail, idx) => {
+        console.log('firequiz time : ' + fireQuizAt[idx])
         return collector + (ansDetail.at - fireQuizAt[idx])
       }, 0)
 
@@ -280,21 +283,23 @@ exports.getTopUsers = functions.https.onRequest((req, res) => {
         totalTimeUsed: timeUsedBeforeAnswer
       }
 
-  })
+    })
 
-  let topUsers = candidate.sort((a, b) => {
-    if(b.point - a.point == 0) return a.totalTimeUsed - b.totalTimeUsed
-    else return b.point - a.point
-  })
+    let topUsers = candidate.sort((a, b) => {
+      if(b.point - a.point == 0) return a.totalTimeUsed - b.totalTimeUsed
+      else return b.point - a.point
+    })
 
-  if(topUsers.length > 10) {
-    topUsers = topUsers.splice(0, 10)
+    if(topUsers.length > 10) {
+      topUsers = topUsers.splice(0, 10)
+    }
+
+    res.json({
+      error: null,
+      topUsers: topUsers
+    })
+
   }
-
-  res.json({
-    error: null,
-    topUsers: topUsers
-  })
 
 })
 
@@ -374,6 +379,7 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
             "quick_replies": quickReplyChoices
           }
 
+      if(!fireQuizAt) fireQuizAt = Array(quizPack.length).fill(0)
       fireQuizAt[currentQuiz] = (new Date()).getTime()
       db.ref(`fireQuizAt`).set(fireQuizAt)
 
@@ -433,16 +439,13 @@ exports.restart = functions.https.onRequest((req, res) => {
     clearTimeout(timeout)
 
     quizPack = null
-    currentQuiz = -1 // -1 mean not fired once
-    fireQuizAt = null
 
-    allUsers = {}
-    participants = {}
-
+    db.ref(`currentQuiz`).set(-1)
     db.ref(`canEnter`).set(false)
     db.ref(`canAnswer`).set(false)
     db.ref(`playing`).set(false)
     db.ref(`participants`).set(null)
+    db.ref(`fireQuizAt`).set(null)
 
 
     res.json({
@@ -648,6 +651,9 @@ function receivedMessage(event) {
     else sendTextMessage(senderID, 'โอเค~ รออีกแป๊บนะ กิจกรรมใกล้จะเริ่มแล้ว')
 
   }
+  else if(messageQRPayload == 'ไม่เข้าร่วม' && !participants[senderID]) {
+    sendTextMessage(senderID, 'ถ้าเปลี่ยนใจก็ทักมาได้นะ')
+  }
   // ------- USER MESSAGE NORMALLY
   else if (messageText) {
 
@@ -747,6 +753,11 @@ db.ref(`quizLoaded`).on('value', (snapshot) => {
 //---------------- Fire Quiz --------------------
 db.ref(`currentQuiz`).on('value', (currentQuizSnapshot) => {
   currentQuiz = currentQuizSnapshot.val()
+  //fireQuiz =
+})
+
+db.ref(`fireQuizAt`).on('value', (fireQuizAtSnapshot) => {
+  fireQuizAt = fireQuizAtSnapshot.val()
   //fireQuiz =
 })
 
