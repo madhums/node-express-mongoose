@@ -2,7 +2,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin')
 const firebase = require('firebase')
 const cors = require('cors')({
-  origin: 'http://localhost:3000'
+  origin: ['http://localhost:3000', 'https://codelab-a8367.firebaseapp.com']
 });
 
 //const port = 3002;
@@ -56,6 +56,10 @@ db.ref(`currentQuiz`).set(currentQuiz)
 db.ref(`fireQuizAt`).set(fireQuizAt)
 
 db.ref(`participants`).set({})
+
+console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`);
+console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> STARTING SERVICE, should appear 1 time`);
+console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`);
 
 //----------------------- Cloud Functions ------------------------
 
@@ -178,129 +182,144 @@ exports.getinramusers = functions.https.onRequest((req, res) => {
 exports.showRandomCorrectUsers = functions.https.onRequest((req, res) => {
   cors(req, res, () => {
 
-    let targetQuizNo = parseInt(req.query.quizno)
+    if(!req.query.quizno) res.json({ 'error': 'please specify quiz no.'})
+    else if(!quizPack) res.json({ 'error': 'quiz not ready'})
+    else if(req.query.quizno < 0 || req.query.quizno > quizPack.length - 1) res.json({ 'error': 'incorrect quiz no.'})
+    else {
 
-    let answerAmout = 0
-    let answerRate = quizPack[targetQuizNo].choices.reduce((obj, choiceValue) => {
-      obj[choiceValue] = 0
-      return obj
-    }, {})
+      let targetQuizNo = parseInt(req.query.quizno)
 
-    if(targetQuizNo > -1 || targetQuizNo < quizPack.length) {
+      let answerAmount = 0
+      let answerRate = quizPack[targetQuizNo].choices.reduce((obj, choiceValue) => {
+        obj[choiceValue] = 0
+        return obj
+      }, {})
 
-      let correctUsers = Object.keys(participants).map(key => {
+      console.log('answerRate = ' + JSON.stringify(answerRate))
 
-        if(participants[key].answerPack[targetQuizNo].correct) {
-          return {
-            id : key,
-            firstName: participants[key].firstName,
-            lastName: participants[key].lastName,
-            profilePic: participants[key].profilePic,
-            answerTime: participants[key].answerPack[targetQuizNo].at
+      if(targetQuizNo > -1 || targetQuizNo < quizPack.length) {
+
+        let correctUsers = Object.keys(participants).map(key => {
+
+          if(participants[key].answerPack[targetQuizNo].ans.length > 0) {
+            answerAmount++
+            answerRate[participants[key].answerPack[targetQuizNo].ans]++
+            console.log('>>> in map : answerRate = ' + JSON.stringify(answerRate))
           }
+
+          if(participants[key].answerPack[targetQuizNo].correct) {
+            return {
+              id : key,
+              firstName: participants[key].firstName,
+              lastName: participants[key].lastName,
+              profilePic: participants[key].profilePic,
+              answerTime: participants[key].answerPack[targetQuizNo].at
+            }
+          }
+
+        })
+
+        correctUsers = correctUsers.filter(n => { return n != undefined })
+
+        for(key in answerRate) {
+          answerRate[key] = Math.round(answerRate[key] / answerAmount * 100)
         }
 
-        if(participants[key].answerPack[targetQuizNo].ans.length > 0) {
-          answerAmout++
-          answerRate[participants[key].answerPack[targetQuizNo].ans]++
+        console.log('>>> AFTER % : answerRate = ' + JSON.stringify(answerRate))
+        let range = correctUsers.length
+        let sortCorrectUsers = []
+
+        if(range <= 25 ) {
+
+          if(range > 1)
+            sortCorrectUsers = correctUsers.sort((a, b) => { return a.answerTime - b.answerTime })
+          else
+            sortCorrectUsers = correctUsers
+
+          console.log(`sortCorrectUsers : ${sortCorrectUsers}`)
+
+          res.json({
+            error: null,
+            answerRate: answerRate,
+            correctUsers: sortCorrectUsers
+          })
+
+        }
+        else {
+
+          let array = correctUsers
+          for (let i = array.length - 1; i > 0; i--) {
+
+            let j = Math.floor(Math.random() * (i + 1));
+            let temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+
+          }
+
+          res.json({
+            error: null,
+            answerRate: answerRate,
+            correctUsers: array
+          })
+
         }
 
+      }
+      else res.json({
+        error: `quiz no. incorrect`,
+        text: `you requested quiz number ${targetQuizNo}
+              but current quiz number is ${currentQuiz} and quiz length is ${quizPack.length}`
       })
 
-      correctUsers = correctUsers.filter(n => { return n != undefined })
-
-      for(key in answerRate) {
-        answerRate[key] = Math.round(answerRate[key] / answerAmout * 100)
-      }
-
-      let range = correctUsers.length
-      let sortCorrectUsers = []
-
-      if(range <= 25 ) {
-
-        if(range > 1)
-          sortCorrectUsers = correctUsers.sort((a, b) => { return a.answerTime - b.answerTime })
-        else
-          sortCorrectUsers = correctUsers
-
-        console.log(`sortCorrectUsers : ${sortCorrectUsers}`)
-
-        res.json({
-          error: null,
-          answerRate: answerRate,
-          correctUsers: sortCorrectUsers
-        })
-
-      }
-      else {
-
-        let array = correctUsers
-        for (let i = array.length - 1; i > 0; i--) {
-
-          let j = Math.floor(Math.random() * (i + 1));
-          let temp = array[i];
-          array[i] = array[j];
-          array[j] = temp;
-
-        }
-
-        res.json({
-          error: null,
-          answerRate: answerRate,
-          correctUsers: array
-        })
-
-      }
 
     }
-    else res.json({
-      error: `quiz no. incorrect`,
-      text: `you requested quiz number ${targetQuizNo}
-            but current quiz number is ${currentQuiz} and quiz length is ${quizPack.length}`
-    })
+
 
   })
 })
 
 exports.getTopUsers = functions.https.onRequest((req, res) => {
+  cors(req, res, () => {
 
-  if(!fireQuizAt) res.json({error: 'no quiz sent OR no sent time collected'})
-  else {
+    if(!fireQuizAt) res.json({error: 'no quiz sent OR no sent time collected'})
+    else {
 
-    let candidate = Object.keys(participants).map(key => {
+      let candidate = Object.keys(participants).map(key => {
 
-      let timeUsedBeforeAnswer = participants[key].answerPack.reduce((collector, ansDetail, idx) => {
-        console.log('firequiz time : ' + fireQuizAt[idx])
-        return collector + (ansDetail.at - fireQuizAt[idx])
-      }, 0)
+        let timeUsedBeforeAnswer = participants[key].answerPack.reduce((collector, ansDetail, idx) => {
+          console.log('firequiz time : ' + fireQuizAt[idx])
+          return (ansDetail.ans) ? (collector + (ansDetail.at - fireQuizAt[idx]) ) : collector
+        }, 0)
 
-      return {
-        id : key,
-        firstName: participants[key].firstName,
-        lastName: participants[key].lastName,
-        profilePic: participants[key].profilePic,
-        point: participants[key].point,
-        totalTimeUsed: timeUsedBeforeAnswer
+        return {
+          id : key,
+          firstName: participants[key].firstName,
+          lastName: participants[key].lastName,
+          profilePic: participants[key].profilePic,
+          point: participants[key].point,
+          totalTimeUsed: timeUsedBeforeAnswer
+        }
+
+      })
+
+      let topUsers = candidate.sort((a, b) => {
+        if(b.point - a.point == 0) return a.totalTimeUsed - b.totalTimeUsed
+        else return b.point - a.point
+      })
+
+      if(topUsers.length > 10) {
+        topUsers = topUsers.splice(0, 10)
       }
 
-    })
+      res.json({
+        error: null,
+        topUsers: topUsers
+      })
 
-    let topUsers = candidate.sort((a, b) => {
-      if(b.point - a.point == 0) return a.totalTimeUsed - b.totalTimeUsed
-      else return b.point - a.point
-    })
-
-    if(topUsers.length > 10) {
-      topUsers = topUsers.splice(0, 10)
     }
 
-    res.json({
-      error: null,
-      topUsers: topUsers
-    })
-
-  }
-
+  })
 })
 
 exports.sendRequest = functions.https.onRequest((req, res) => {
@@ -312,7 +331,7 @@ exports.sendRequest = functions.https.onRequest((req, res) => {
       allID.forEach((id)=>{
 
         let inviteMessage = {
-              "text": 'แชทชิงโชค กำลังจะเริ่มในไม่ช้า ต้องการเข้าร่วมเล่นด้วยหรือไม่?',
+              "text": 'แชตชิงโชค กำลังจะเริ่มในไม่ช้า ต้องการเข้าร่วมเล่นด้วยหรือไม่?',
               "quick_replies": [
                 {
                   "content_type":"text",
@@ -345,59 +364,64 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
 
     if(!playing) db.ref(`playing`).set(true)
 
-    let oldc = currentQuiz
-    if(req.query.next == 'true' && (currentQuiz < quizPack.length) ) {
-      db.ref(`currentQuiz`).set(currentQuiz+1)
-      console.log(`update currentQuiz to ${oldc+1} // is it : ${currentQuiz}`);
-    }
-
-    if(!quizPack || !participants || currentQuiz > quizPack.length - 1 || currentQuiz < 0 ) {
-
-      if(quizPack)
-        res.json({ 'error': 'quiz no. out of bound'})
-      else
-        res.json({ 'error': 'quiz not ready, try again later'})
-    }
+    if(!quizPack) res.json({ 'error': 'quiz not ready, try again later'})
+    else if(!participants)  res.json({ 'error': 'quiz not ready, try again later'})
     else {
 
-      clearTimeout(timeout)
-      db.ref(`canAnswer`).set(true)
+      let oldc = currentQuiz
+      if(req.query.next == 'true' && (currentQuiz < quizPack.length) ) {
+        db.ref(`currentQuiz`).set(currentQuiz+1)
+        console.log(`update currentQuiz to ${oldc+1} // is it : ${currentQuiz}`);
+      }
 
-      let answerTime = (req.query.timer) ? parseInt(req.query.timer)+5 : 65
-      let quickReplyChoices = []
+      if(currentQuiz > quizPack.length - 1 || currentQuiz < 0 )
+        res.json({
+          'error': `quiz no. out of bound`,
+          'currentQuiz': currentQuiz,
+          'suggestion': 'if this is the first question don\'t forget to use ?next=true param'
+        })
+      else {
 
-      quickReplyChoices = quizPack[currentQuiz].choices.map(choice => {
-        return {
-          "content_type":"text",
-          "title": choice,
-          "payload": choice
-        }
-      })
+        clearTimeout(timeout)
+        db.ref(`canAnswer`).set(true)
 
-      let quizMessage = {
-            "text": quizPack[currentQuiz].q,
-            "quick_replies": quickReplyChoices
+        let answerTime = (req.query.timer) ? parseInt(req.query.timer)+5 : 65
+        let quickReplyChoices = []
+
+        quickReplyChoices = quizPack[currentQuiz].choices.map(choice => {
+          return {
+            "content_type":"text",
+            "title": choice,
+            "payload": choice
           }
+        })
 
-      if(!fireQuizAt) fireQuizAt = Array(quizPack.length).fill(0)
-      fireQuizAt[currentQuiz] = (new Date()).getTime()
-      db.ref(`fireQuizAt`).set(fireQuizAt)
+        let quizMessage = {
+              "text": quizPack[currentQuiz].q,
+              "quick_replies": quickReplyChoices
+            }
 
-      Object.keys(participants).forEach(id => {
-        sendQuickReplies(id, quizMessage)
-      })
+        if(!fireQuizAt) fireQuizAt = Array(quizPack.length).fill(0)
+        fireQuizAt[currentQuiz] = (new Date()).getTime()
+        db.ref(`fireQuizAt`).set(fireQuizAt)
 
-      timeout = setTimeout(()=>{
-        db.ref(`canAnswer`).set(false)
-      }, answerTime*1000) //convert to millisecs
+        Object.keys(participants).forEach(id => {
+          sendQuickReplies(id, quizMessage)
+        })
 
-      //res.send(`sent quiz NO. ${currentQuiz} : ${quizPack[currentQuiz].q}`)
-      res.json({
-        'error': null,
-        'qno': currentQuiz,
-        'q': quizPack[currentQuiz].q,
-        'choices': quizPack[currentQuiz].choices
-      })
+        timeout = setTimeout(()=>{
+          db.ref(`canAnswer`).set(false)
+        }, answerTime*1000) //convert to millisecs
+
+        //res.send(`sent quiz NO. ${currentQuiz} : ${quizPack[currentQuiz].q}`)
+        res.json({
+          'error': null,
+          'qno': currentQuiz,
+          'q': quizPack[currentQuiz].q,
+          'choices': quizPack[currentQuiz].choices
+        })
+
+      }
 
     }
 
@@ -411,7 +435,9 @@ exports.addQuiz = functions.https.onRequest((req, res) => {
       db.ref(`quiz`).set(req.body.quiz)
     }
 
-    res.end()
+    res.json({
+      error: null
+    })
 
   })
 })
@@ -529,7 +555,7 @@ function sendCascadeMessage(id, textArray) {
   textArray.forEach((m) => {
     setTimeout(()=>{
       sendTextMessage(id, m)
-    }, 666)
+    }, 1000)
   })
 
 }
@@ -544,7 +570,7 @@ function addNewUser(newUserId) {
     if(playing || canEnter) {
 
       let inviteMessage = {
-            "text": 'แชทชิงโชค กำลังจะเริ่มในไม่ช้า ต้องการเข้าร่วมเล่นด้วยหรือไม่?',
+            "text": 'แชตชิงโชค กำลังจะเริ่มในไม่ช้า ต้องการเข้าร่วมเล่นด้วยหรือไม่?',
             "quick_replies": [
               {
                 "content_type":"text",
@@ -566,7 +592,7 @@ function addNewUser(newUserId) {
 
       let texts = [
         `สวัสดี คุณ ${profile.first_name} ${profile.last_name}`,
-        `ขณะนี้ไม่มีกิจกรรมใดดำเนินอยู่ ถ้ามีกิจกรรมเมื่อไร ทางเราจะติดต่อกลับไปนะ`
+        `ขณะนี้ แชตชิงโชค ยังไม่เริ่ม ถ้าใกล้ถึงช่วงเวลาของกิจกรรมแล้วทางเราจะติดต่อกลับไปนะ`
       ]
       sendCascadeMessage(newUserId, texts)
 
@@ -626,7 +652,10 @@ function receivedMessage(event) {
 
     participants[senderID] = {
       point: 0,
-      answerPack: answerTemplate
+      answerPack: answerTemplate,
+      firstName: allUsers[senderID].firstName,
+      lastName: allUsers[senderID].lastName,
+      profilePic: allUsers[senderID].profilePic
     }
 
     console.log(`new parti: ${JSON.stringify(participants[senderID])}`)
@@ -648,7 +677,16 @@ function receivedMessage(event) {
       sendQuickReplies(senderID, quizMessage)
 
     }
-    else sendTextMessage(senderID, 'โอเค~ รออีกแป๊บนะ กิจกรรมใกล้จะเริ่มแล้ว')
+    else {
+      //sendTextMessage(senderID, 'โอเค~ รออีกแป๊บนะ กิจกรรมใกล้จะเริ่มแล้ว')
+      let texts = [
+        `ยินดีต้อนรับเข้าสู่เกม "แชตชิงโชค" โปรดรอคำถามจาก facebook Live`,
+        `ขณะนี้ แชตชิงโชค ยังไม่เริ่ม ถ้าใกล้ถึงช่วงเวลาของกิจกรรมแล้วทางเราจะติดต่อกลับไปนะ`
+      ]
+
+      sendCascadeMessage(senderID, texts)
+
+    }
 
   }
   else if(messageQRPayload == 'ไม่เข้าร่วม' && !participants[senderID]) {
@@ -807,11 +845,13 @@ db.ref(`users`).on('child_added', (childSnapshot) => {
 //------------- update participants -------------------
 
 db.ref(`participants`).on('child_added', (childSnapshot) => {
-  console.log()
+  // console.log()
   participants[childSnapshot.key] = childSnapshot.val()
-  participants[childSnapshot.key].firstName = allUsers[childSnapshot.key].firstName
-  participants[childSnapshot.key].lastName = allUsers[childSnapshot.key].lastName
-  participants[childSnapshot.key].profilePic = allUsers[childSnapshot.key].profilePic
+  // let tempParticipant = childSnapshot.val()
+  // tempParticipant.firstName = allUsers[childSnapshot.key].firstName
+  // tempParticipant.lastName = allUsers[childSnapshot.key].lastName
+  // tempParticipant.profilePic = allUsers[childSnapshot.key].profilePic
+  // db.ref(`participants/${childSnapshot.key}`).set(tempParticipant)
   console.log(`participants updated`)
 
 })
