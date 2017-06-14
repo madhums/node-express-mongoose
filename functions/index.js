@@ -48,6 +48,7 @@ let answerTemplate = null
 //   at: 0
 // })
 
+/*
 db.ref(`playing`).set(playing)
 db.ref(`canAnswer`).set(canAnswer)
 db.ref(`canEnter`).set(canEnter)
@@ -56,6 +57,7 @@ db.ref(`currentQuiz`).set(currentQuiz)
 db.ref(`fireQuizAt`).set(fireQuizAt)
 
 db.ref(`participants`).set({})
+*/
 
 console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`);
 console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> STARTING SERVICE, should appear 1 time`);
