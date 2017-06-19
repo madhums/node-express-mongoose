@@ -209,7 +209,7 @@ exports.showRandomCorrectUsers = functions.https.onRequest((req, res) => {
             console.log('>>> in map : answerRate = ' + JSON.stringify(answerRate))
           }
 
-          if(participants[key].answerPack[targetQuizNo].correct) {
+          if(participants[key].answerPack[targetQuizNo].correct == true) {
             return {
               id : key,
               firstName: participants[key].firstName,
@@ -553,16 +553,40 @@ function callSendAPI(messageData) {
 }
 
 function sendCascadeMessage(id, textArray) {
-
+/*
   textArray.forEach((m) => {
     setTimeout(()=>{
       sendTextMessage(id, m)
     }, 1000)
   })
+*/
+
+  textArray.reduce((promiseOrder, message) => {
+
+      return promiseOrder.then(() => {
+        //console.log(message);
+        sendTextMessage(id, message)
+        return new Promise(res => {
+          setTimeout(res, 1000)
+        })
+
+      })
+
+  }, Promise.resolve()).then(
+
+      () => console.log('send cascade message DONE!'),
+      (error) => {
+        console.log(`reduce error : ${error} `)
+      }
+
+  )
+
 
 }
 
 function addNewUser(newUserId) {
+
+  console.log(`enter addNewUser`)
 
   userManagementAPI.recordNewUserID(newUserId)
   messengerAPI.sendTypingOn(newUserId)
@@ -703,7 +727,12 @@ function receivedMessage(event) {
     // If we receive a text message, check to see if it matches a keyword
     // and send back the example. Otherwise, just echo the text we received.
     if(!participants[senderID]) {
+      console.log(`user id not found in participants array -> adding new user`)
       addNewUser(senderID)
+    }
+    else if(participants[senderID] && !playing && !canEnter) {
+      console.log(`this user is in our sigth, but game is end or not started yet, tell the user!`)
+      sendTextMessage(senderID, `ขณะนี้ แชทชิงโชค ยังไม่เริ่ม ถ้าใกล้ถึงช่วงเวลาของกิจกรรมแล้วทางเราจะติดต่อกลับไปนะ`)
     }
     else {
       if(playing)
@@ -718,6 +747,38 @@ function receivedMessage(event) {
     //sendTextMessage(senderID, "Message with attachment received");
   }
 }
+
+
+//--------------- LAB
+/*
+sendCascade(messageArray, sendOptions) {
+    const returnedBodies = [];
+
+    let promiseCascade = Promise.resolve();
+
+    for (const messageObject of messageArray) {
+      promiseCascade = promiseCascade.then((body) => {
+        if (body) {
+          returnedBodies.push(body);
+        }
+        if (messageObject.raw) {
+          return this.sendRawMessage(messageObject.raw);
+        } else if (messageObject.message) {
+          return this.sendMessage(messageObject.message, sendOptions);
+        }
+        throw new Error('No valid message options specified');
+      });
+    }
+
+    return promiseCascade
+
+    .then((body) => {
+      // add last body and deal with potential callback
+      returnedBodies.push(body);
+      return returnedBodies;
+    });
+}
+*/
 
 // let nodeSchedule = require('node-schedule');
 // let rerunner = nodeSchedule.scheduleJob('*/5 * * * * *', function(){
