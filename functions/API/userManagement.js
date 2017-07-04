@@ -52,12 +52,14 @@ module.exports = function(axios, db, messengerAPI) {
         else {
 
           //console.log(`adding  new user`)
+          console.log(`json: ${JSON.stringify(fetchedProfile)}`)
+
           db.ref(`userIds`).push().set(userId)
           db.ref(`users`).push().set({
             'fbid': userId,
             'firstName': fetchedProfile.first_name,
             'lastName': fetchedProfile.last_name,
-            'gender': fetchedProfile.gender,
+            //'gender': fetchedProfile.gender,
             'profilePic': fetchedProfile.profile_pic,
             'timezone': fetchedProfile.timezone,
             'createdAt': (new Date()).toISOString()

@@ -611,7 +611,9 @@ function addNewUser(newUserId) {
             ]
           }
 
-      sendQuickReplies(newUserId, inviteMessage)
+      setTimeout(() => {
+        sendQuickReplies(newUserId, inviteMessage)
+      }, 1000)
 
     }
     else {
@@ -735,8 +737,34 @@ function receivedMessage(event) {
       sendTextMessage(senderID, `ขณะนี้ แชทชิงโชค ยังไม่เริ่ม ถ้าใกล้ถึงช่วงเวลาของกิจกรรมแล้วทางเราจะติดต่อกลับไปนะ`)
     }
     else {
-      if(playing)
-        sendTextMessage(senderID, `ตอบซ้ำไม่ได้นะ`)
+      if(playing) {
+
+        if(!canAnswer) sendTextMessage(senderID, `หมดเวลาตอบข้อนี้แล้วจ้า`)
+        else {
+
+          sendTextMessage(senderID, `พิมพ์ตอบจะไม่ได้คะแนนนะ กดตอบเอา ;)`)
+
+
+          let quickReplyChoices = []
+
+          quickReplyChoices = quizPack[currentQuiz].choices.map(choice => {
+            return {
+              "content_type":"text",
+              "title": choice,
+              "payload": choice
+            }
+          })
+
+          let quizMessage = {
+                "text": quizPack[currentQuiz].q,
+                "quick_replies": quickReplyChoices
+              }
+
+          setTimeout( () => { sendQuickReplies(senderID, quizMessage) }, 1000)
+
+        }
+
+      }
       else if(canEnter)
         sendTextMessage(senderID, `รอสักครู่นะ กิจกรรมยังไม่เริ่ม`)
     }
@@ -874,6 +902,13 @@ db.ref(`quiz`).on('child_changed', (childSnapshot) => {
   }
 })
 
+db.ref(`quiz`).on('child_removed', (childSnapshot) => {
+  if(quizPack) {
+    quizPack[childSnapshot.key] = childSnapshot.val()
+    console.log(`quiz updated`)
+  }
+})
+
 // -------------- user data --------------
 
 db.ref(`users`).once('value')
@@ -925,9 +960,4 @@ db.ref(`participants`).on('child_added', (childSnapshot) => {
 db.ref(`participants`).on('child_changed', (childSnapshot) => {
   participants[childSnapshot.key] = childSnapshot.val()
   console.log(`participants updated`)
-})
-
-db.ref(`participants`).on('child_removed', (oldChildSnapshot) => {
-  participants = {}
-  console.log(`participants reset`)
 })
