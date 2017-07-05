@@ -46,13 +46,13 @@ module.exports = function(axios, db, messengerAPI) {
       .then(allID => {
 
         if(allID.indexOf(userId) > -1) {
-          //console.log(`duplciate user id`)
+          console.log(`duplciate user id`)
           //return resolve(userName)
         }
         else {
 
-          //console.log(`adding  new user`)
-          console.log(`json: ${JSON.stringify(fetchedProfile)}`)
+          console.log(`adding  new user`)
+          //console.log(`json: ${JSON.stringify(fetchedProfile)}`)
 
           db.ref(`userIds`).push().set(userId)
           db.ref(`users`).push().set({

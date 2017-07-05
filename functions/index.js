@@ -65,6 +65,22 @@ console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`);
 
 //----------------------- Cloud Functions ------------------------
 
+function _getParticipants() {
+  return db.ref(`participants`).once('value')
+}
+
+function _getQuiz() {
+  return db.ref(`quiz`).once('value')
+}
+
+function _getUsers() {
+  return db.ref(`users`).once('value')
+}
+
+function _getFireQuizAt() {
+  return db.ref(`fireQuizAt`).once('value')
+}
+
 exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest((req, res) => {
 
   if(req.method == "GET") {
@@ -82,21 +98,23 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest((req, res) =>
   else if(req.method == "POST") {
 
     //console.log('POST Requested');
-    var data = req.body;
+    let data = req.body;
     // Make sure this is a page subscription
     if (data.object === 'page') {
 
       // Iterate over each entry - there may be multiple if batched
       data.entry.forEach(function(entry) {
-        var pageID = entry.id;
-        var timeOfEvent = entry.time;
+        let pageID = entry.id;
+        let timeOfEvent = entry.time;
 
         // Iterate over each messaging event
         entry.messaging.forEach(function(event) {
           if (event.message) {
             receivedMessage(event);
+          } else if(event.delivery){
+            console.log(`Message delivered to ${event.sender.id}`);
           } else {
-            console.log("Webhook received unknown event: ")//, event);
+            console.log(`Webhook Unknown Event: ${JSON.stringify(event)}`);
           }
         });
       });
@@ -151,11 +169,34 @@ exports.setCanAnswer = functions.https.onRequest((req, res) => {
 exports.getQuizStatus = functions.https.onRequest((req, res) => {
   cors(req, res, () => {
 
-    res.json({
-      currentQuiz: currentQuiz,
-      quizLength: (quizPack) ? quizPack.length : 0,
-      fireQuizAt: fireQuizAt,
-      quiz: quizPack
+    let cq = -1
+    let fqa = null
+    let q = null
+
+    db.ref(`currentQuiz`).once('value')
+    .then(snapshot => {
+      cq = snapshot.val()
+
+      return db.ref(`quiz`).once('value')
+    })
+    .then(snapshot => {
+      q = snapshot.val()
+
+      return db.ref(`fireQuizAt`).once('value')
+    })
+    .then(snapshot => {
+      fqa = snapshot.val()
+
+      res.json({
+        currentQuiz: cq,
+        quizLength: (q) ? q.length : 0,
+        fireQuizAt: fqa,
+        quiz: q
+      })
+
+    })
+    .catch(error => {
+      console.log(`there's an error in getQuizStatus: ${error}`)
     })
 
   })
@@ -164,18 +205,15 @@ exports.getQuizStatus = functions.https.onRequest((req, res) => {
 exports.getParticipants = functions.https.onRequest((req, res) => {
   cors(req, res, () => {
 
-    res.json({
-      participants: participants
+    _getParticipants()
+    .then(snapshot => {
+      res.json({
+        participants: snapshot.val()
+      })
     })
-
-  })
-})
-
-exports.getinramusers = functions.https.onRequest((req, res) => {
-  cors(req, res, () => {
-
-    res.json({
-      allUsers: allUsers
+    .catch(error => {
+      console.log(`there's an error in getParticipants: ${error}`)
+      res.end()
     })
 
   })
@@ -184,98 +222,123 @@ exports.getinramusers = functions.https.onRequest((req, res) => {
 exports.showRandomCorrectUsers = functions.https.onRequest((req, res) => {
   cors(req, res, () => {
 
-    if(!req.query.quizno) res.json({ 'error': 'please specify quiz no.'})
-    else if(!quizPack) res.json({ 'error': 'quiz not ready'})
-    else if(req.query.quizno < 0 || req.query.quizno > quizPack.length - 1) res.json({ 'error': 'incorrect quiz no.'})
-    else {
+    let quiz = null
+    let part = null
 
-      let targetQuizNo = parseInt(req.query.quizno)
+    _getQuiz()
+    .then(quizSnapshot => {
+      quiz = quizSnapshot.val()
+      return _getParticipants()
+    })
+    .then(participantsSnapshot => {
 
-      let answerAmount = 0
-      let answerRate = quizPack[targetQuizNo].choices.reduce((obj, choiceValue) => {
-        obj[choiceValue] = 0
-        return obj
-      }, {})
+      part = participantsSnapshot.val()
 
-      console.log('answerRate = ' + JSON.stringify(answerRate))
+      if(!req.query.quizno) res.json({ 'error': 'please specify quiz no.'})
+      else if(!quiz) res.json({ 'error': 'quiz not ready'})
+      else if(!part) res.json({ 'error': 'participants not found'})
+      else if(req.query.quizno < 0 || req.query.quizno > quiz.length - 1) res.json({ 'error': 'incorrect quiz no.'})
+      else {
 
-      if(targetQuizNo > -1 || targetQuizNo < quizPack.length) {
+        let targetQuizNo = parseInt(req.query.quizno)
 
-        let correctUsers = Object.keys(participants).map(key => {
+        let answerAmount = 0
+        let answerRate = quiz[targetQuizNo].choices.reduce((obj, choiceValue) => {
+          obj[choiceValue] = 0
+          return obj
+        }, {})
 
-          if(participants[key].answerPack[targetQuizNo].ans.length > 0) {
-            answerAmount++
-            answerRate[participants[key].answerPack[targetQuizNo].ans]++
-            console.log('>>> in map : answerRate = ' + JSON.stringify(answerRate))
-          }
+        console.log('answerRate = ' + JSON.stringify(answerRate))
+        console.log('quiz = ' + JSON.stringify(quiz))
+        console.log('participant = ' + JSON.stringify(part))
 
-          if(participants[key].answerPack[targetQuizNo].correct == true) {
-            return {
-              id : key,
-              firstName: participants[key].firstName,
-              lastName: participants[key].lastName,
-              profilePic: participants[key].profilePic,
-              answerTime: participants[key].answerPack[targetQuizNo].at
+        if(targetQuizNo > -1 || targetQuizNo < quiz.length) {
+
+          let correctUsers = Object.keys(part).map(key => {
+
+            if(part[key].answerPack[targetQuizNo].ans.length > 0) {
+              answerAmount++
+              answerRate[part[key].answerPack[targetQuizNo].ans]++
+              console.log('>>> in map : answerRate = ' + JSON.stringify(answerRate))
             }
+
+            if(part[key].answerPack[targetQuizNo].correct == true) {
+              return {
+                id : key,
+                firstName: participants[key].firstName,
+                lastName: participants[key].lastName,
+                profilePic: participants[key].profilePic,
+                answerTime: participants[key].answerPack[targetQuizNo].at
+              }
+            }
+
+          })
+
+          correctUsers = correctUsers.filter(n => { return n != undefined })
+
+          for(key in answerRate) {
+            answerRate[key] = Math.round(answerRate[key] / answerAmount * 100)
           }
 
+          console.log('>>> AFTER % : answerRate = ' + JSON.stringify(answerRate))
+          let range = correctUsers.length
+          let sortCorrectUsers = []
+
+          if(range <= 25 ) {
+
+            if(range > 1)
+              sortCorrectUsers = correctUsers.sort((a, b) => { return a.answerTime - b.answerTime })
+            else
+              sortCorrectUsers = correctUsers
+
+            console.log(`sortCorrectUsers : ${sortCorrectUsers}`)
+
+            res.json({
+              error: null,
+              answerRate: answerRate,
+              correctUsers: sortCorrectUsers
+            })
+
+          }
+          else {
+
+            let array = correctUsers
+            for (let i = array.length - 1; i > 0; i--) {
+
+              let j = Math.floor(Math.random() * (i + 1));
+              let temp = array[i];
+              array[i] = array[j];
+              array[j] = temp;
+
+            }
+
+            res.json({
+              error: null,
+              answerRate: answerRate,
+              correctUsers: array
+            })
+
+          }
+
+        }
+        else res.json({
+          error: `quiz no. incorrect`,
+          text: `you requested quiz number ${targetQuizNo}
+                but current quiz number is ${currentQuiz} and quiz length is ${quizPack.length}`
         })
 
-        correctUsers = correctUsers.filter(n => { return n != undefined })
-
-        for(key in answerRate) {
-          answerRate[key] = Math.round(answerRate[key] / answerAmount * 100)
-        }
-
-        console.log('>>> AFTER % : answerRate = ' + JSON.stringify(answerRate))
-        let range = correctUsers.length
-        let sortCorrectUsers = []
-
-        if(range <= 25 ) {
-
-          if(range > 1)
-            sortCorrectUsers = correctUsers.sort((a, b) => { return a.answerTime - b.answerTime })
-          else
-            sortCorrectUsers = correctUsers
-
-          console.log(`sortCorrectUsers : ${sortCorrectUsers}`)
-
-          res.json({
-            error: null,
-            answerRate: answerRate,
-            correctUsers: sortCorrectUsers
-          })
-
-        }
-        else {
-
-          let array = correctUsers
-          for (let i = array.length - 1; i > 0; i--) {
-
-            let j = Math.floor(Math.random() * (i + 1));
-            let temp = array[i];
-            array[i] = array[j];
-            array[j] = temp;
-
-          }
-
-          res.json({
-            error: null,
-            answerRate: answerRate,
-            correctUsers: array
-          })
-
-        }
 
       }
-      else res.json({
-        error: `quiz no. incorrect`,
-        text: `you requested quiz number ${targetQuizNo}
-              but current quiz number is ${currentQuiz} and quiz length is ${quizPack.length}`
-      })
 
 
-    }
+
+
+    })
+    .catch(error => {
+
+    })
+
+
 
 
   })
@@ -284,42 +347,60 @@ exports.showRandomCorrectUsers = functions.https.onRequest((req, res) => {
 exports.getTopUsers = functions.https.onRequest((req, res) => {
   cors(req, res, () => {
 
-    if(!fireQuizAt) res.json({error: 'no quiz sent OR no sent time collected'})
-    else {
+    let fq = null
+    let part = null
 
-      let candidate = Object.keys(participants).map(key => {
+    _getFireQuizAt()
+    .then(snapshot => {
+      fq = snapshot.val()
+      return _getParticipants()
+    })
+    .then(snapshot => {
 
-        let timeUsedBeforeAnswer = participants[key].answerPack.reduce((collector, ansDetail, idx) => {
-          console.log('firequiz time : ' + fireQuizAt[idx])
-          return (ansDetail.ans) ? (collector + (ansDetail.at - fireQuizAt[idx]) ) : collector
-        }, 0)
+      if(!fq) res.json({error: 'no quiz sent OR no sent time collected'})
+      else {
 
-        return {
-          id : key,
-          firstName: participants[key].firstName,
-          lastName: participants[key].lastName,
-          profilePic: participants[key].profilePic,
-          point: participants[key].point,
-          totalTimeUsed: timeUsedBeforeAnswer
+        part = snapshot.val()
+        let candidate = Object.keys(part).map(key => {
+
+          let timeUsedBeforeAnswer = part[key].answerPack.reduce((collector, ansDetail, idx) => {
+            console.log('firequiz time : ' + fq[idx])
+            return (ansDetail.ans) ? (collector + (ansDetail.at - fq[idx]) ) : collector
+          }, 0)
+
+          return {
+            id : key,
+            firstName: part[key].firstName,
+            lastName: part[key].lastName,
+            profilePic: part[key].profilePic,
+            point: part[key].point,
+            totalTimeUsed: timeUsedBeforeAnswer
+          }
+
+        })
+
+        let topUsers = candidate.sort((a, b) => {
+          if(b.point - a.point == 0) return a.totalTimeUsed - b.totalTimeUsed
+          else return b.point - a.point
+        })
+
+        if(topUsers.length > 10) {
+          topUsers = topUsers.splice(0, 10)
         }
 
-      })
+        res.json({
+          error: null,
+          topUsers: topUsers
+        })
 
-      let topUsers = candidate.sort((a, b) => {
-        if(b.point - a.point == 0) return a.totalTimeUsed - b.totalTimeUsed
-        else return b.point - a.point
-      })
-
-      if(topUsers.length > 10) {
-        topUsers = topUsers.splice(0, 10)
       }
 
-      res.json({
-        error: null,
-        topUsers: topUsers
-      })
+    })
+    .catch(error => {
+      console.log(`there's an error in getTopUsers: ${error}`)
+      res.end()
+    })
 
-    }
 
   })
 })
