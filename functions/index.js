@@ -81,6 +81,51 @@ function _getFireQuizAt() {
   return db.ref(`fireQuizAt`).once('value')
 }
 
+_getStatus = () => {
+
+  return new Promise((resolve, reject) => {
+
+    let canEnter = false
+    let playing = false
+    let canAnswer = false
+    let currentQuiz = -1
+
+    db.ref(`canEnter`).once('value')
+    .then(ce => {
+      canEnter = ce.val()
+      return db.ref(`canAnswer`).once('value')
+    })
+    .then(ca => {
+      canAnswer = ca.val()
+      return db.ref(`playing`).once('value')
+    })
+    .then(pl => {
+      playing = pl.val()
+      return db.ref(`currentQuiz`).once('value')
+    })
+    .then(cq => {
+
+      currentQuiz = cq.val()
+      let status = {
+        canEnter: canEnter,
+        canAnswer: canAnswer,
+        playing: playing,
+        currentQuiz: currentQuiz
+      }
+
+      return resolve(status)
+
+    })
+    .catch(error => {
+      return reject(status)
+    })
+
+  })
+
+
+
+}
+
 exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest((req, res) => {
 
   if(req.method == "GET") {
@@ -445,68 +490,100 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
 
   cors(req, res, () => {
 
-    if(!playing) db.ref(`playing`).set(true)
+    let status = null
+    let participants = null
+    let quiz = null
+    let fireQuizAt = null
 
-    if(!quizPack) res.json({ 'error': 'quiz not ready, try again later'})
-    else if(!participants)  res.json({ 'error': 'quiz not ready, try again later'})
-    else {
+    _getStatus()
+    .then(fetchedStatus => {
+      status = fetchedStatus
+      return _getFireQuizAt()
+    })
+    .then(fqaSnapshot => {
+      fireQuizAt = fqaSnapshot.val()
+      return _getParticipants()
+    })
+    .then(participantsSnapshot => {
+      participants = participantsSnapshot.val()
+      return _getQuiz()
+    })
+    .then(quizSnapshot => {
 
-      let oldc = currentQuiz
-      if(req.query.next == 'true' && (currentQuiz < quizPack.length) ) {
-        db.ref(`currentQuiz`).set(currentQuiz+1)
-        console.log(`update currentQuiz to ${oldc+1} // is it : ${currentQuiz}`);
-      }
+      quiz = quizSnapshot.val()
 
-      if(currentQuiz > quizPack.length - 1 || currentQuiz < 0 )
-        res.json({
-          'error': `quiz no. out of bound`,
-          'currentQuiz': currentQuiz,
-          'suggestion': 'if this is the first question don\'t forget to use ?next=true param'
-        })
+      if(!status.playing) db.ref(`playing`).set(true)
+
+      if(!quiz) res.json({ 'error': 'quiz not ready, try again later'})
+      else if(!participants)  res.json({ 'error': 'quiz not ready, try again later'})
       else {
 
-        clearTimeout(timeout)
-        db.ref(`canAnswer`).set(true)
+        let oldc = status.currentQuiz
+        if(req.query.next == 'true' && (status.currentQuiz < quiz.length) ) {
+          db.ref(`currentQuiz`).set(status.currentQuiz+1)
+          status.currentQuiz += 1
+          console.log(`update currentQuiz to ${oldc+1} // is it : ${currentQuiz}`);
+        }
 
-        let answerTime = (req.query.timer) ? parseInt(req.query.timer)+5 : 65
-        let quickReplyChoices = []
+        if(status.currentQuiz > quiz.length - 1 || status.currentQuiz < 0 )
+          res.json({
+            'error': `quiz no. out of bound`,
+            'currentQuiz': status.currentQuiz,
+            'suggestion': 'if this is the first question don\'t forget to use ?next=true param'
+          })
+        else {
 
-        quickReplyChoices = quizPack[currentQuiz].choices.map(choice => {
-          return {
-            "content_type":"text",
-            "title": choice,
-            "payload": choice
-          }
-        })
+          clearTimeout(timeout)
+          db.ref(`canAnswer`).set(true)
 
-        let quizMessage = {
-              "text": quizPack[currentQuiz].q,
-              "quick_replies": quickReplyChoices
+          let answerTime = (req.query.timer) ? parseInt(req.query.timer)+5 : 65
+          let quickReplyChoices = []
+
+          quickReplyChoices = quiz[status.currentQuiz].choices.map(choice => {
+            return {
+              "content_type":"text",
+              "title": choice,
+              "payload": choice
             }
+          })
 
-        if(!fireQuizAt) fireQuizAt = Array(quizPack.length).fill(0)
-        fireQuizAt[currentQuiz] = (new Date()).getTime()
-        db.ref(`fireQuizAt`).set(fireQuizAt)
+          let quizMessage = {
+                "text": quiz[status.currentQuiz].q,
+                "quick_replies": quickReplyChoices
+              }
 
-        Object.keys(participants).forEach(id => {
-          sendQuickReplies(id, quizMessage)
-        })
+          if(!fireQuizAt) fireQuizAt = Array(quizPack.length).fill(0)
 
-        timeout = setTimeout(()=>{
-          db.ref(`canAnswer`).set(false)
-        }, answerTime*1000) //convert to millisecs
+          if(fireQuizAt[status.currentQuiz] == 0) {
+            fireQuizAt[status.currentQuiz] = (new Date()).getTime()
+            db.ref(`fireQuizAt`).set(fireQuizAt)
+          }
 
-        //res.send(`sent quiz NO. ${currentQuiz} : ${quizPack[currentQuiz].q}`)
-        res.json({
-          'error': null,
-          'qno': currentQuiz,
-          'q': quizPack[currentQuiz].q,
-          'choices': quizPack[currentQuiz].choices
-        })
+          Object.keys(participants).forEach(id => {
+            sendQuickReplies(id, quizMessage)
+          })
+
+          timeout = setTimeout(()=>{
+            db.ref(`canAnswer`).set(false)
+          }, answerTime*1000) //convert to millisecs
+
+          //res.send(`sent quiz NO. ${currentQuiz} : ${quizPack[currentQuiz].q}`)
+          res.json({
+            'error': null,
+            'qno': status.currentQuiz,
+            'q': quiz[status.currentQuiz].q,
+            'choices': quiz[status.currentQuiz].choices
+          })
+
+        }
 
       }
 
-    }
+    })
+    .catch(error => {
+      console.log(`there's an error in sendQuiz: ${error}`)
+      res.end()
+    })
 
   })
 })
@@ -531,12 +608,21 @@ exports.sendResult = functions.https.onRequest((req, res) => {
     db.ref(`canEnter`).set(false)
     db.ref(`playing`).set(false)
 
-    Object.keys(participants).forEach(id => {
-      sendTextMessage(id, `กิจกรรมจบแล้ว ยินดีด้วย คุณได้คะแนนรวม ${participants[id].point} คะแนน`)
-    })
+    _getParticipants()
+    .then(participantsSnapshot => {
 
-    res.json({
-      'error': null
+      Object.keys(participantsSnapshot.val()).forEach(id => {
+        sendTextMessage(id, `กิจกรรมจบแล้ว ยินดีด้วย คุณได้คะแนนรวม ${participants[id].point} คะแนน`)
+      })
+
+      res.json({
+        'error': null
+      })
+
+    })
+    .catch(error => {
+      console.log(`there's an error in sendResult: ${error}`)
+      res.end()
     })
 
   })
@@ -546,8 +632,6 @@ exports.restart = functions.https.onRequest((req, res) => {
   cors(req, res, () => {
 
     clearTimeout(timeout)
-
-    quizPack = null
 
     db.ref(`currentQuiz`).set(-1)
     db.ref(`canEnter`).set(false)
@@ -669,12 +753,18 @@ function addNewUser(newUserId) {
 
   console.log(`enter addNewUser`)
 
+  let userProfile = null
+
   userManagementAPI.recordNewUserID(newUserId)
   messengerAPI.sendTypingOn(newUserId)
   messengerAPI.callProfileAPI(newUserId)
   .then(profile => {
+    userProfile = profile
+    return _getStatus()
+  })
+  .then(status => {
 
-    if(playing || canEnter) {
+    if(status.playing || status.canEnter) {
 
       let inviteMessage = {
             "text": 'แชทชิงโชค กำลังจะเริ่มในไม่ช้า ต้องการเข้าร่วมเล่นด้วยหรือไม่?',
@@ -700,7 +790,7 @@ function addNewUser(newUserId) {
     else {
 
       let texts = [
-        `สวัสดี คุณ ${profile.first_name} ${profile.last_name}`,
+        `สวัสดี คุณ ${userProfile.first_name} ${userProfile.last_name}`,
         `ขณะนี้ แชทชิงโชค ยังไม่เริ่ม ถ้าใกล้ถึงช่วงเวลาของกิจกรรมแล้วทางเราจะติดต่อกลับไปนะ`
       ]
       sendCascadeMessage(newUserId, texts)
@@ -732,129 +822,196 @@ function receivedMessage(event) {
   let messageAttachments = message.attachments;
 
   // ------- USER ANSWER
-  if(playing && messageQRPayload && participants[senderID] && currentQuiz > -1) {
+  let status = null
+  let participants = null
+  let allUsers = null
+  let quiz = null
 
-    if(!canAnswer) sendTextMessage(senderID, `หมดเวลาตอบข้อนี้แล้วจ้า`)
-    else {
+  _getStatus()
+  .then(fetchedStatus => {
+    status = fetchedStatus
+    return _getQuiz()
+  })
+  .then(quizSnapshot => {
+    quiz = quizSnapshot.val()
+    return _getParticipants()
+  })
+  .then(participantsSnapshot => {
+    participants = participantsSnapshot.val()
+    return db.ref(`users`).once('value')//userManagementAPI.getAllID()
+  })
+  .then(fetchedUsers => {
 
-      participants[senderID].answerPack[currentQuiz].ans = messageQRPayload
-      participants[senderID].answerPack[currentQuiz].at = (new Date()).getTime()
+    users = fetchedUsers.val()
+    let allUsers = {}
 
-      if(messageQRPayload == quizPack[currentQuiz].a) {
-        //sendTextMessage(senderID, `correct`)
-        participants[senderID].answerPack[currentQuiz].correct = true
-        participants[senderID].point++
+    for(key in users) {
+      allUsers[users[key].fbid] = {
+        'fullName': users[key].firstName + ' ' + users[key].lastName,
+        'firstName': users[key].firstName,
+        'lastName': users[key].lastName,
+        'profilePic': users[key].profilePic
+      }
+    }
+
+    console.log(`________________________________`)
+    console.log(`_______ ${JSON.stringify(status)} ______`)
+    console.log(`________________________________`)
+    //----------------------------------------------------------------------------------------
+    console.log(`before if`)
+    if(status.playing && messageQRPayload && participants && status.currentQuiz > -1) {
+      console.log(`IN 1st if`)
+      if(!status.canAnswer) sendTextMessage(senderID, `หมดเวลาตอบข้อนี้แล้วจ้า`)
+      else {
+
+        console.log(`IN 1st ELSE`)
+
+        if( participants[senderID] && (!participants[senderID].answerPack[status.currentQuiz].ans)) {
+
+          participants[senderID].answerPack[status.currentQuiz].ans = messageQRPayload
+          participants[senderID].answerPack[status.currentQuiz].at = (new Date()).getTime()
+
+          if(messageQRPayload == quiz[status.currentQuiz].a) {
+            //sendTextMessage(senderID, `correct`)
+            participants[senderID].answerPack[status.currentQuiz].correct = true
+            participants[senderID].point++
+
+          }
+
+          //else sendTextMessage(senderID, `wrong, answer is ${quizPack[currentQuiz].a}`)
+          sendTextMessage(senderID, `ได้คำตอบแล้วจ้า~`)
+          db.ref(`participants/${senderID}`).set(participants[senderID])
+
+        }
+        else if(participants[senderID].answerPack[status.currentQuiz].ans) {
+          sendTextMessage(senderID, `คุณได้ตอบคำถามข้อนี้ไปแล้วนะ`)
+        }
+
 
       }
 
-      //else sendTextMessage(senderID, `wrong, answer is ${quizPack[currentQuiz].a}`)
-      sendTextMessage(senderID, `ได้คำตอบแล้วจ้า~`)
-      db.ref(`participants`).set(participants)
+    }
+    // ------- USER ENTER
+    else if(messageQRPayload == 'เข้าร่วม' && ((participants && !participants[senderID]) || !participants) && status.canEnter) {
+
+      console.log(`in the khaoruam // id : ${senderID}`)
+
+      console.log(`in the khaoruam // allID : ${JSON.stringify(allUsers)}`)
+
+      //if(!participants[senderID]) {
+
+        let tempParticipant = {
+          point: 0,
+          answerPack: answerTemplate,
+          firstName: allUsers[senderID].firstName,
+          lastName: allUsers[senderID].lastName,
+          profilePic: allUsers[senderID].profilePic
+        }
+
+        console.log(`new parti: ${JSON.stringify(tempParticipant)}`)
+        db.ref(`participants/${senderID}`).set(tempParticipant)
+
+        if(status.playing && status.canAnswer) {
+
+          let quizMessage = {
+                "text": quiz[status.currentQuiz].q,
+                "quick_replies": quiz[status.currentQuiz].choices.map(choice => {
+                  return {
+                    "content_type":"text",
+                    "title": choice,
+                    "payload": choice
+                  }
+                })
+              }
+
+          sendQuickReplies(senderID, quizMessage)
+
+        }
+        else {
+          //sendTextMessage(senderID, 'โอเค~ รออีกแป๊บนะ กิจกรรมใกล้จะเริ่มแล้ว')
+          let texts = [
+            `ยินดีต้อนรับเข้าสู่เกม "แชทชิงโชค" โปรดรอคำถามจาก facebook Live`,
+            `กติกาการแข่งขัน ผู้ที่สะสมคะแนนได้สูงสุดใน 3 อันดับแรกของแต่ละวัน จะได้รับของรางวัลจากทางรายการ
+    แต้มจะไม่สามารถสะสมข้ามสัปดาห์ได้ และการตัดสินของกรรมการจะถือเป็นที่สิ้นสุด
+
+    ทีมงานและครอบครัวไม่สามารถร่วมเล่นเกมและรับของรางวัลได้`
+          ]
+
+          sendCascadeMessage(senderID, texts)
+
+        }
+/*
+      }
+      else {
+        console.log(`Already has this user in participants`)
+      }
+*/
 
     }
-
-  }
-  // ------- USER ENTER
-  else if(messageQRPayload == 'เข้าร่วม' && !participants[senderID] && canEnter) {
-
-    console.log(`in the khaoruam // id : ${senderID}`)
-
-    participants[senderID] = {
-      point: 0,
-      answerPack: answerTemplate,
-      firstName: allUsers[senderID].firstName,
-      lastName: allUsers[senderID].lastName,
-      profilePic: allUsers[senderID].profilePic
+    else if(messageQRPayload == 'ไม่เข้าร่วม' && !participants[senderID]) {
+      sendTextMessage(senderID, 'ถ้าเปลี่ยนใจก็ทักมาได้นะ')
     }
+    // ------- USER MESSAGE NORMALLY
+    else if (messageText) {
+      console.log(`IN get message`)
+      // If we receive a text message, check to see if it matches a keyword
+      // and send back the example. Otherwise, just echo the text we received.
+      if(!allUsers || !allUsers[senderID] || !participants || !participants[senderID]) {
+        console.log(`user id not found in DB {OR} not in participants -> adding new user`)
+        addNewUser(senderID)
+      }
+      else if(!status.playing && !status.canEnter) {
+        console.log(`this user is in our sigth, but game is end or not started yet, tell the user!`)
+        sendTextMessage(senderID, `ขณะนี้ แชทชิงโชค ยังไม่เริ่ม ถ้าใกล้ถึงช่วงเวลาของกิจกรรมแล้วทางเราจะติดต่อกลับไปนะ`)
+      }
+      //else if(!participants)
+      else {
+        if(status.playing) {
 
-    console.log(`new parti: ${JSON.stringify(participants[senderID])}`)
-    db.ref(`participants`).set(participants)
+          if(!status.canAnswer) sendTextMessage(senderID, `หมดเวลาตอบข้อนี้แล้วจ้า`)
+          else {
 
-    if(playing && canAnswer) {
+            sendTextMessage(senderID, `พิมพ์ตอบจะไม่ได้คะแนนนะ กดตอบเอา ;)`)
 
-      let quizMessage = {
-            "text": quizPack[currentQuiz].q,
-            "quick_replies": quizPack[currentQuiz].choices.map(choice => {
+
+            let quickReplyChoices = []
+
+            quickReplyChoices = quiz[status.currentQuiz].choices.map(choice => {
               return {
                 "content_type":"text",
                 "title": choice,
                 "payload": choice
               }
             })
+
+            let quizMessage = {
+                  "text": quiz[status.currentQuiz].q,
+                  "quick_replies": quickReplyChoices
+                }
+
+            setTimeout( () => { sendQuickReplies(senderID, quizMessage) }, 1000)
+
           }
 
-      sendQuickReplies(senderID, quizMessage)
-
-    }
-    else {
-      //sendTextMessage(senderID, 'โอเค~ รออีกแป๊บนะ กิจกรรมใกล้จะเริ่มแล้ว')
-      let texts = [
-        `ยินดีต้อนรับเข้าสู่เกม "แชทชิงโชค" โปรดรอคำถามจาก facebook Live`,
-        `กติกาการแข่งขัน ผู้ที่สะสมคะแนนได้สูงสุดใน 3 อันดับแรกของแต่ละวัน จะได้รับของรางวัลจากทางรายการ
-แต้มจะไม่สามารถสะสมข้ามสัปดาห์ได้ และการตัดสินของกรรมการจะถือเป็นที่สิ้นสุด
-
-ทีมงานและครอบครัวไม่สามารถร่วมเล่นเกมและรับของรางวัลได้`
-      ]
-
-      sendCascadeMessage(senderID, texts)
-
-    }
-
-  }
-  else if(messageQRPayload == 'ไม่เข้าร่วม' && !participants[senderID]) {
-    sendTextMessage(senderID, 'ถ้าเปลี่ยนใจก็ทักมาได้นะ')
-  }
-  // ------- USER MESSAGE NORMALLY
-  else if (messageText) {
-
-    // If we receive a text message, check to see if it matches a keyword
-    // and send back the example. Otherwise, just echo the text we received.
-    if(!participants[senderID]) {
-      console.log(`user id not found in participants array -> adding new user`)
-      addNewUser(senderID)
-    }
-    else if(participants[senderID] && !playing && !canEnter) {
-      console.log(`this user is in our sigth, but game is end or not started yet, tell the user!`)
-      sendTextMessage(senderID, `ขณะนี้ แชทชิงโชค ยังไม่เริ่ม ถ้าใกล้ถึงช่วงเวลาของกิจกรรมแล้วทางเราจะติดต่อกลับไปนะ`)
-    }
-    else {
-      if(playing) {
-
-        if(!canAnswer) sendTextMessage(senderID, `หมดเวลาตอบข้อนี้แล้วจ้า`)
-        else {
-
-          sendTextMessage(senderID, `พิมพ์ตอบจะไม่ได้คะแนนนะ กดตอบเอา ;)`)
-
-
-          let quickReplyChoices = []
-
-          quickReplyChoices = quizPack[currentQuiz].choices.map(choice => {
-            return {
-              "content_type":"text",
-              "title": choice,
-              "payload": choice
-            }
-          })
-
-          let quizMessage = {
-                "text": quizPack[currentQuiz].q,
-                "quick_replies": quickReplyChoices
-              }
-
-          setTimeout( () => { sendQuickReplies(senderID, quizMessage) }, 1000)
-
         }
-
+        else if(status.canEnter)
+          sendTextMessage(senderID, `รอสักครู่นะ กิจกรรมยังไม่เริ่ม`)
       }
-      else if(canEnter)
-        sendTextMessage(senderID, `รอสักครู่นะ กิจกรรมยังไม่เริ่ม`)
+
+    } else if (messageAttachments) {
+      console.log(JSON.stringify(message))
+      console.log(`Message with attachment received`)
+      //sendTextMessage(senderID, "Message with attachment received");
     }
 
-  } else if (messageAttachments) {
-    console.log(JSON.stringify(message))
-    console.log(`Message with attachment received`)
-    //sendTextMessage(senderID, "Message with attachment received");
-  }
+    //----------------------------------------------------------------------------------------
+
+  })
+  .catch(error => {
+    console.log(`there's an error in receiving message: ${error}`)
+  })
+
+
 }
 
 
