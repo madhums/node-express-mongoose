@@ -26,7 +26,7 @@ const db = admin.database()
 
 const messengerAPI = require("./API/messengerProfile.js")(axios, env.messenger)
 const userManagementAPI = require("./API/userManagement.js")(axios, db, messengerAPI)
-
+/*
 playing = false
 
 quizPack = null
@@ -41,6 +41,7 @@ canAnswer = false
 timeout = null
 
 let answerTemplate = null
+*/
 
 // let answerTemplate = Array(10).fill({
 //   ans: '',
@@ -1074,7 +1075,7 @@ db.ref(`currentQuiz`).once(`value`)
 */
 
 //------------------- firebase event handler ------------------
-
+/*
 
 db.ref(`canEnter`).on('value', snapshot => {
   canEnter = snapshot.val()
@@ -1088,7 +1089,8 @@ db.ref(`playing`).on('value', snapshot => {
   playing = snapshot.val()
 })
 
-
+*/
+/*
 db.ref(`quizLoaded`).on('value', (snapshot) => {
 
   console.log(`Loading quiz...`)
@@ -1117,10 +1119,11 @@ db.ref(`quizLoaded`).on('value', (snapshot) => {
   }
 
 })
-
+*/
 
 
 //---------------- Fire Quiz --------------------
+/*
 db.ref(`currentQuiz`).on('value', (currentQuizSnapshot) => {
   currentQuiz = currentQuizSnapshot.val()
   //fireQuiz =
@@ -1130,9 +1133,9 @@ db.ref(`fireQuizAt`).on('value', (fireQuizAtSnapshot) => {
   fireQuizAt = fireQuizAtSnapshot.val()
   //fireQuiz =
 })
-
+*/
 //------------- update question (quiz) --------------
-
+/*
 db.ref(`quiz`).on('child_changed', (childSnapshot) => {
   if(quizPack) {
     quizPack[childSnapshot.key] = childSnapshot.val()
@@ -1146,9 +1149,9 @@ db.ref(`quiz`).on('child_removed', (childSnapshot) => {
     console.log(`quiz updated`)
   }
 })
-
+*/
 // -------------- user data --------------
-
+/*
 db.ref(`users`).once('value')
 .then(snapshot => {
 
@@ -1180,9 +1183,9 @@ db.ref(`users`).on('child_added', (childSnapshot) => {
   }
   console.log(`users update [${childSnapshot.val().fbid}]`)
 })
-
+*/
 //------------- update participants -------------------
-
+/*
 db.ref(`participants`).on('child_added', (childSnapshot) => {
   // console.log()
   participants[childSnapshot.key] = childSnapshot.val()
@@ -1199,3 +1202,4 @@ db.ref(`participants`).on('child_changed', (childSnapshot) => {
   participants[childSnapshot.key] = childSnapshot.val()
   console.log(`participants updated`)
 })
+*/
