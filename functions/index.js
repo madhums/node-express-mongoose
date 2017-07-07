@@ -370,7 +370,7 @@ exports.showRandomCorrectUsers = functions.https.onRequest((req, res) => {
         else res.json({
           error: `quiz no. incorrect`,
           text: `you requested quiz number ${targetQuizNo}
-                but current quiz number is ${currentQuiz} and quiz length is ${quizPack.length}`
+                but current quiz number is ${currentQuiz} and quiz length is ${quiz.length}`
         })
 
 
@@ -515,15 +515,15 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
 
       if(!status.playing) db.ref(`playing`).set(true)
 
-      if(!quiz) res.json({ 'error': 'quiz not ready, try again later'})
-      else if(!participants)  res.json({ 'error': 'quiz not ready, try again later'})
+      if(!quiz) res.json({ 'error': 'quiz not ready, try again later', 'quiz': quizSnapshot.val()})
+      else if(!participants)  res.json({ 'error': 'no participants, try again later'})
       else {
 
         let oldc = status.currentQuiz
         if(req.query.next == 'true' && (status.currentQuiz < quiz.length) ) {
           db.ref(`currentQuiz`).set(status.currentQuiz+1)
           status.currentQuiz += 1
-          console.log(`update currentQuiz to ${oldc+1} // is it : ${currentQuiz}`);
+          console.log(`update currentQuiz to ${oldc+1} // is it : ${status.currentQuiz}`);
         }
 
         if(status.currentQuiz > quiz.length - 1 || status.currentQuiz < 0 )
@@ -534,11 +534,13 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
           })
         else {
 
-          clearTimeout(timeout)
+          //clearTimeout(timeout)
           db.ref(`canAnswer`).set(true)
 
           let answerTime = (req.query.timer) ? parseInt(req.query.timer)+5 : 65
           let quickReplyChoices = []
+
+          db.ref(`answerWindow`).set(answerTime)
 
           quickReplyChoices = quiz[status.currentQuiz].choices.map(choice => {
             return {
@@ -553,7 +555,7 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
                 "quick_replies": quickReplyChoices
               }
 
-          if(!fireQuizAt) fireQuizAt = Array(quizPack.length).fill(0)
+          if(!fireQuizAt) fireQuizAt = Array(quiz.length).fill(0)
 
           if(fireQuizAt[status.currentQuiz] == 0) {
             fireQuizAt[status.currentQuiz] = (new Date()).getTime()
@@ -564,10 +566,13 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
             sendQuickReplies(id, quizMessage)
           })
 
+          /*
           timeout = setTimeout(()=>{
             db.ref(`canAnswer`).set(false)
           }, answerTime*1000) //convert to millisecs
+          */
 
+          //db.ref(`timeout`).set(timeout)
           //res.send(`sent quiz NO. ${currentQuiz} : ${quizPack[currentQuiz].q}`)
           res.json({
             'error': null,
@@ -632,8 +637,8 @@ exports.sendResult = functions.https.onRequest((req, res) => {
 exports.restart = functions.https.onRequest((req, res) => {
   cors(req, res, () => {
 
-    clearTimeout(timeout)
-
+    //clearTimeout(timeout)
+    //db.ref(`timeout`).set(null)
     db.ref(`currentQuiz`).set(-1)
     db.ref(`canEnter`).set(false)
     db.ref(`canAnswer`).set(false)
@@ -900,6 +905,11 @@ function receivedMessage(event) {
       console.log(`in the khaoruam // allID : ${JSON.stringify(allUsers)}`)
 
       //if(!participants[senderID]) {
+      let answerTemplate = Array(quiz.length).fill({
+        ans: '',
+        correct: false,
+        at: 0
+      })
 
         let tempParticipant = {
           point: 0,
@@ -1203,3 +1213,48 @@ db.ref(`participants`).on('child_changed', (childSnapshot) => {
   console.log(`participants updated`)
 })
 */
+
+setInterval( () => {
+
+  //console.log(`in interval checker`)
+
+  let status = null
+
+  _getStatus()
+  .then(fStatus => {
+    status = fStatus
+    return _getFireQuizAt()
+  })
+  .then(fqa => {
+
+    let fqaReal = fqa.val()
+
+    if(status.playing && fqaReal) {
+
+      if(fqaReal[status.currentQuiz] && fqaReal[status.currentQuiz] != 0) {
+
+        db.ref(`answerWindow`).once('value')
+        .then(awSnap => {
+
+          let gap = awSnap.val()
+          if((new Date).getTime() - fqaReal[status.currentQuiz] > gap*1000 && status.canAnswer) {
+            db.ref(`canAnswer`).set(false)
+            console.log(` ======================= NOW YOU CANT ANSWER`)
+            console.log(`fired at : ${fqaReal[status.currentQuiz]}`)
+            console.log(`now is : ${(new Date).getTime()}`);
+            console.log(`diff: ${(new Date).getTime() - fqaReal[status.currentQuiz]} , gap is : ${gap}`)
+          }
+          //else console.log(` ======================= value not reset`)
+
+        })
+
+      }
+
+    }
+
+  })
+  .catch(error => {
+    console.log(`An Error in SET INTERVAL : ${error}`)
+  })
+
+}, 10000);
