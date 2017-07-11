@@ -5,3 +5,4 @@ lab/testCode.js
 functions/credential/facebookKey.json
 functions/credential/serviceAccountKey.json
 lab/package.json
+lab/test-system-result.json

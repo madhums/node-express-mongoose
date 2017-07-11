@@ -10,7 +10,6 @@
     "object-curly-spacing": [2, "always"],
     "strict": 0,
     "quotes": [2, "single", "avoid-escape"],
-    "semi": [2, "always"],
     "space-before-function-paren": [2, "always"],
     "keyword-spacing": [2, {"before": true, "after": true}],
     "space-infix-ops": 2,

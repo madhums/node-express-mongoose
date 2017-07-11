@@ -1,21 +1,21 @@
-//---- DB Functions ----
-//exports.database = database
-module.exports = function(axios, db, messengerAPI) {
+// ---- DB Functions ----
+// exports.database = database
+module.exports = function (axios, db, messengerAPI) {
 
   let module = {}
 
-  //get all users' fbid
+  // get all users' fbid
   module.getAllID = () => {
 
     return new Promise((resolve, reject) => {
 
       db.ref('userIds').once('value')
       .then(snapshot => {
-        if(snapshot.val() !== null) {
+        if (snapshot.val() !== null) {
           let idArray = []
           let obj = snapshot.val()
 
-          for(key in obj)
+          for (let key in obj)
             idArray.push(obj[key])
 
           return resolve(idArray)
@@ -23,7 +23,7 @@ module.exports = function(axios, db, messengerAPI) {
         else return resolve([])
       })
       .catch(error => {
-        //console.log(`get All Id error: ${error}`);
+        // console.log(`get All Id error: ${error}`);
         reject(error)
       })
 
@@ -32,9 +32,9 @@ module.exports = function(axios, db, messengerAPI) {
 
 
   // record new user id when user interact with bot for the first time
-  module.recordNewUserID = function(userId) {
+  module.recordNewUserID = function (userId) {
 
-      let userName = ''
+      let userName = null
       let fetchedProfile = null
 
       messengerAPI.callProfileAPI(userId)
@@ -45,34 +45,34 @@ module.exports = function(axios, db, messengerAPI) {
       })
       .then(allID => {
 
-        if(allID.indexOf(userId) > -1) {
-          console.log(`duplciate user id`)
-          //return resolve(userName)
+        if (allID.indexOf(userId) > -1) {
+          console.log('duplciate user id')
+          // return resolve(userName)
         }
         else {
 
-          console.log(`adding  new user`)
-          //console.log(`json: ${JSON.stringify(fetchedProfile)}`)
+          console.log('adding  new user')
+          // console.log(`json: ${JSON.stringify(fetchedProfile)}`)
 
-          db.ref(`userIds`).push().set(userId)
-          db.ref(`users`).push().set({
+          db.ref('userIds').push().set(userId)
+          db.ref('users').push().set({
             'fbid': userId,
             'firstName': fetchedProfile.first_name,
             'lastName': fetchedProfile.last_name,
-            //'gender': fetchedProfile.gender,
+            // 'gender': fetchedProfile.gender,
             'profilePic': fetchedProfile.profile_pic,
             'timezone': fetchedProfile.timezone,
             'createdAt': (new Date()).toISOString()
           })
 
-          //console.log(`new user has been added successfully`);
-          //return resolve(userName)
+          // console.log(`new user has been added successfully`);
+          // return resolve(userName)
         }
 
       })
       .catch(error => {
         console.log(`error: ${error}`);
-        //return reject(error)
+        // return reject(error)
       })
 
   }
