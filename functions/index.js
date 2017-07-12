@@ -170,6 +170,15 @@ exports.setCanAnswer = functions.https.onRequest((req, res) => {
 	})
 })
 
+
+const httpsTriggered = require('./httpsTriggered.js')
+
+exports.test = functions.https.onRequest((req, res) => {
+
+	httpsTriggered.test(cors, req, res, db)
+
+})
+
 exports.getQuizStatus = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
 		let cq = -1
@@ -783,15 +792,14 @@ function receivedMessage (event) {
 			console.log('before if')
 			if (
 				status.playing &&
-				messageQRPayload  &&
+				quiz[status.currentQuiz].choices.indexOf(messageQRPayload) > -1  &&
 				participants &&
 				status.currentQuiz > -1
 			) {
-				console.log('IN 1st if')
+				
 				if (!status.canAnswer)
 					sendTextMessage(senderID, 'หมดเวลาตอบข้อนี้แล้วจ้า')
 				else {
-					console.log('IN 1st ELSE')
 
 					if (
 						participants[senderID] &&
