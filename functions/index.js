@@ -405,6 +405,63 @@ exports.getTopUsers = functions.https.onRequest((req, res) => {
 	})
 })
 
+exports.sendCustomMessage = functions.https.onRequest((req, res) => {
+	cors(req, res, () => {
+
+		let mode = (req.query['mode']) ? req.query['mode'] : 0
+		let message = ''
+
+		console.log(`mode = ${mode} `)
+		
+		if (mode == 0) {
+			// send from POST
+			userManagementAPI.getAllID()
+			.then(allID => {
+				message = req.body.message
+				allID.forEach(id => {
+					sendTextMessage(id, message)
+				})
+	
+				res.json({
+					error: null
+				})
+			})
+			.catch(error => {
+				console.log(`custom message case 1 error : ${error} `)
+			})
+		}
+		else if (mode == 1) {
+
+			// send using Message from DB
+			db.ref('customMessage').once('value')
+			.then(snapshot => {
+				message = snapshot.val()
+				return userManagementAPI.getAllID()
+			})
+			.then(allID => {
+				allID.forEach(id => {
+					sendTextMessage(id, message)
+				})
+
+				res.json({
+					error: null
+				})
+			})
+			.catch(error => {
+				console.log(`custom message case 2 error : ${error} `)
+			})
+
+		}
+		else {
+			res.json({
+					'error': 'no mode select, please choose 1 for web post, 2 for DB Message',
+					'suggestion': 'add ?mode=1 with post OR ?mode=2 '
+				})
+		}
+
+  })
+})
+
 exports.sendRequest = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
 
@@ -890,6 +947,7 @@ function receivedMessage (event) {
 */
 			} else if (messageQRPayload == 'ไม่เข้าร่วม' && !participants[senderID]) {
 				sendTextMessage(senderID, 'ถ้าเปลี่ยนใจก็ทักมาได้นะ')
+
 			} else if (messageText) {
 				// ------- USER MESSAGE NORMALLY
 				console.log('IN get message')
@@ -948,6 +1006,16 @@ function receivedMessage (event) {
 			} else if (messageAttachments) {
 				console.log(JSON.stringify(message))
 				console.log('Message with attachment received')
+				if (
+					!allUsers ||
+					!allUsers[senderID] ||
+					!participants ||
+					!participants[senderID]
+				) {
+					console.log('user id not found in DB {OR} not in participants -> adding new user')
+					addNewUser(senderID)
+				}
+
 			}
 
 			// ----------------------------------------------------------------------------------------
