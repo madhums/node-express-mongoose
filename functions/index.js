@@ -5,9 +5,13 @@ const cors = require('cors')({
 	origin: ['http://localhost:3000', 'https://codelab-a8367.firebaseapp.com']
 })
 
-// const port = 3002
+const param = require('jquery-param')
 const env = functions.config().quizshow
 const axios = require('axios')
+
+const FB = require('fbgraph')
+FB.setAccessToken(env.messenger.page_token)
+
 
 let serviceAccount = require('./credential/serviceAccountKey.json')
 
@@ -32,6 +36,27 @@ const userManagementAPI = require('./API/userManagement.js')(
 	messengerAPI
 )
 
+let util = {
+	'getFireQuizAt': _getFireQuizAt,
+	'getParticipants': _getParticipants,
+	'getQuiz': _getQuiz,
+	'getStatus': _getStatus
+}
+
+let messengerFunctions = {
+	'sendTextMessage': sendTextMessage,
+	'sendCascadeMessage': sendCascadeMessage,
+	'sendQuickReplies': sendQuickReplies
+}
+
+const httpsFunctions = require('./httpsTriggered.js')(
+	db,
+	util,
+	messengerAPI,
+	userManagementAPI,
+	messengerFunctions
+)
+
 console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> STARTING SERVICE')
 
 // ----------------------- Cloud Functions ------------------------
@@ -44,14 +69,13 @@ function _getQuiz () {
 	return db.ref('quiz').once('value')
 }
 
-// function _getUsers () {
-// 	return db.ref('users').once('value')
-// }
-
 function _getFireQuizAt () {
 	return db.ref('fireQuizAt').once('value')
 }
 
+function _getAdmin () {
+	return db.ref('admin').once('value')
+}
 
 function _getStatus () {
 	return new Promise((resolve, reject) => {
@@ -91,6 +115,105 @@ function _getStatus () {
 			})
 	})
 }
+
+
+// ------------------------------------------------
+
+function sendBatchMessage (reqPack) {
+
+	// REQUEST FORMAT (reqPack must be array of data like this)
+	//
+	// let bodyData = {
+	// 	recipient: {
+	// 		id: user.fbid
+	// 	},
+	// 	message: {
+	// 		text: `สวัสดี ${user.firstName} ทดสอบอีกที`
+	// 	}
+	// }
+
+	// requests.push({
+	// 	method: 'POST',
+	// 	relative_url: 'me/messages?include_headers=false',
+	// 	body: param(bodyData)
+	// })
+
+	// batch allow 50 command per request
+	let batchLimit = 50
+	for (let i = 0; i < reqPack.length; i += batchLimit) {
+
+		FB.batch(reqPack.slice(i, i + batchLimit), (error, res) => {
+
+			if (error) {
+				console.log(`\n batch [${i}] error : ${JSON.stringify(error)} \n`)
+			}
+			else {
+
+				console.log(`batch [${i}] / no error : `)
+				res.forEach(response => {
+					console.log(response['body'])
+				})
+					
+			}
+
+		})
+
+	}
+}
+
+function testBatch () {
+
+	db.ref('users').once('value')
+	.then(snapshot => {
+		let usersKey = snapshot.val()
+		let requests = []
+
+		let users = Object.keys(usersKey).map(key => {
+			return usersKey[key]
+		})
+
+		users.forEach(user => {
+
+			let bodyData = {
+				recipient: {
+					id: user.fbid
+				},
+				message: {
+					text: `สวัสดี ${user.firstName} ทดสอบอีกที`
+				}
+			}
+
+			requests.push({
+				method: 'POST',
+				relative_url: 'me/messages?include_headers=false',
+				body: param(bodyData)
+			})
+
+		})
+		
+		sendBatchMessage(requests)
+
+	})
+	.catch(error => {
+		console.log(`test batch error : ${error} `)
+	})
+
+}
+
+
+exports.batchSend = functions.https.onRequest((req, res) => {
+	cors(req, res, () => {
+
+		testBatch()
+		res.json({
+			'text': 'nah'
+		})
+
+	})
+})
+
+
+// ------------------------------
 
 exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest(
 	(req, res) => {
@@ -142,74 +265,68 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest(
 	}
 )
 
-exports.setCanEnter = functions.https.onRequest((req, res) => {
-	cors(req, res, () => {
-		if (req.query.status.toLowerCase() === 'open') db.ref('canEnter').set(true)
-		else if (req.query.status.toLowerCase() === 'close')
-			db.ref('canEnter').set(false)
+// exports.setCanEnter = functions.https.onRequest((req, res) => {
+// 	cors(req, res, () => {
+// 		if (req.query.status.toLowerCase() === 'open') db.ref('canEnter').set(true)
+// 		else if (req.query.status.toLowerCase() === 'close')
+// 			db.ref('canEnter').set(false)
 
-		// res.send(`set canEnter to ${req.query.status}`)
-		res.json({
-			error: null,
-			status: 'ok'
-		})
-	})
-})
+// 		// res.send(`set canEnter to ${req.query.status}`)
+// 		res.json({
+// 			error: null,
+// 			status: 'ok'
+// 		})
+// 	})
+// })
 
-exports.setCanAnswer = functions.https.onRequest((req, res) => {
-	cors(req, res, () => {
-		if (req.query.status.toLowerCase() === 'open') db.ref('canAnswer').set(true)
-		else if (req.query.status.toLowerCase() === 'close')
-			db.ref('canAnswer').set(false)
+// exports.setCanAnswer = functions.https.onRequest((req, res) => {
+// 	cors(req, res, () => {
+// 		if (req.query.status.toLowerCase() === 'open') db.ref('canAnswer').set(true)
+// 		else if (req.query.status.toLowerCase() === 'close')
+// 			db.ref('canAnswer').set(false)
 
-		// res.send(`set canAnswer to ${req.query.status}`)
-		res.json({
-			error: null,
-			status: 'ok'
-		})
-	})
-})
+// 		// res.send(`set canAnswer to ${req.query.status}`)
+// 		res.json({
+// 			error: null,
+// 			status: 'ok'
+// 		})
+// 	})
+// })
 
-
-const httpsTriggered = require('./httpsTriggered.js')
-
-exports.test = functions.https.onRequest((req, res) => {
-
-	httpsTriggered.test(cors, req, res, db)
-
-})
 
 exports.getQuizStatus = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
-		let cq = -1
-		let fqa = null
-		let q = null
 
-		_getStatus()
-		.then(status => {
-				cq = status.currentQuiz
+		httpsFunctions.getQuizStatus(req, res)
+		// let cq = -1
+		// let fqa = null
+		// let q = null
 
-				return _getQuiz()
-			})
-			.then(snapshot => {
-				q = snapshot.val()
+		// _getStatus()
+		// .then(status => {
+		// 		cq = status.currentQuiz
 
-				return _getFireQuizAt()
-			})
-			.then(snapshot => {
-				fqa = snapshot.val()
+		// 		return _getQuiz()
+		// 	})
+		// 	.then(snapshot => {
+		// 		q = snapshot.val()
 
-				res.json({
-					currentQuiz: cq,
-					quizLength: q ? q.length : 0,
-					fireQuizAt: fqa,
-					quiz: q
-				})
+		// 		return _getFireQuizAt()
+		// 	})
+		// 	.then(snapshot => {
+		// 		fqa = snapshot.val()
 
-			})
-			.catch(error => {
-				console.log(`there's an error in getQuizStatus: ${error}`)
-			})
+		// 		res.json({
+		// 			currentQuiz: cq,
+		// 			quizLength: q ? q.length : 0,
+		// 			fireQuizAt: fqa,
+		// 			quiz: q
+		// 		})
+
+		// 	})
+		// 	.catch(error => {
+		// 		console.log(`there's an error in getQuizStatus: ${error}`)
+		// 	})
 	})
 })
 
@@ -408,29 +525,12 @@ exports.getTopUsers = functions.https.onRequest((req, res) => {
 exports.sendCustomMessage = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
 
-		let mode = (req.query['mode']) ? req.query['mode'] : 0
+		let approve = (req.query['approve'] == 'true') ? true : false
 		let message = ''
 
-		console.log(`mode = ${mode} `)
+		console.log(`mode = ${approve} `)
 		
-		if (mode == 0) {
-			// send from POST
-			userManagementAPI.getAllID()
-			.then(allID => {
-				message = req.body.message
-				allID.forEach(id => {
-					sendTextMessage(id, message)
-				})
-	
-				res.json({
-					error: null
-				})
-			})
-			.catch(error => {
-				console.log(`custom message case 1 error : ${error} `)
-			})
-		}
-		else if (mode == 1) {
+		if (approve) {
 
 			// send using Message from DB
 			db.ref('customMessage').once('value')
@@ -439,9 +539,30 @@ exports.sendCustomMessage = functions.https.onRequest((req, res) => {
 				return userManagementAPI.getAllID()
 			})
 			.then(allID => {
+
+				let messageBatchRequests = []
+
 				allID.forEach(id => {
-					sendTextMessage(id, message)
+
+					let bodyData = {
+						recipient: {
+							id: id
+						},
+						message: {
+							text: message
+						}
+					}
+
+					messageBatchRequests.push({
+						method: 'POST',
+						relative_url: 'me/messages?include_headers=false',
+						body: param(bodyData)
+					})
+
+					// sendTextMessage(id, message)
 				})
+
+				sendBatchMessage(messageBatchRequests)
 
 				res.json({
 					error: null
@@ -454,8 +575,8 @@ exports.sendCustomMessage = functions.https.onRequest((req, res) => {
 		}
 		else {
 			res.json({
-					'error': 'no mode select, please choose 1 for web post, 2 for DB Message',
-					'suggestion': 'add ?mode=1 with post OR ?mode=2 '
+					'error': 'need param approve to send the message',
+					'suggestion': 'add ?approve=true to send the message'
 				})
 		}
 
@@ -470,30 +591,54 @@ exports.sendRequest = functions.https.onRequest((req, res) => {
 		userManagementAPI
 			.getAllID()
 			.then(allID => {
+
+				let sendRequestBatch = []
+
 				allID.forEach(id => {
+
 					let inviteMessage = {
-						text:
-							'แชทชิงโชค กำลังจะเริ่มในไม่ช้า ต้องการเข้าร่วมเล่นด้วยหรือไม่?',
-						quick_replies: [
-							{
-								content_type: 'text',
-								title: 'เข้าร่วม',
-								payload: 'เข้าร่วม'
-							},
-							{
-								content_type: 'text',
-								title: 'ไม่เข้าร่วม',
-								payload: 'ไม่เข้าร่วม'
-							}
-						]
+
+						recipient: { id: id },
+						message: {
+							text: 'แชทชิงโชค กำลังจะเริ่มในไม่ช้า ต้องการเข้าร่วมเล่นด้วยหรือไม่?',
+							quick_replies: [
+								{
+									content_type: 'text',
+									title: 'เข้าร่วม',
+									payload: 'เข้าร่วม'
+								},
+								{
+									content_type: 'text',
+									title: 'ไม่เข้าร่วม',
+									payload: 'ไม่เข้าร่วม'
+								}
+							]
+						}
+						
 					}
 
-					sendQuickReplies(id, inviteMessage)
+					sendRequestBatch.push({
+						method: 'POST',
+						relative_url: 'me/messages?include_headers=false',
+						body: param(inviteMessage)
+					})
+
+					// sendQuickReplies(id, inviteMessage)
 				})
-				res.send('sent')
+
+				sendBatchMessage(sendRequestBatch)
+
+				res.json({
+					error: null,
+					text: 'everything is fine... I guess ?'
+				})
+
 			})
 			.catch(error => {
-				res.send(`sendRequest : ${error}`)
+				res.json({
+					error: error,
+					text: 'shit happens'
+				})
 			})
 	})
 })
@@ -566,10 +711,7 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
 							}
 						})
 
-						let quizMessage = {
-							text: quiz[status.currentQuiz].q,
-							quick_replies: quickReplyChoices
-						}
+						
 
 						if (!fireQuizAt) fireQuizAt = Array(quiz.length).fill(0)
 
@@ -578,9 +720,32 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
 							db.ref('fireQuizAt').set(fireQuizAt)
 						}
 
+						let sendQuizBatch = []
+
 						Object.keys(participants).forEach(id => {
-							sendQuickReplies(id, quizMessage)
+
+							let quizBodyData = {
+
+								recipient: {
+									id: id
+								},
+								message: {
+									text: quiz[status.currentQuiz].q,
+									quick_replies: quickReplyChoices
+								}
+								
+							}
+
+							sendQuizBatch.push({
+								method: 'POST',
+								relative_url: 'me/messages?include_headers=false',
+								body: param(quizBodyData)
+							})
+
+							// sendQuickReplies(id, quizMessage)
 						})
+
+						sendBatchMessage(sendQuizBatch)
 
 						res.json({
 							error: null,
@@ -588,6 +753,7 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
 							q: quiz[status.currentQuiz].q,
 							choices: quiz[status.currentQuiz].choices
 						})
+
 					}
 				}
 			})
@@ -610,9 +776,18 @@ exports.addQuiz = functions.https.onRequest((req, res) => {
 	})
 })
 
+exports.sendEndMessage = functions.https.onRequest((req, res) => {
+	cors(req, res, () => {
+
+		httpsFunctions.sendEndMessage(req, res)
+
+	})
+})
+
 exports.sendResult = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
 
+		db.ref('canAnswer').set(false)
 		db.ref('canEnter').set(false)
 		db.ref('playing').set(false)
 
@@ -623,12 +798,29 @@ exports.sendResult = functions.https.onRequest((req, res) => {
 
 				participants = participantsSnapshot.val()
 
+				let sendResultRequests = []
+
 				Object.keys(participants).forEach(id => {
-					sendTextMessage(
-						id,
-						`กิจกรรมจบแล้ว ยินดีด้วย คุณได้คะแนนรวม ${participants[id].point} คะแนน`
-					)
+
+					let bodyData = {
+						recipient: {
+							id: id
+						},
+						message: {
+							text: `กิจกรรมจบแล้ว ยินดีด้วย คุณได้คะแนนรวม ${participants[id].point} คะแนน`
+						}
+					}
+
+					sendResultRequests.push({
+						method: 'POST',
+						relative_url: 'me/messages?include_headers=false',
+						body: param(bodyData)
+					})
+					
+					
 				})
+
+				sendBatchMessage(sendResultRequests)
 
 				res.json({
 					error: null
@@ -713,16 +905,12 @@ function callSendAPI (messageData) {
 					)
 				}
 			} else {
-				console.error(
-					'Failed calling Send API',
-					res.status,
-					res.statusText,
-					res.data.error
-				)
+				console.log(`Failed calling Send API ${res.status} / ${res.statusText} / ${res.data.error}`)
 			}
 		})
 		.catch(error => {
-			console.log(`send API : ${error}`)
+			console.log('send API : ')
+			console.log(`${error}`)
 		})
 }
 
@@ -815,8 +1003,21 @@ function receivedMessage (event) {
 	let participants = null
 	// let allUsers = null
 	let quiz = null
+	let adminAvaiability = false
+	let admins = null
 
-	_getStatus()
+	_getAdmin()
+		.then(snapshot => {
+			admins = snapshot.val()
+
+			if (Object.keys(admins).length > 0) {
+				if (admins[senderID])
+					adminAvaiability = true
+			}
+			
+			console.log(`admin : ${JSON.stringify(admins)}`)
+			return _getStatus()
+		})
 		.then(fetchedStatus => {
 			status = fetchedStatus
 			return _getQuiz()
@@ -854,8 +1055,9 @@ function receivedMessage (event) {
 				status.currentQuiz > -1
 			) {
 				
-				if (!status.canAnswer)
+				if (!status.canAnswer) {
 					sendTextMessage(senderID, 'หมดเวลาตอบข้อนี้แล้วจ้า')
+				}
 				else {
 
 					if (
@@ -953,7 +1155,92 @@ function receivedMessage (event) {
 				console.log('IN get message')
 				// If we receive a text message, check to see if it matches a keyword
 				// and send back the example. Otherwise, just echo the text we received.
-				if (
+				if (adminAvaiability) {
+
+					console.log(`admin check return true : ${adminAvaiability} `)
+
+					if (admins[senderID]) {
+						// sendTextMessage(senderID, 'you are an admin')
+						let splitted = messageText.split(':: ')
+
+						if (splitted.length <= 1) {
+							sendTextMessage(senderID, '## ERROR!! INVALID COMMAND SYNTAX')
+						}
+						else {
+
+							console.log('to run command')
+							
+							let command = splitted[0]
+							let text = splitted[1]
+
+							if (command == 'ANN_ALL') {
+
+								console.log(`running command [${command}]`)
+								let batchRequests = []
+
+								Object.keys(allUsers).forEach(id => {
+									
+									let bodyData = {
+										recipient: {
+											id: id
+										},
+										message: {
+											text: text
+										}
+									}
+
+									batchRequests.push({
+										method: 'POST',
+										relative_url: 'me/messages?include_headers=false',
+										body: param(bodyData)
+									})
+									// sendTextMessage(id, text)
+								})
+
+								sendBatchMessage(batchRequests)
+								// tell admin that message was sent
+								sendTextMessage(senderID, '## Message sent to ALL USERS')
+							}
+							else if (command == 'ANN_PART') {
+
+								console.log(`running command [${command}]`)
+								let batchRequests = []
+
+								Object.keys(participants).forEach(id => {
+									
+									let bodyData = {
+										recipient: {
+											id: id
+										},
+										message: {
+											text: text
+										}
+									}
+
+									batchRequests.push({
+										method: 'POST',
+										relative_url: 'me/messages?include_headers=false',
+										body: param(bodyData)
+									})
+									
+									// sendTextMessage(id, text)
+								})
+
+								sendBatchMessage(batchRequests)
+								// tell admin that message was sent
+								sendTextMessage(senderID, '## Message sent to ALL PARTICIPANTS')
+
+							}
+							else {
+								sendTextMessage(senderID, '## ERROR!! COMMAND NOT FOUND')
+							}
+
+						}
+
+					}
+
+				}
+				else if (
 					!allUsers ||
 					!allUsers[senderID] ||
 					!participants ||
@@ -974,7 +1261,7 @@ function receivedMessage (event) {
 				} else {
 					// else if(!participants)
 					if (status.playing) {
-						if (!status.canAnswer)
+						if (status.canAnswer)
 							sendTextMessage(senderID, 'หมดเวลาตอบข้อนี้แล้วจ้า')
 						else {
 							sendTextMessage(senderID, 'พิมพ์ตอบจะไม่ได้คะแนนนะ กดตอบเอา')
@@ -1024,6 +1311,9 @@ function receivedMessage (event) {
 			console.log(`there's an error in receiving message: ${error}`)
 		})
 }
+
+
+// ----------------------------------------------------
 
 setInterval(() => {
 	// console.log(`in interval checker`)

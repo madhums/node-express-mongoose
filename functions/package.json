@@ -6,10 +6,12 @@
     "botmaster": "^2.3.1",
     "cors": "^2.8.3",
     "express": "4.15.0",
+    "fbgraph": "^1.4.1",
     "firebase": "^3.9.0",
     "firebase-admin": "~4.2.1",
     "firebase-functions": "^0.5.7",
     "firebase-tools": "^3.9.1",
+    "jquery-param": "^0.2.0",
     "node-schedule": "^1.2.3"
   },
   "private": true
