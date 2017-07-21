@@ -1261,8 +1261,13 @@ function receivedMessage (event) {
 				} else {
 					// else if(!participants)
 					if (status.playing) {
-						if (status.canAnswer)
+
+						if (!status.canAnswer) {
 							sendTextMessage(senderID, 'หมดเวลาตอบข้อนี้แล้วจ้า')
+						}
+						else if (participants[senderID] && participants[senderID].answerPack[status.currentQuiz].ans) {
+							sendTextMessage(senderID, 'คุณได้ตอบคำถามข้อนี้ไปแล้วนะ')
+						}
 						else {
 							sendTextMessage(senderID, 'พิมพ์ตอบจะไม่ได้คะแนนนะ กดตอบเอา')
 
@@ -1287,6 +1292,7 @@ function receivedMessage (event) {
 								sendQuickReplies(senderID, quizMessage)
 							}, 1000)
 						}
+
 					} else if (status.canEnter)
 						sendTextMessage(senderID, 'รอสักครู่นะ กิจกรรมยังไม่เริ่ม')
 				}
