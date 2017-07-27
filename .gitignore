@@ -6,3 +6,5 @@ functions/credential/facebookKey.json
 functions/credential/serviceAccountKey.json
 lab/package.json
 lab/test-system-result.json
+lab/db/chat-17-07.json
+lab/db/chat-24-07.json

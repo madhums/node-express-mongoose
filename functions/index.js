@@ -150,7 +150,12 @@ function sendBatchMessage (reqPack) {
 			else {
 
 				console.log(`batch [${i}] / no error : `)
+				let time = new Date()
+				let date = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate()
+				let epochTime = time.getTime()
+
 				res.forEach(response => {
+					db.ref(`batchLogs/${date}/${epochTime}`).push().set(response['body'])
 					console.log(response['body'])
 				})
 					
@@ -161,53 +166,70 @@ function sendBatchMessage (reqPack) {
 	}
 }
 
-function testBatch () {
 
-	db.ref('users').once('value')
-	.then(snapshot => {
-		let usersKey = snapshot.val()
-		let requests = []
+exports.readLog = functions.https.onRequest((req, res) => {
+	cors(req, res, () => {
+		
+		let epochTime = Number(req.query['epoch'])
 
-		let users = Object.keys(usersKey).map(key => {
-			return usersKey[key]
-		})
+		if (!epochTime) {
+			res.json ({ 
+				error: 'no epoch param assigned'
+			})
+		}
+		else {
 
-		users.forEach(user => {
+			let time = new Date(epochTime)
+			let date = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate()
 
-			let bodyData = {
-				recipient: {
-					id: user.fbid
-				},
-				message: {
-					text: `สวัสดี ${user.firstName} ทดสอบอีกที`
+			console.log(`time : ${time}`)
+			console.log(`date : ${date}`)
+			console.log(`batchLogs/${date}/${time.getTime()}/`)
+
+			db.ref(`batchLogs/${date}/${time.getTime()}/`).once('value')
+			.then(batchSnapshot => {
+
+				let bat = batchSnapshot.val()
+				
+				let error = {
+					detail : [],
+					count : 0
 				}
-			}
 
-			requests.push({
-				method: 'POST',
-				relative_url: 'me/messages?include_headers=false',
-				body: param(bodyData)
+				let success = {
+					detail : [],
+					count : 0
+				}
+
+				let logCount = Object.keys(bat).length
+
+				Object.keys(bat).forEach(key => {
+
+					let tempLog = JSON.parse(bat[key])
+
+					if (tempLog.error) {
+						error.detail.push(tempLog)
+						error.count++
+					}
+					else if (tempLog.recipient_id) {
+						success.detail.push(tempLog)
+						success.count++
+					}
+
+				})
+
+				res.json({
+					total: logCount,
+					success: success,
+					error: error
+				})
+
+			})
+			.catch(error => {
+				console.error(error)
 			})
 
-		})
-		
-		sendBatchMessage(requests)
-
-	})
-	.catch(error => {
-		console.log(`test batch error : ${error} `)
-	})
-
-}
-
-
-exports.batchSend = functions.https.onRequest((req, res) => {
-	cors(req, res, () => {
-
-		testBatch()
-		res.json({
-			'text': 'nah'
-		})
+		}
 
 	})
 })
@@ -264,34 +286,6 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest(
 		}
 	}
 )
-
-// exports.setCanEnter = functions.https.onRequest((req, res) => {
-// 	cors(req, res, () => {
-// 		if (req.query.status.toLowerCase() === 'open') db.ref('canEnter').set(true)
-// 		else if (req.query.status.toLowerCase() === 'close')
-// 			db.ref('canEnter').set(false)
-
-// 		// res.send(`set canEnter to ${req.query.status}`)
-// 		res.json({
-// 			error: null,
-// 			status: 'ok'
-// 		})
-// 	})
-// })
-
-// exports.setCanAnswer = functions.https.onRequest((req, res) => {
-// 	cors(req, res, () => {
-// 		if (req.query.status.toLowerCase() === 'open') db.ref('canAnswer').set(true)
-// 		else if (req.query.status.toLowerCase() === 'close')
-// 			db.ref('canAnswer').set(false)
-
-// 		// res.send(`set canAnswer to ${req.query.status}`)
-// 		res.json({
-// 			error: null,
-// 			status: 'ok'
-// 		})
-// 	})
-// })
 
 
 exports.getQuizStatus = functions.https.onRequest((req, res) => {
@@ -693,12 +687,10 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
 								"if this is the first question don't forget to use ?next=true param"
 						})
 					else {
-						// clearTimeout(timeout)
-						db.ref('canAnswer').set(true)
-
+						
 						let answerTime = req.query.timer
-							? parseInt(req.query.timer) + 5
-							: 65
+							? parseInt(req.query.timer) + 10
+							: 70
 						let quickReplyChoices = []
 
 						db.ref('answerWindow').set(answerTime)
@@ -711,29 +703,20 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
 							}
 						})
 
-						
-
-						if (!fireQuizAt) fireQuizAt = Array(quiz.length).fill(0)
-
-						if (fireQuizAt[status.currentQuiz] == 0) {
-							fireQuizAt[status.currentQuiz] = new Date().getTime()
-							db.ref('fireQuizAt').set(fireQuizAt)
-						}
+						// ---------- start preparing batch request
 
 						let sendQuizBatch = []
 
 						Object.keys(participants).forEach(id => {
 
 							let quizBodyData = {
-
 								recipient: {
-									id: id
+								id: id
 								},
 								message: {
 									text: quiz[status.currentQuiz].q,
 									quick_replies: quickReplyChoices
 								}
-								
 							}
 
 							sendQuizBatch.push({
@@ -742,17 +725,51 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
 								body: param(quizBodyData)
 							})
 
-							// sendQuickReplies(id, quizMessage)
 						})
 
-						sendBatchMessage(sendQuizBatch)
+						if (!fireQuizAt) fireQuizAt = Array(quiz.length).fill(0)
 
-						res.json({
-							error: null,
-							qno: status.currentQuiz,
-							q: quiz[status.currentQuiz].q,
-							choices: quiz[status.currentQuiz].choices
-						})
+						if (fireQuizAt[status.currentQuiz] == 0) {
+
+							fireQuizAt[status.currentQuiz] = new Date().getTime()
+
+							db.ref('fireQuizAt').set(fireQuizAt)
+							.then(() => {
+								return db.ref('canAnswer').set(true)
+							})
+							.then(() => {
+
+								console.log('sync SENDING')
+								sendBatchMessage(sendQuizBatch)
+
+								res.json({
+									error: null,
+									qno: status.currentQuiz,
+									q: quiz[status.currentQuiz].q,
+									choices: quiz[status.currentQuiz].choices
+								})
+
+							})
+
+						}
+						else {
+							
+							db.ref('canAnswer').set(true)
+							.then(() => {
+
+								console.log('sync SENDING / not set new FQA')
+								sendBatchMessage(sendQuizBatch)
+
+								res.json({
+									error: null,
+									qno: status.currentQuiz,
+									q: quiz[status.currentQuiz].q,
+									choices: quiz[status.currentQuiz].choices
+								})
+
+							})
+
+						}
 
 					}
 				}
@@ -1321,42 +1338,90 @@ function receivedMessage (event) {
 
 // ----------------------------------------------------
 
+exports.answerGap = functions.database.ref('canAnswer').onWrite(event => {
+	
+	let canAnswer = event.data.val()
+	console.log(`canAnswer was changed to : ${canAnswer} `)
+	
+	if (canAnswer) {
+
+		db.ref('answerWindow').once('value')
+		.then(awSnap => {
+			
+			let gap = awSnap.val()
+			console.log(`cuz canAnswer is [${canAnswer}] -> set [${gap}] seconds timer `)
+
+			setTimeout(() => {
+				db.ref('canAnswer').set(false)
+				console.log('_______________________')
+				console.log('NOW YOU CAN\'T ANSWER ME')
+			}, gap * 1000)
+
+		})
+		.catch(error => {
+			console.log(`get answer gap error in answerGap trigerr: ${error} `)
+		})
+		
+	}
+
+})
+
+/*
 setInterval(() => {
 	// console.log(`in interval checker`)
 
-	let status = null
+	let gap = 70
+	let fqa = []
+	let currentQuiz = -1
+	let playing = false
+	let canAnswer = false
 
-	_getStatus()
-		.then(fStatus => {
-			status = fStatus
-			return _getFireQuizAt()
-		})
-		.then(fqa => {
-			let fqaReal = fqa.val()
+	db.ref('answerWindow').once('value')
+	.then(awSnap => {
+		gap = awSnap.val()
+		return db.ref('playing').once('value')
+	})
+	.then(p => {
+		playing = p.val()
+		return db.ref('canAnswer').once('value')
+	})
+	.then(ca => {
+		canAnswer = ca.val()
+		return db.ref('fireQuizAt').once('value')
+	})
+	.then(fqaSnap => {
+		fqa = fqaSnap.val()
+		return db.ref('currentQuiz').once('value')
+	})
+	.then(cq => {
+		
+		currentQuiz = cq.val()
 
-			if (status.playing && fqaReal) {
-				if (fqaReal[status.currentQuiz] && fqaReal[status.currentQuiz] != 0) {
-					db.ref('answerWindow').once('value').then(awSnap => {
-						let gap = awSnap.val()
-						if (
-							new Date().getTime() - fqaReal[status.currentQuiz] > gap * 1000 &&
-							status.canAnswer
-						) {
-							db.ref('canAnswer').set(false)
-							console.log(' ======================= NOW YOU CANT ANSWER')
-							console.log(`fired at : ${fqaReal[status.currentQuiz]}`)
-							console.log(`now is : ${new Date().getTime()}`)
-							console.log(
-								`diff: ${new Date().getTime() -
-									fqaReal[status.currentQuiz]} , gap is : ${gap}`
-							)
-						}
-						// else console.log(` ======================= value not reset`)
-					})
+		if (playing && fqa) {
+
+			if (fqa[currentQuiz] && fqa[currentQuiz] != 0) {
+			
+				if (new Date().getTime() - fqa[currentQuiz] > gap * 1000 && canAnswer ) {
+
+					console.log(`fire quiz array : ${fqa}`)
+					db.ref('canAnswer').set(false)
+					console.log(' ======================= NOW YOU CANT ANSWER')
+					console.log(`fired at : ${fqa[currentQuiz]}`)
+					console.log(`now is : ${new Date().getTime()}`)
+					console.log(`diff: ${new Date().getTime() - fqa[currentQuiz]} , gap is : ${gap}`)
+					
 				}
+					// else console.log(` ======================= value not reset`)
+				
 			}
-		})
-		.catch(error => {
-			console.log(`An Error in SET INTERVAL : ${error}`)
-		})
+
+		}
+
+	})
+	.catch(error => {
+		console.log(`An Error in SET INTERVAL : ${error}`)
+	})
+
 }, 10000)
+
+*/
