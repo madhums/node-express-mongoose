@@ -5,13 +5,12 @@ const cors = require('cors')({
 	origin: ['http://localhost:3000', 'https://codelab-a8367.firebaseapp.com']
 })
 
+const FB = require('fbgraph')
 const param = require('jquery-param')
 const env = functions.config().quizshow
 const axios = require('axios')
 
-const FB = require('fbgraph')
 FB.setAccessToken(env.messenger.page_token)
-
 
 let serviceAccount = require('./credential/serviceAccountKey.json')
 
@@ -46,18 +45,20 @@ let util = {
 let messengerFunctions = {
 	'sendTextMessage': sendTextMessage,
 	'sendCascadeMessage': sendCascadeMessage,
-	'sendQuickReplies': sendQuickReplies
+	'sendQuickReplies': sendQuickReplies,
+	'sendBatchMessage': sendBatchMessage
 }
 
 const httpsFunctions = require('./httpsTriggered.js')(
 	db,
 	util,
+	param,
 	messengerAPI,
 	userManagementAPI,
 	messengerFunctions
 )
 
-console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> STARTING SERVICE')
+console.log('STARTING SERVICE')
 
 // ----------------------- Cloud Functions ------------------------
 
@@ -138,7 +139,7 @@ function sendBatchMessage (reqPack) {
 	// 	body: param(bodyData)
 	// })
 
-	// batch allow 50 command per request
+	// batch allow 50 commands per request
 	let batchLimit = 50
 	for (let i = 0; i < reqPack.length; i += batchLimit) {
 
@@ -181,10 +182,6 @@ exports.readLog = functions.https.onRequest((req, res) => {
 
 			let time = new Date(epochTime)
 			let date = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate()
-
-			console.log(`time : ${time}`)
-			console.log(`date : ${date}`)
-			console.log(`batchLogs/${date}/${time.getTime()}/`)
 
 			db.ref(`batchLogs/${date}/${time.getTime()}/`).once('value')
 			.then(batchSnapshot => {
@@ -237,403 +234,89 @@ exports.readLog = functions.https.onRequest((req, res) => {
 
 // ------------------------------
 
-exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest(
-	(req, res) => {
-		if (req.method == 'GET') {
-			// console.log('GET Requested')
-			if (
-				req.query['hub.mode'] === 'subscribe' &&
-				req.query['hub.verify_token'] === env.messenger.verify_token
-			) {
-				// console.log("Validating webhook")
-				res.status(200).send(req.query['hub.challenge'])
-			} else {
-				console.error(
-					'Failed validation. Make sure the validation tokens match.'
-				)
-				res.sendStatus(403)
-			}
-		} else if (req.method == 'POST') {
-			// console.log('POST Requested')
-			let data = req.body
-			// Make sure this is a page subscription
-			if (data.object === 'page') {
-				// Iterate over each entry - there may be multiple if batched
-				data.entry.forEach(function (entry) {
-					let pageID = entry.id
-					let timeOfEvent = entry.time
-					console.log(`page id [${pageID}] , TOE ${timeOfEvent}`)
+exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest( (req, res) => {
 
-					// Iterate over each messaging event
-					entry.messaging.forEach(function (event) {
-						if (event.message) {
-							receivedMessage(event)
-						} else if (event.delivery) {
-							console.log(`Message delivered to ${event.sender.id}`)
-						} else {
-							console.log(`Webhook Unknown Event: ${JSON.stringify(event)}`)
-						}
-					})
+	if (req.method == 'GET') {
+
+		// console.log('GET Requested')
+		if (
+			req.query['hub.mode'] === 'subscribe' &&
+			req.query['hub.verify_token'] === env.messenger.verify_token
+		) {
+			// console.log("Validating webhook")
+			res.status(200).send(req.query['hub.challenge'])
+		} else {
+			console.error(
+				'Failed validation. Make sure the validation tokens match.'
+			)
+			res.sendStatus(403)
+		}
+
+	} else if (req.method == 'POST') {
+
+		// console.log('POST Requested')
+		let data = req.body
+		// Make sure this is a page subscription
+		if (data.object === 'page') {
+			// Iterate over each entry - there may be multiple if batched
+			data.entry.forEach(function (entry) {
+				let pageID = entry.id
+				let timeOfEvent = entry.time
+				console.log(`page id [${pageID}] , TOE ${timeOfEvent}`)
+
+				// Iterate over each messaging event
+				entry.messaging.forEach(function (event) {
+					if (event.message) {
+						receivedMessage(event)
+					} else if (event.delivery) {
+						console.log(`Message delivered to ${event.sender.id}`)
+					} else {
+						console.log(`Webhook Unknown Event: ${JSON.stringify(event)}`)
+					}
 				})
 
-				// Assume all went well.
-				//
-				// You must send back a 200, within 20 seconds, to let us know
-				// you've successfully received the callback. Otherwise, the request
-				// will time out and we will keep trying to resend.
-				res.sendStatus(200)
-			}
+			})
+
+			// Assume all went well.
+			//
+			// You must send back a 200, within 20 seconds, to let us know
+			// you've successfully received the callback. Otherwise, the request
+			// will time out and we will keep trying to resend.
+			res.sendStatus(200)
 		}
+		
 	}
-)
+})
 
 
 exports.getQuizStatus = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
-
 		httpsFunctions.getQuizStatus(req, res)
-		// let cq = -1
-		// let fqa = null
-		// let q = null
-
-		// _getStatus()
-		// .then(status => {
-		// 		cq = status.currentQuiz
-
-		// 		return _getQuiz()
-		// 	})
-		// 	.then(snapshot => {
-		// 		q = snapshot.val()
-
-		// 		return _getFireQuizAt()
-		// 	})
-		// 	.then(snapshot => {
-		// 		fqa = snapshot.val()
-
-		// 		res.json({
-		// 			currentQuiz: cq,
-		// 			quizLength: q ? q.length : 0,
-		// 			fireQuizAt: fqa,
-		// 			quiz: q
-		// 		})
-
-		// 	})
-		// 	.catch(error => {
-		// 		console.log(`there's an error in getQuizStatus: ${error}`)
-		// 	})
 	})
 })
 
 exports.getParticipants = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
-		_getParticipants()
-			.then(snapshot => {
-				res.json({
-					participants: snapshot.val()
-				})
-			})
-			.catch(error => {
-				console.log(`there's an error in getParticipants: ${error}`)
-				res.end()
-			})
+		httpsFunctions.getParticipants(req, res)
 	})
 })
 
 exports.showRandomCorrectUsers = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
-
-		let quiz = null
-		let participants = null
-		let currentQuiz = -1
-
-		_getStatus()
-			.then(status => {
-				currentQuiz = status.currentQuiz
-				return _getQuiz()	
-			})
-			.then(quizSnapshot => {
-				quiz = quizSnapshot.val()
-				return _getParticipants()
-			})
-			.then(participantsSnapshot => {
-				participants = participantsSnapshot.val()
-
-				if (!req.query.quizno) res.json({ error: 'please specify quiz no.' })
-				else if (!quiz) res.json({ error: 'quiz not ready' })
-				else if (!participants) res.json({ error: 'participants not found' })
-				else if (req.query.quizno < 0 || req.query.quizno > quiz.length - 1)
-					res.json({ error: 'incorrect quiz no.' })
-				else {
-					let targetQuizNo = parseInt(req.query.quizno)
-
-					let answerAmount = 0
-					let answerRate = quiz[
-						targetQuizNo
-					].choices.reduce((obj, choiceValue) => {
-						obj[choiceValue] = 0
-						return obj
-					}, {})
-
-					console.log('answerRate = ' + JSON.stringify(answerRate))
-					console.log('quiz = ' + JSON.stringify(quiz))
-					console.log('participant = ' + JSON.stringify(participants))
-
-					if (targetQuizNo > -1 || targetQuizNo < quiz.length) {
-						let correctUsers = Object.keys(participants).map(key => {
-							if (participants[key].answerPack[targetQuizNo].ans.length > 0) {
-								answerAmount++
-								answerRate[participants[key].answerPack[targetQuizNo].ans]++
-								console.log(
-									'>>> in map : answerRate = ' + JSON.stringify(answerRate)
-								)
-							}
-
-							if (participants[key].answerPack[targetQuizNo].correct == true) {
-								return {
-									id: key,
-									firstName: participants[key].firstName,
-									lastName: participants[key].lastName,
-									profilePic: participants[key].profilePic,
-									answerTime: participants[key].answerPack[targetQuizNo].at
-								}
-							}
-						})
-
-						correctUsers = correctUsers.filter(n => {
-							return n != undefined
-						})
-
-						for (let key in answerRate) {
-							answerRate[key] = Math.round(answerRate[key] / answerAmount * 100)
-						}
-
-						console.log(
-							'>>> AFTER % : answerRate = ' + JSON.stringify(answerRate)
-						)
-						let range = correctUsers.length
-						let sortCorrectUsers = []
-
-						if (range <= 25) {
-							if (range > 1)
-								sortCorrectUsers = correctUsers.sort((a, b) => {
-									return a.answerTime - b.answerTime
-								})
-							else sortCorrectUsers = correctUsers
-
-							console.log(`sortCorrectUsers : ${sortCorrectUsers}`)
-
-							res.json({
-								error: null,
-								answerRate: answerRate,
-								correctUsers: sortCorrectUsers
-							})
-						} else {
-							let array = correctUsers
-							for (let i = array.length - 1; i > 0; i--) {
-								let j = Math.floor(Math.random() * (i + 1))
-								let temp = array[i]
-								array[i] = array[j]
-								array[j] = temp
-							}
-
-							res.json({
-								error: null,
-								answerRate: answerRate,
-								correctUsers: array
-							})
-						}
-					} else
-						res.json({
-							error: 'quiz no. incorrect',
-							text: `you requested quiz number ${targetQuizNo}
-                but current quiz number is ${currentQuiz} and quiz length is ${quiz.length}`
-						})
-				}
-			})
-			.catch(error => {
-				res.json({
-							error: error,
-							'text': 'there should be error, but i dont\' know what it is. system don\'t tell me'
-						})
-			})
+		httpsFunctions.showRandomCorrectUsers(req, res)
 	})
 })
 
 exports.getTopUsers = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
-
-		let fq = null
-		let participants = null
-
-		_getFireQuizAt()
-			.then(snapshot => {
-				fq = snapshot.val()
-				return _getParticipants()
-			})
-			.then(snapshot => {
-				if (!fq) res.json({ error: 'no quiz sent OR no sent time collected' })
-				else {
-					participants = snapshot.val()
-					let candidate = Object.keys(participants).map(key => {
-						let timeUsedBeforeAnswer = participants[
-							key
-						].answerPack.reduce((collector, ansDetail, idx) => {
-							console.log('firequiz time : ' + fq[idx])
-							return ansDetail.ans
-								? collector + (ansDetail.at - fq[idx])
-								: collector
-						}, 0)
-
-						return {
-							id: key,
-							firstName: participants[key].firstName,
-							lastName: participants[key].lastName,
-							profilePic: participants[key].profilePic,
-							point: participants[key].point,
-							totalTimeUsed: timeUsedBeforeAnswer
-						}
-					})
-
-					let topUsers = candidate.sort((a, b) => {
-						if (b.point - a.point == 0) return a.totalTimeUsed - b.totalTimeUsed
-						else return b.point - a.point
-					})
-
-					if (topUsers.length > 10) {
-						topUsers = topUsers.splice(0, 10)
-					}
-
-					res.json({
-						error: null,
-						topUsers: topUsers
-					})
-				}
-			})
-			.catch(error => {
-				console.log(`there's an error in getTopUsers: ${error}`)
-				res.end()
-			})
+		httpsFunctions.getTopUsers(req, res)
 	})
 })
 
-exports.sendCustomMessage = functions.https.onRequest((req, res) => {
-	cors(req, res, () => {
-
-		let approve = (req.query['approve'] == 'true') ? true : false
-		let message = ''
-
-		console.log(`mode = ${approve} `)
-		
-		if (approve) {
-
-			// send using Message from DB
-			db.ref('customMessage').once('value')
-			.then(snapshot => {
-				message = snapshot.val()
-				return userManagementAPI.getAllID()
-			})
-			.then(allID => {
-
-				let messageBatchRequests = []
-
-				allID.forEach(id => {
-
-					let bodyData = {
-						recipient: {
-							id: id
-						},
-						message: {
-							text: message
-						}
-					}
-
-					messageBatchRequests.push({
-						method: 'POST',
-						relative_url: 'me/messages?include_headers=false',
-						body: param(bodyData)
-					})
-
-					// sendTextMessage(id, message)
-				})
-
-				sendBatchMessage(messageBatchRequests)
-
-				res.json({
-					error: null
-				})
-			})
-			.catch(error => {
-				console.log(`custom message case 2 error : ${error} `)
-			})
-
-		}
-		else {
-			res.json({
-					'error': 'need param approve to send the message',
-					'suggestion': 'add ?approve=true to send the message'
-				})
-		}
-
-  })
-})
 
 exports.sendRequest = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
-
-		db.ref('canEnter').set(true)
-
-		userManagementAPI
-			.getAllID()
-			.then(allID => {
-
-				let sendRequestBatch = []
-
-				allID.forEach(id => {
-
-					let inviteMessage = {
-
-						recipient: { id: id },
-						message: {
-							text: 'แชทชิงโชค กำลังจะเริ่มในไม่ช้า ต้องการเข้าร่วมเล่นด้วยหรือไม่?',
-							quick_replies: [
-								{
-									content_type: 'text',
-									title: 'เข้าร่วม',
-									payload: 'เข้าร่วม'
-								},
-								{
-									content_type: 'text',
-									title: 'ไม่เข้าร่วม',
-									payload: 'ไม่เข้าร่วม'
-								}
-							]
-						}
-						
-					}
-
-					sendRequestBatch.push({
-						method: 'POST',
-						relative_url: 'me/messages?include_headers=false',
-						body: param(inviteMessage)
-					})
-
-					// sendQuickReplies(id, inviteMessage)
-				})
-
-				sendBatchMessage(sendRequestBatch)
-
-				res.json({
-					error: null,
-					text: 'everything is fine... I guess ?'
-				})
-
-			})
-			.catch(error => {
-				res.json({
-					error: error,
-					text: 'shit happens'
-				})
-			})
+		httpsFunctions.sendRequest(req, res)
 	})
 })
 
@@ -783,86 +466,19 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
 
 exports.addQuiz = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
-		if (req.method == 'POST') {
-			db.ref('quiz').set(req.body.quiz)
-		}
-
-		res.json({
-			error: null
-		})
-	})
-})
-
-exports.sendEndMessage = functions.https.onRequest((req, res) => {
-	cors(req, res, () => {
-
-		httpsFunctions.sendEndMessage(req, res)
-
+		httpsFunctions.addQuiz(req, res)
 	})
 })
 
 exports.sendResult = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
-
-		db.ref('canAnswer').set(false)
-		db.ref('canEnter').set(false)
-		db.ref('playing').set(false)
-
-		let participants = null
-
-		_getParticipants()
-			.then(participantsSnapshot => {
-
-				participants = participantsSnapshot.val()
-
-				let sendResultRequests = []
-
-				Object.keys(participants).forEach(id => {
-
-					let bodyData = {
-						recipient: {
-							id: id
-						},
-						message: {
-							text: `กิจกรรมจบแล้ว ยินดีด้วย คุณได้คะแนนรวม ${participants[id].point} คะแนน`
-						}
-					}
-
-					sendResultRequests.push({
-						method: 'POST',
-						relative_url: 'me/messages?include_headers=false',
-						body: param(bodyData)
-					})
-					
-					
-				})
-
-				sendBatchMessage(sendResultRequests)
-
-				res.json({
-					error: null
-				})
-			})
-			.catch(error => {
-				console.log(`there's an error in sendResult: ${error}`)
-				res.end()
-			})
+		httpsFunctions.sendResult(req, res)
 	})
 })
 
 exports.restart = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
-		
-		db.ref('currentQuiz').set(-1)
-		db.ref('canEnter').set(false)
-		db.ref('canAnswer').set(false)
-		db.ref('playing').set(false)
-		db.ref('participants').set(null)
-		db.ref('fireQuizAt').set(null)
-
-		res.json({
-			error: null
-		})
+		httpsFunctions.restart(req, res)
 	})
 })
 
@@ -875,7 +491,6 @@ function sendQuickReplies (recipientId, quickReplies) {
 		},
 		message: quickReplies
 	}
-
 	callSendAPI(messageData)
 }
 
@@ -932,73 +547,82 @@ function callSendAPI (messageData) {
 }
 
 function sendCascadeMessage (id, textArray) {
-	textArray
-		.reduce((promiseOrder, message) => {
-			return promiseOrder.then(() => {
-				// console.log(message)
-				sendTextMessage(id, message)
-				return new Promise(res => {
-					setTimeout(res, 1000)
-				})
+
+	textArray.reduce((promiseOrder, message) => {
+		return promiseOrder.then(() => {
+			// console.log(message)
+			sendTextMessage(id, message)
+			return new Promise(res => {
+				setTimeout(res, 1000)
 			})
-		}, Promise.resolve())
-		.then(
-			() => console.log('send cascade message DONE!'),
-			error => {
-				console.log(`reduce error : ${error} `)
-			}
-		)
+		})
+	}, Promise.resolve())
+	.then( () => console.log('send cascade message DONE!'),
+		error => {
+			console.log(`reduce error : ${error} `)
+		}
+	)
+
 }
 
 function addNewUser (newUserId) {
-	console.log('enter addNewUser')
 
+	console.log('enter addNewUser')
 	let userProfile = null
 
 	userManagementAPI.recordNewUserID(newUserId)
 	messengerAPI.sendTypingOn(newUserId)
-	messengerAPI
-		.callProfileAPI(newUserId)
-		.then(profile => {
-			userProfile = profile
-			return _getStatus()
-		})
-		.then(status => {
-			if (status.playing || status.canEnter) {
-				let inviteMessage = {
-					text:
-						'แชทชิงโชค กำลังจะเริ่มในไม่ช้า ต้องการเข้าร่วมเล่นด้วยหรือไม่?',
-					quick_replies: [
-						{
-							content_type: 'text',
-							title: 'เข้าร่วม',
-							payload: 'เข้าร่วม'
-						},
-						{
-							content_type: 'text',
-							title: 'ไม่เข้าร่วม',
-							payload: 'ไม่เข้าร่วม'
-						}
-					]
-				}
 
-				setTimeout(() => {
-					sendQuickReplies(newUserId, inviteMessage)
-				}, 1000)
-			} else {
-				let texts = [
-					`สวัสดี คุณ ${userProfile.first_name} ${userProfile.last_name}`,
-					'ขณะนี้ แชทชิงโชค ยังไม่เริ่ม ถ้าใกล้ถึงช่วงเวลาของกิจกรรมแล้วทางเราจะติดต่อกลับไปนะ'
+	messengerAPI.callProfileAPI(newUserId)
+	.then(profile => {
+
+		userProfile = profile
+		return _getStatus()
+
+	})
+	.then(status => {
+
+		if (status.playing || status.canEnter) {
+			let inviteMessage = {
+				text:
+					'แชทชิงโชค กำลังจะเริ่มในไม่ช้า ต้องการเข้าร่วมเล่นด้วยหรือไม่?',
+				quick_replies: [
+					{
+						content_type: 'text',
+						title: 'เข้าร่วม',
+						payload: 'เข้าร่วม'
+					},
+					{
+						content_type: 'text',
+						title: 'ไม่เข้าร่วม',
+						payload: 'ไม่เข้าร่วม'
+					}
 				]
-				sendCascadeMessage(newUserId, texts)
 			}
-		})
-		.catch(error => {
-			console.log(`error : ${error}`)
-		})
+
+			setTimeout(() => {
+				sendQuickReplies(newUserId, inviteMessage)
+			}, 1000)
+
+		} else {
+
+			let texts = [
+				`สวัสดี คุณ ${userProfile.first_name} ${userProfile.last_name}`,
+				'ขณะนี้ แชทชิงโชค ยังไม่เริ่ม ถ้าใกล้ถึงช่วงเวลาของกิจกรรมแล้วทางเราจะติดต่อกลับไปนะ'
+			]
+
+			sendCascadeMessage(newUserId, texts)
+		}
+
+	})
+	.catch(error => {
+		console.log(`error : ${error}`)
+	})
+
 }
 
 function receivedMessage (event) {
+
 	let senderID = event.sender.id
 	let recipientID = event.recipient.id
 	let timeOfMessage = event.timestamp
@@ -1336,7 +960,7 @@ function receivedMessage (event) {
 }
 
 
-// ----------------------------------------------------
+// ------------------------ TIMER  -------------------------
 
 exports.answerGap = functions.database.ref('canAnswer').onWrite(event => {
 	
@@ -1365,63 +989,3 @@ exports.answerGap = functions.database.ref('canAnswer').onWrite(event => {
 	}
 
 })
-
-/*
-setInterval(() => {
-	// console.log(`in interval checker`)
-
-	let gap = 70
-	let fqa = []
-	let currentQuiz = -1
-	let playing = false
-	let canAnswer = false
-
-	db.ref('answerWindow').once('value')
-	.then(awSnap => {
-		gap = awSnap.val()
-		return db.ref('playing').once('value')
-	})
-	.then(p => {
-		playing = p.val()
-		return db.ref('canAnswer').once('value')
-	})
-	.then(ca => {
-		canAnswer = ca.val()
-		return db.ref('fireQuizAt').once('value')
-	})
-	.then(fqaSnap => {
-		fqa = fqaSnap.val()
-		return db.ref('currentQuiz').once('value')
-	})
-	.then(cq => {
-		
-		currentQuiz = cq.val()
-
-		if (playing && fqa) {
-
-			if (fqa[currentQuiz] && fqa[currentQuiz] != 0) {
-			
-				if (new Date().getTime() - fqa[currentQuiz] > gap * 1000 && canAnswer ) {
-
-					console.log(`fire quiz array : ${fqa}`)
-					db.ref('canAnswer').set(false)
-					console.log(' ======================= NOW YOU CANT ANSWER')
-					console.log(`fired at : ${fqa[currentQuiz]}`)
-					console.log(`now is : ${new Date().getTime()}`)
-					console.log(`diff: ${new Date().getTime() - fqa[currentQuiz]} , gap is : ${gap}`)
-					
-				}
-					// else console.log(` ======================= value not reset`)
-				
-			}
-
-		}
-
-	})
-	.catch(error => {
-		console.log(`An Error in SET INTERVAL : ${error}`)
-	})
-
-}, 10000)
-
-*/
