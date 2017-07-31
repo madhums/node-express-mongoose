@@ -7,13 +7,12 @@ const cors = require('cors')({
 	origin: ['http://localhost:3000', 'https://codelab-a8367.firebaseapp.com']
 })
 
+const db = admin.database()
 const FB = require('fbgraph')
 const param = require('jquery-param')
 const axios = require('axios')
 
 FB.setAccessToken(env.messenger.page_token)
-
-const db = admin.database()
 
 const messengerAPI = require('./API/messengerProfile.js')// (axios, env.messenger)
 const userManagementAPI = require('./API/userManagement.js')
@@ -266,7 +265,6 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest( (req, res) =
 		
 	}
 })
-
 
 exports.getQuizStatus = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {

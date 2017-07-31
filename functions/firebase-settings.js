@@ -6,10 +6,10 @@ let serviceAccount = require('./credential/serviceAccountKey.json')
 
 const firebaseConfig = {
 	credential: admin.credential.cert(serviceAccount),
-	apiKey: env.firebase.api_key, // 'AIzaSyAShU7XQD5ji6DDf7PY__EUGb9LwvukrNU',
+	apiKey: env.firebase.api_key,
 	authDomain: 'codelab-a8367.firebaseapp.com',
 	databaseURL: 'https://codelab-a8367.firebaseio.com/',
-	storageBucket: 'codelab-a8367.appspot.com',
+	storageBucket: 'gs://codelab-a8367.appspot.com',
 	messagingSenderId: 565799047733
 }
 
