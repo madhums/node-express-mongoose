@@ -10,31 +10,51 @@ module.exports = function (util, messengerFunctions) {
   let module = {}
 
   // --------- START HERE
-  module.getQuizStatus = function (req, res) {
+  module.getOverallStatus = function (req, res) {
 
     let cq = -1
 		let fqa = null
 		let q = null
+		let p = []
+		let ucount = 0
 
 		util.getStatus()
 		.then(status => {
 				cq = status.currentQuiz
-
 				return util.getQuiz()
 			})
 			.then(snapshot => {
 				q = snapshot.val()
-
 				return util.getFireQuizAt()
 			})
 			.then(snapshot => {
 				fqa = snapshot.val()
+				return util.getParticipants()
+			})
+			.then(partSnap => {
+				let tp = partSnap.val()
+				if (tp) {
+					Object.keys(tp).forEach(key => {
+						p.push(tp[key])
+					})
+				}
+
+				return db.ref('/userIds').once('value')
+			})
+			.then(uidSnap => {
+				let uids = uidSnap.val()
+				
+				if (uids) ucount = Object.keys(uids).length
 
 				res.json({
 					currentQuiz: cq,
 					quizLength: q ? q.length : 0,
 					fireQuizAt: fqa,
-					quiz: q
+					quiz: q,
+					userAmount: ucount,
+					participantsAmount: p.length,
+					participants: p,
+
 				})
 
 			})

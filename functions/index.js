@@ -266,9 +266,9 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest( (req, res) =
 	}
 })
 
-exports.getQuizStatus = functions.https.onRequest((req, res) => {
+exports.getOverallStatus = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
-		httpsFunctions.getQuizStatus(req, res)
+		httpsFunctions.getOverallStatus(req, res)
 	})
 })
 
