@@ -1,39 +1,22 @@
-const functions = require('firebase-functions')
-const admin = require('firebase-admin')
-// const firebase = require('firebase')
+const firebaseInit = require('./firebase-settings.js')
+const functions = firebaseInit.functions
+const admin = firebaseInit.admin
+const env = firebaseInit.env
+
 const cors = require('cors')({
 	origin: ['http://localhost:3000', 'https://codelab-a8367.firebaseapp.com']
 })
 
 const FB = require('fbgraph')
 const param = require('jquery-param')
-const env = functions.config().quizshow
 const axios = require('axios')
 
 FB.setAccessToken(env.messenger.page_token)
 
-let serviceAccount = require('./credential/serviceAccountKey.json')
-
-const firebaseConfig = {
-	credential: admin.credential.cert(serviceAccount),
-	apiKey: env.firebase.api_key, // 'AIzaSyAShU7XQD5ji6DDf7PY__EUGb9LwvukrNU',
-	authDomain: 'codelab-a8367.firebaseapp.com',
-	databaseURL: 'https://codelab-a8367.firebaseio.com/',
-	storageBucket: 'codelab-a8367.appspot.com',
-	messagingSenderId: 565799047733
-}
-
-// firebase.initializeApp(firebaseConfig)
-admin.initializeApp(firebaseConfig)
-serviceAccount = null
 const db = admin.database()
 
-const messengerAPI = require('./API/messengerProfile.js')(axios, env.messenger)
-const userManagementAPI = require('./API/userManagement.js')(
-	axios,
-	db,
-	messengerAPI
-)
+const messengerAPI = require('./API/messengerProfile.js')// (axios, env.messenger)
+const userManagementAPI = require('./API/userManagement.js')
 
 let util = {
 	'getFireQuizAt': _getFireQuizAt,
@@ -50,11 +33,7 @@ let messengerFunctions = {
 }
 
 const httpsFunctions = require('./httpsTriggered.js')(
-	db,
 	util,
-	param,
-	messengerAPI,
-	userManagementAPI,
 	messengerFunctions
 )
 
@@ -572,7 +551,7 @@ function addNewUser (newUserId) {
 
 	userManagementAPI.recordNewUserID(newUserId)
 	messengerAPI.sendTypingOn(newUserId)
-
+	console.log('b4 call profile api')
 	messengerAPI.callProfileAPI(newUserId)
 	.then(profile => {
 
@@ -669,7 +648,7 @@ function receivedMessage (event) {
 		})
 		.then(participantsSnapshot => {
 			participants = participantsSnapshot.val()
-			return db.ref('users').once('value') // userManagementAPI.getAllID()
+			return db.ref('users').once('value')
 		})
 		.then(fetchedUsers => {
 			let users = fetchedUsers.val()
@@ -955,7 +934,7 @@ function receivedMessage (event) {
 			// ----------------------------------------------------------------------------------------
 		})
 		.catch(error => {
-			console.log(`there's an error in receiving message: ${error}`)
+			console.error(`there's an error in receiving message: ${error}`)
 		})
 }
 
