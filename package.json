@@ -44,7 +44,7 @@
     "eslint": "~4.1.0",
     "nodemon": "~1.11.0",
     "supertest": "~3.0.0",
-    "tape": "~4.7.0"
+    "tape": "~4.8.0"
   },
   "repository": {
     "type": "git",
