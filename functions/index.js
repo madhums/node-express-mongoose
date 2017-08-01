@@ -147,7 +147,7 @@ function sendBatchMessage (reqPack) {
 
 
 exports.addNewUserFromWeb = functions.https.onRequest((req, res) => {
-	cors((req, res) => {
+	cors((req, res, ()  => {
 
 		let uid = req.body.userID
 		let pageinfo = {
