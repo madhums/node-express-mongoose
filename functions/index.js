@@ -146,26 +146,52 @@ function sendBatchMessage (reqPack) {
 }
 
 
+exports.addNewUserFromWeb = functions.https.onRequest((req, res) => {
+	cors((req, res) => {
+
+		let uid = req.body.userID
+		let pageinfo = {
+			'page': uid,
+			'appsecret_proof': env.messenger.proof
+		}
+
+		FB.api('/1287538277989643/ids_for_pages','GET', pageinfo,
+			response => {
+
+				if (error) {
+					res.json({ error: error })
+				}
+				else {
+					let data = response.data[0]
+					res.json({
+						error: null,
+						pageID: data.id
+					})
+				}
+			
+			}
+		)
+
+	})
+})
+
 exports.readLog = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
 		
-		let epochTime = Number(req.query['epoch'])
+		let date = req.query['date']
 
-		if (!epochTime) {
-			res.json ({ 
-				error: 'no epoch param assigned'
-			})
-		}
+		if (!date) res.json({ error: 'please specify date param' })
 		else {
 
-			let time = new Date(epochTime)
-			let date = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate()
-
-			db.ref(`batchLogs/${date}/${time.getTime()}/`).once('value')
+			db.ref(`/batchLogs/${date}`).once('value')
 			.then(batchSnapshot => {
 
-				let bat = batchSnapshot.val()
-				
+				let bat = {}
+				let rB = batchSnapshot.val()
+				Object.keys(rB).forEach(date => {
+					bat = Object.assign(bat, rB[date])
+				})
+					
 				let error = {
 					detail : [],
 					count : 0
@@ -206,6 +232,7 @@ exports.readLog = functions.https.onRequest((req, res) => {
 
 		}
 
+
 	})
 })
 
@@ -223,31 +250,31 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest( (req, res) =
 		) {
 			// console.log("Validating webhook")
 			res.status(200).send(req.query['hub.challenge'])
+
 		} else {
-			console.error(
-				'Failed validation. Make sure the validation tokens match.'
-			)
+			console.error('Failed validation. Make sure the validation tokens match.')
 			res.sendStatus(403)
 		}
 
 	} else if (req.method == 'POST') {
 
-		// console.log('POST Requested')
 		let data = req.body
+
 		// Make sure this is a page subscription
 		if (data.object === 'page') {
+
 			// Iterate over each entry - there may be multiple if batched
 			data.entry.forEach(function (entry) {
 				let pageID = entry.id
 				let timeOfEvent = entry.time
-				console.log(`page id [${pageID}] , TOE ${timeOfEvent}`)
+				// console.log(`page id [${pageID}] , TOE ${timeOfEvent}`)
 
 				// Iterate over each messaging event
 				entry.messaging.forEach(function (event) {
 					if (event.message) {
 						receivedMessage(event)
-					} else if (event.delivery) {
-						console.log(`Message delivered to ${event.sender.id}`)
+					// } else if (event.delivery) {
+					//	console.log(`Message delivered to ${event.sender.id}`)
 					} else {
 						console.log(`Webhook Unknown Event: ${JSON.stringify(event)}`)
 					}
@@ -266,7 +293,7 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest( (req, res) =
 	}
 })
 
-exports.getOverallStatus = functions.https.onRequest((req, res) => {
+exports.getQuizStatus = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
 		httpsFunctions.getOverallStatus(req, res)
 	})
@@ -666,55 +693,39 @@ function receivedMessage (event) {
 			console.log('________________________________')
 			// ----------------------------------------------------------------------------------------
 			console.log('before if')
-			if (
-				status.playing &&
-				quiz[status.currentQuiz].choices.indexOf(messageQRPayload) > -1  &&
-				participants &&
-				status.currentQuiz > -1
-			) {
+			if (status.playing && quiz[status.currentQuiz].choices.indexOf(messageQRPayload) > -1  &&
+				participants && status.currentQuiz > -1 ) {
 				
 				if (!status.canAnswer) {
 					sendTextMessage(senderID, 'หมดเวลาตอบข้อนี้แล้วจ้า')
 				}
 				else {
 
-					if (
-						participants[senderID] &&
-						!participants[senderID].answerPack[status.currentQuiz].ans
-					) {
-						participants[senderID].answerPack[
-							status.currentQuiz
-						].ans = messageQRPayload
-						participants[senderID].answerPack[
-							status.currentQuiz
-						].at = new Date().getTime()
+					sendTextMessage(senderID, 'ได้คำตอบแล้วจ้า~')
+
+					if (participants[senderID] && !participants[senderID].answerPack[status.currentQuiz].ans) {
+
+						participants[senderID].answerPack[status.currentQuiz].ans = messageQRPayload
+						participants[senderID].answerPack[status.currentQuiz].at = new Date().getTime()
 
 						if (messageQRPayload == quiz[status.currentQuiz].a) {
-							// sendTextMessage(senderID, `correct`)
-							participants[senderID].answerPack[
-								status.currentQuiz
-							].correct = true
+							participants[senderID].answerPack[status.currentQuiz].correct = true
 							participants[senderID].point++
 						}
 
-						// else sendTextMessage(senderID, `wrong, answer is ${quizPack[currentQuiz].a}`)
-						sendTextMessage(senderID, 'ได้คำตอบแล้วจ้า~')
 						db.ref(`participants/${senderID}`).set(participants[senderID])
-					} else if (
-						participants[senderID].answerPack[status.currentQuiz].ans
-					) {
+
+					} else if (participants[senderID].answerPack[status.currentQuiz].ans) {
 						sendTextMessage(senderID, 'คุณได้ตอบคำถามข้อนี้ไปแล้วนะ')
 					}
 				}
-			} else if (
-				messageQRPayload == 'เข้าร่วม' &&
-				((participants && !participants[senderID]) || !participants) &&
-				status.canEnter
-			) {
-				// ------- USER ENTER
-				console.log(`in the khaoruam // id : ${senderID}`)
 
-				console.log(`in the khaoruam // allID : ${JSON.stringify(allUsers)}`)
+			} else if ( messageQRPayload == 'เข้าร่วม' && ((participants && !participants[senderID]) || !participants) && status.canEnter ) {
+
+				// ------- USER ENTER
+				// console.log(`in the khaoruam // id : ${senderID}`)
+
+				// console.log(`in the khaoruam // allID : ${JSON.stringify(allUsers)}`)
 
 				// if(!participants[senderID]) {
 				let answerTemplate = Array(quiz.length).fill({
@@ -731,7 +742,7 @@ function receivedMessage (event) {
 					profilePic: allUsers[senderID].profilePic
 				}
 
-				console.log(`new parti: ${JSON.stringify(tempParticipant)}`)
+				console.log(`new parti: ${allUsers[senderID].firstName}`)
 				db.ref(`participants/${senderID}`).set(tempParticipant)
 
 				if (status.playing && status.canAnswer) {
@@ -770,7 +781,7 @@ function receivedMessage (event) {
 
 			} else if (messageText) {
 				// ------- USER MESSAGE NORMALLY
-				console.log('IN get message')
+				// console.log('IN get message')
 				// If we receive a text message, check to see if it matches a keyword
 				// and send back the example. Otherwise, just echo the text we received.
 				if (adminAvaiability) {
@@ -858,24 +869,16 @@ function receivedMessage (event) {
 					}
 
 				}
-				else if (
-					!allUsers ||
-					!allUsers[senderID] ||
-					!participants ||
-					!participants[senderID]
-				) {
-					console.log(
-						'user id not found in DB {OR} not in participants -> adding new user'
-					)
+				else if (!allUsers || !allUsers[senderID] || !participants || !participants[senderID]) {
+
+					console.log('user id not found in DB {OR} not in participants -> adding new user')
 					addNewUser(senderID)
+
 				} else if (!status.playing && !status.canEnter) {
-					console.log(
-						'this user is in our sigth, but game is end or not started yet, tell the user!'
-					)
-					sendTextMessage(
-						senderID,
-						'ขณะนี้ แชทชิงโชค ยังไม่เริ่ม ถ้าใกล้ถึงช่วงเวลาของกิจกรรมแล้วทางเราจะติดต่อกลับไปนะ'
-					)
+
+					console.log('this user is in our sigth, but game is end or not started yet, tell the user!')
+					sendTextMessage(senderID,'ขณะนี้ แชทชิงโชค ยังไม่เริ่ม ถ้าใกล้ถึงช่วงเวลาของกิจกรรมแล้วทางเราจะติดต่อกลับไปนะ')
+
 				} else {
 					// else if(!participants)
 					if (status.playing) {
@@ -939,6 +942,8 @@ function receivedMessage (event) {
 
 // ------------------------ TIMER  -------------------------
 
+// this approach has problem with rapidly fire quiz 
+// so, don't do it
 exports.answerGap = functions.database.ref('canAnswer').onWrite(event => {
 	
 	let canAnswer = event.data.val()
