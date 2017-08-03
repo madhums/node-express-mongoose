@@ -76,8 +76,105 @@ const recordNewUserID = function (userId) {
 
 }
 
+// temporary, should be merge with ^ 
+
+// const recordNewUserID_FBlogin = function (fbloginID, PSID, firebaseAuth) {
+
+const recordNewUserID_FBlogin = function (fbloginID, PSID, firebaseAuth) {
+
+  return new Promise((resolve, reject) => {
+
+    let userName = ''
+    let fetchedProfile = null
+
+    messengerAPI.callProfileAPI(PSID)
+    .then(profile => {
+      userName = `${profile.first_name} ${profile.last_name}`
+      fetchedProfile = profile
+      console.log(`profile : ${fetchedProfile}`)
+      return getAllID()
+    })
+    .then(allID => {
+
+      if (allID.indexOf(PSID) > -1) {
+        console.log(`duplciate user id, ${userName} already in DB, adding fb login id to DB`)
+        db.ref('users').orderByChild('fbid').equalTo(PSID).once('value')
+        .then(uSnap => {
+
+          let userInfo = uSnap.val()
+          let key = Object.keys(userInfo)[0]
+
+          console.log('user info : ' + userInfo)
+
+          if (!userInfo.fb_loginid) {
+
+            console.log(`users/${key}/ , fb_loginid : ${fbloginID}, key : ${firebaseAuth}`)
+            db.ref(`users/${key}/`).update({ fb_loginid: fbloginID , firebaseAuth: firebaseAuth })
+            .then(() => {
+              console.log('update fb_loginid success.')
+              // curious about timing, just in case
+              return resolve({
+                PSID: PSID,
+                firstName: userInfo.firstName,
+                lastName: userInfo.lastName
+              }) 
+            })
+
+          }
+          else { 
+            return resolve({
+                PSID: PSID,
+                firstName: userInfo.firstName,
+                lastName: userInfo.lastName
+              }) 
+          }
+          
+        })
+        .catch(error => {
+          console.log(`fb login update error: ${error}`);
+        })
+
+      }
+      else {
+        console.log('adding  new user')
+        // console.log(`json: ${JSON.stringify(fetchedProfile)}`)
+
+        db.ref('userIds').push().set(PSID)
+        db.ref('users').push().set({
+          'fbid': PSID,
+          'fb_loginid': fbloginID,
+          'firebaseAuth': firebaseAuth,
+          'firstName': fetchedProfile.first_name,
+          'lastName': fetchedProfile.last_name,
+          // 'gender': fetchedProfile.gender,
+          'profilePic': fetchedProfile.profile_pic,
+          'timezone': fetchedProfile.timezone,
+          'createdAt': (new Date()).toISOString()
+        })
+        .then(() => {
+          console.log('ADD NEW fb_loginid success.')
+          return resolve({
+                PSID: PSID,
+                firstName: fetchedProfile.first_name,
+                lastName: fetchedProfile.last_name
+              })
+        })
+
+      }
+
+    })
+    .catch(error => {
+      console.log(`fb login add new user error: ${error}`);
+      reject(error)
+    })
+
+  })
+
+}
+
 
 module.exports = {
   recordNewUserID,
-  getAllID
+  getAllID,
+  recordNewUserID_FBlogin
 }

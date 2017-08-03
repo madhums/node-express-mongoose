@@ -147,30 +147,63 @@ function sendBatchMessage (reqPack) {
 
 
 exports.addNewUserFromWeb = functions.https.onRequest((req, res) => {
-	cors((req, res, ()  => {
+	cors(req, res, ()  => {
 
-		let uid = req.body.userID
-		let pageinfo = {
-			'page': uid,
-			'appsecret_proof': env.messenger.proof
-		}
+		let uid = req.body.userID // || req.query['xuid']
+		let firebaseAuth = req.body.firebaseKey
 
-		FB.api('/1287538277989643/ids_for_pages','GET', pageinfo,
-			response => {
+		if (!uid || !firebaseAuth ) res.json({ error: 'no userID or Firebase Authen key' })
+		else {
 
-				if (error) {
-					res.json({ error: error })
+			axios.get(`https://graph.facebook.com/v2.10/${uid}/ids_for_pages`, {
+				params: {
+					page: '1849513501943443', // DS page ID
+					appsecret_proof: env.messenger.proof,
+					access_token: env.messenger.access_token,
+					include_headers: false
 				}
-				else {
-					let data = response.data[0]
-					res.json({
-						error: null,
-						pageID: data.id
+			})
+			.then(response => {
+
+				if (response.status == 200) {
+
+					let data = response.data.data[0]
+					console.log(`data.id : ${data.id}`)
+					userManagementAPI.recordNewUserID_FBlogin(uid, data.id, firebaseAuth)
+					.then(userData => {
+						
+						res.json({
+							error: null,
+							PSID: userData.PSID,
+							firstName: userData.firstName,
+							lastName: userData.lastName
+						})
+
 					})
+					// wait for response from recordNewUserID_FBlogin
+
+					// res.json({
+					// 	error: null,
+					// 	message: 'everything should be fine'
+					// })
+
 				}
-			
-			}
-		)
+				else res.json({
+					error: `response with status code ${response.status}`
+				})				
+
+			})
+			.catch(err => {
+
+				res.json({
+					error: err.response.data.error.message,
+					error_code: err.response.data.error.code
+				})
+
+			})
+
+		}
+		
 
 	})
 })
@@ -568,6 +601,7 @@ function sendCascadeMessage (id, textArray) {
 	)
 
 }
+
 
 function addNewUser (newUserId) {
 
