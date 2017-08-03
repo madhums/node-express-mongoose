@@ -104,7 +104,7 @@ const recordNewUserID_FBlogin = function (fbloginID, PSID, firebaseAuth) {
           let userInfo = uSnap.val()
           let key = Object.keys(userInfo)[0]
 
-          console.log('user info : ' + userInfo)
+          // console.log('user info : ' + JSON.stringify(userInfo[key]) )
 
           if (!userInfo.fb_loginid) {
 
@@ -115,17 +115,17 @@ const recordNewUserID_FBlogin = function (fbloginID, PSID, firebaseAuth) {
               // curious about timing, just in case
               return resolve({
                 PSID: PSID,
-                firstName: userInfo.firstName,
-                lastName: userInfo.lastName
-              }) 
+                firstName: userInfo[key].firstName,
+                lastName: userInfo[key].lastName
+              })
             })
 
           }
           else { 
             return resolve({
                 PSID: PSID,
-                firstName: userInfo.firstName,
-                lastName: userInfo.lastName
+                firstName: userInfo[key].firstName,
+                lastName: userInfo[key].lastName
               }) 
           }
           
