@@ -154,7 +154,8 @@ exports.answerFromWeb = functions.https.onRequest((req, res) => {
     if(!PSID || ! answer) res.json({ error: 'no PSID, answer data found' })
     else {
 
-      let participantInfo = null
+	  let participantInfo = null
+	  let status = null
 
       db.ref(`participants/${PSID}`).once('value')
       .then(partSnap => {
@@ -163,19 +164,21 @@ exports.answerFromWeb = functions.https.onRequest((req, res) => {
         if(participantInfo == null) throw `error getting info of participant id : ${PSID}`
         else return _getStatus()
       })
-      .then(status => {
-        
-        if(!status.playing) res.json({ error: 1, message: 'quiz not started' })
-        else if(!status.canAnswer) res.json({ error: 1, message: 'quiz timeout' })
-        else if(participantInfo.answerPack[status.currentQuiz].ans.length > 0) res.json({ error: 2, message: 'already answered' })
-        else return db.ref(`quiz/${status.currentQuiz}`) // status.playing && status.canAnswer
+      .then(fStatus => {
+		
+		status = fStatus
+		
+        if(!status.playing) throw { code: 1, message: 'quiz not started' }
+        else if(!status.canAnswer) throw { code: 1, message: 'quiz timeout' }
+        else if(participantInfo.answerPack[status.currentQuiz].ans.length > 0) throw { code: 2, message: 'already answered' }
+        else return db.ref(`quiz/${status.currentQuiz}`).once('value') // status.playing && status.canAnswer
 
       })
       .then(quizSnap => {
         
         let quiz = quizSnap.val()
         
-        if(quiz.choices.indexOf(answer) == -1 ) res.json({ error: 2, message: 'answer not in choices scope ?!' })
+        if(quiz.choices.indexOf(answer) == -1 ) throw { code: 2, message: 'answer not in choices scope ?!' }
         else if(answer == quiz.a) {
           participantInfo.answerPack[status.currentQuiz].correct = true
 					participantInfo.point++
@@ -197,12 +200,11 @@ exports.answerFromWeb = functions.https.onRequest((req, res) => {
       })
       .catch(error => {
 
-        console.log(`Error found in [answerFromWeb]: ${error}`)
-
-        res.json({
-          error: 3,
-          message: error
-        })
+		console.log(`Error found in [answerFromWeb]: ${error}`)
+		
+		if(error.code) res.json({ error: error.code, message: error.message })
+		else res.json({ error: 3, message: error })
+		
       })
 
     }
