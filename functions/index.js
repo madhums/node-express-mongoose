@@ -145,6 +145,71 @@ function sendBatchMessage (reqPack) {
 	}
 }
 
+exports.answerFromWeb = functions.https.onRequest((req, res) => {
+  cors(req, res, () => {
+
+    let PSID = req.body.PSID
+    let answer = req.body.answer
+
+    if(PSID || ! answer) res.json({ error: 'no PSID, answer data found' })
+    else {
+
+      let participantInfo = null
+
+      db.ref(`participants/${PSID}`).once('value')
+      .then(partSnap => {
+        participantInfo = partSnap.val()
+
+        if(participantInfo == null) throw `error getting info of participant id : ${PSID}`
+        else return _getStatus()
+      })
+      .then(status => {
+        
+        if(!status.playing) res.json({ error: 1, message: 'quiz not started' })
+        else if(!status.canAnswer) res.json({ error: 1, message: 'quiz timeout' })
+        else if(participantInfo.answerPack[status.currentQuiz].ans.length > 0) res.json({ error: 2, message: 'already answered' })
+        else return db.ref(`quiz/${status.currentQuiz}`) // status.playing && status.canAnswer
+
+      })
+      .then(quizSnap => {
+        
+        let quiz = quizSnap.val()
+        
+        if(quiz.choices.indexOf(answer) == -1 ) res.json({ error: 2, message: 'answer not in choices scope ?!' })
+        else if(answer == quiz.a) {
+          participantInfo.answerPack[status.currentQuiz].correct = true
+					participantInfo.point++
+        }
+
+        participantInfo.answerPack[status.currentQuiz].ans = answer
+        db.ref(`participants/${PSID}/`).set(participantInfo)
+        .then(() => {
+
+          console.log(`update participant [${PSID}] answer for quiz no [${status.currentQuiz}] success`)
+          
+          res.json({
+            error: null,
+            message: 'update success'
+          })
+          
+        })
+
+      })
+      .catch(error => {
+
+        console.log(`Error found in [answerFromWeb]: ${error}`)
+
+        res.json({
+          error: 3,
+          message: error
+        })
+      })
+
+    }
+    
+    
+  })
+})
 
 exports.addNewUserFromWeb = functions.https.onRequest((req, res) => {
 	cors(req, res, ()  => {
@@ -180,12 +245,6 @@ exports.addNewUserFromWeb = functions.https.onRequest((req, res) => {
 						})
 
 					})
-					// wait for response from recordNewUserID_FBlogin
-
-					// res.json({
-					// 	error: null,
-					// 	message: 'everything should be fine'
-					// })
 
 				}
 				else res.json({
