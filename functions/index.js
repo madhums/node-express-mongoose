@@ -151,7 +151,7 @@ exports.answerFromWeb = functions.https.onRequest((req, res) => {
     let PSID = req.body.PSID
     let answer = req.body.answer
 
-    if(PSID || ! answer) res.json({ error: 'no PSID, answer data found' })
+    if(!PSID || ! answer) res.json({ error: 'no PSID, answer data found' })
     else {
 
       let participantInfo = null
