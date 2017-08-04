@@ -4,7 +4,7 @@ const admin = firebaseInit.admin
 const env = firebaseInit.env
 
 const cors = require('cors')({
-	origin: ['http://localhost:3000', 'https://codelab-a8367.firebaseapp.com']
+	origin: ['http://localhost:3000', 'https://codelab-a8367.firebaseapp.com', 'https://codelab-a8367.firebaseapp.com/']
 })
 
 const db = admin.database()
@@ -215,6 +215,29 @@ exports.answerFromWeb = functions.https.onRequest((req, res) => {
   })
 })
 
+exports.addCoupon = functions.https.onRequest((req, res) => {
+	
+	db.ref('users').once('value')
+	.then(us => {
+		let users = us.val()
+		
+		for (let key in users) {
+			users[key].coupon = 0
+		}
+
+		return db.ref('users').set(users)
+
+	})
+	.then(() => {
+		res.send('success')
+	})
+	.catch(error => {
+		console.log(`error testChecker: ${error}`)
+		res.send('failed')
+	})
+
+})
+
 exports.addNewUserFromWeb = functions.https.onRequest((req, res) => {
 	cors(req, res, ()  => {
 
@@ -236,6 +259,8 @@ exports.addNewUserFromWeb = functions.https.onRequest((req, res) => {
 
 				if (response.status == 200) {
 
+					if (response.data.data.length < 1) throw { error: 'This user need to chat on page first', error_code: 5555 }
+
 					let data = response.data.data[0]
 					console.log(`data.id : ${data.id}`)
 					userManagementAPI.recordNewUserID_FBlogin(uid, data.id, firebaseAuth)
@@ -252,13 +277,22 @@ exports.addNewUserFromWeb = functions.https.onRequest((req, res) => {
 
 				}
 				else res.json({
-					error: `response with status code ${response.status}`
+					error: `response with status code ${response.status}`,
+					error_code: `HTTP status code ${response.status}`
 				})				
 
 			})
 			.catch(err => {
 
-				res.json({
+				if (err.error_code == 5555) {
+
+					res.json({
+						error: err.error,
+						error_code: err.error_code
+					})
+
+				}
+				else res.json({
 					error: err.response.data.error.message,
 					error_code: err.response.data.error.code
 				})

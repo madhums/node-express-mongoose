@@ -63,7 +63,8 @@ const recordNewUserID = function (userId) {
         // 'gender': fetchedProfile.gender,
         'profilePic': fetchedProfile.profile_pic,
         'timezone': fetchedProfile.timezone,
-        'createdAt': (new Date()).toISOString()
+        'createdAt': (new Date()).toISOString(),
+        'counpon': 0
       })
 
     }
@@ -106,17 +107,26 @@ const recordNewUserID_FBlogin = function (fbloginID, PSID, firebaseAuth) {
 
           // console.log('user info : ' + JSON.stringify(userInfo[key]) )
 
-          if (!userInfo.fb_loginid) {
+          if (!userInfo[key].fb_loginid || userInfo[key].coupon == null) {
 
             console.log(`users/${key}/ , fb_loginid : ${fbloginID}, key : ${firebaseAuth}`)
-            db.ref(`users/${key}/`).update({ fb_loginid: fbloginID , firebaseAuth: firebaseAuth })
+            
+            let updatePack = {}
+            
+            if (!userInfo[key].fb_loginid) updatePack.fb_loginid = fbloginID
+            if (userInfo[key].coupon == null) updatePack.coupon = 0
+            
+            updatePack.firebaseAuth = firebaseAuth
+
+            db.ref(`users/${key}/`).update(updatePack)
             .then(() => {
               console.log('update fb_loginid success.')
               // curious about timing, just in case
               return resolve({
                 PSID: PSID,
                 firstName: userInfo[key].firstName,
-                lastName: userInfo[key].lastName
+                lastName: userInfo[key].lastName,
+                coupon: 0
               })
             })
 
@@ -125,7 +135,8 @@ const recordNewUserID_FBlogin = function (fbloginID, PSID, firebaseAuth) {
             return resolve({
                 PSID: PSID,
                 firstName: userInfo[key].firstName,
-                lastName: userInfo[key].lastName
+                lastName: userInfo[key].lastName,
+                coupon: userInfo[key].coupon
               }) 
           }
           
@@ -148,6 +159,7 @@ const recordNewUserID_FBlogin = function (fbloginID, PSID, firebaseAuth) {
           'lastName': fetchedProfile.last_name,
           // 'gender': fetchedProfile.gender,
           'profilePic': fetchedProfile.profile_pic,
+          'coupon': 0,
           'timezone': fetchedProfile.timezone,
           'createdAt': (new Date()).toISOString()
         })
@@ -156,7 +168,8 @@ const recordNewUserID_FBlogin = function (fbloginID, PSID, firebaseAuth) {
           return resolve({
                 PSID: PSID,
                 firstName: fetchedProfile.first_name,
-                lastName: fetchedProfile.last_name
+                lastName: fetchedProfile.last_name,
+                coupon: 0
               })
         })
 
