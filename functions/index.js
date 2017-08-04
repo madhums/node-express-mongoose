@@ -270,7 +270,8 @@ exports.addNewUserFromWeb = functions.https.onRequest((req, res) => {
 							error: null,
 							PSID: userData.PSID,
 							firstName: userData.firstName,
-							lastName: userData.lastName
+							lastName: userData.lastName,
+							coupon: userData.coupon
 						})
 
 					})
