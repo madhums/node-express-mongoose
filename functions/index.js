@@ -151,26 +151,26 @@ exports.answerFromWeb = functions.https.onRequest((req, res) => {
     let PSID = req.body.PSID
     let answer = req.body.answer
 
-    if(!PSID || ! answer) res.json({ error: 'no PSID, answer data found' })
+    if (!PSID || ! answer) res.json({ error: 'no PSID, answer data found' })
     else {
 
-	  let participantInfo = null
-	  let status = null
+		let participantInfo = null
+		let status = null
 
-      db.ref(`participants/${PSID}`).once('value')
-      .then(partSnap => {
-        participantInfo = partSnap.val()
+    db.ref(`participants/${PSID}`).once('value')
+    .then(partSnap => {
+      participantInfo = partSnap.val()
 
-        if(participantInfo == null) throw `error getting info of participant id : ${PSID}`
-        else return _getStatus()
+			if (participantInfo == null) throw `error getting info of participant id : ${PSID}`
+				else return _getStatus()
       })
       .then(fStatus => {
 		
-		status = fStatus
+				status = fStatus
 		
-        if(!status.playing) throw { code: 1, message: 'quiz not started' }
-        else if(!status.canAnswer) throw { code: 1, message: 'quiz timeout' }
-        else if(participantInfo.answerPack[status.currentQuiz].ans.length > 0) throw { code: 2, message: 'already answered' }
+        if (!status.playing) throw { code: 1, message: 'quiz not started' }
+        else if (!status.canAnswer) throw { code: 1, message: 'quiz timeout' }
+        else if (participantInfo.answerPack[status.currentQuiz].ans.length > 0) throw { code: 2, message: 'already answered' }
         else return db.ref(`quiz/${status.currentQuiz}`).once('value') // status.playing && status.canAnswer
 
       })
@@ -178,13 +178,15 @@ exports.answerFromWeb = functions.https.onRequest((req, res) => {
         
         let quiz = quizSnap.val()
         
-        if(quiz.choices.indexOf(answer) == -1 ) throw { code: 2, message: 'answer not in choices scope ?!' }
-        else if(answer == quiz.a) {
+        if (quiz.choices.indexOf(answer) == -1 ) throw { code: 2, message: 'answer not in choices scope ?!' }
+        else if (answer == quiz.a) {
           participantInfo.answerPack[status.currentQuiz].correct = true
 					participantInfo.point++
         }
 
-        participantInfo.answerPack[status.currentQuiz].ans = answer
+				participantInfo.answerPack[status.currentQuiz].at = (new Date()).getTime()
+				participantInfo.answerPack[status.currentQuiz].ans = answer
+				
         db.ref(`participants/${PSID}/`).set(participantInfo)
         .then(() => {
 
@@ -202,7 +204,7 @@ exports.answerFromWeb = functions.https.onRequest((req, res) => {
 
 		console.log(`Error found in [answerFromWeb]: ${error}`)
 		
-		if(error.code) res.json({ error: error.code, message: error.message })
+		if (error.code) res.json({ error: error.code, message: error.message })
 		else res.json({ error: 3, message: error })
 		
       })
