@@ -4,7 +4,7 @@ const admin = firebaseInit.admin
 const env = firebaseInit.env
 
 const cors = require('cors')({
-	origin: ['http://localhost:3000', 'https://codelab-a8367.firebaseapp.com', 'https://chatchingchoke.club/']
+	origin: ['http://localhost:3000', 'https://codelab-a8367.firebaseapp.com', 'https://chatchingchoke.club']
 })
 
 const db = admin.database()
