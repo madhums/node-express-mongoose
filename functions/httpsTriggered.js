@@ -237,8 +237,8 @@ module.exports = function (util, messengerFunctions) {
 					else return b.point - a.point
 				})
 
-				if (topUsers.length > 10) {
-					topUsers = topUsers.splice(0, 10)
+				if (topUsers.length > 15) {
+					topUsers = topUsers.splice(0, 15)
 				}
 
 				res.json({

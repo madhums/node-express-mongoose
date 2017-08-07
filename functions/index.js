@@ -4,7 +4,7 @@ const admin = firebaseInit.admin
 const env = firebaseInit.env
 
 const cors = require('cors')({
-	origin: ['http://localhost:3000', 'https://codelab-a8367.firebaseapp.com', 'https://codelab-a8367.firebaseapp.com/']
+	origin: ['http://localhost:3000', 'https://codelab-a8367.firebaseapp.com', 'https://chatchingchoke.club/']
 })
 
 const db = admin.database()
@@ -202,10 +202,10 @@ exports.answerFromWeb = functions.https.onRequest((req, res) => {
       })
       .catch(error => {
 
-		console.log(`Error found in [answerFromWeb]: ${error}`)
-		
-		if (error.code) res.json({ error: error.code, message: error.message })
-		else res.json({ error: 3, message: error })
+				console.log(`Error found in [answerFromWeb]: ${error}`)
+				
+				if (error.code) res.json({ error: error.code, message: error.message })
+				else res.json({ error: 3, message: error })
 		
       })
 
@@ -243,10 +243,12 @@ exports.addNewUserFromWeb = functions.https.onRequest((req, res) => {
 
 		let uid = req.body.userID // || req.query['xuid']
 		let firebaseAuth = req.body.firebaseKey
+		
 
-		if (!uid || !firebaseAuth ) res.json({ error: 'no userID or Firebase Authen key' })
+		if (!uid || !firebaseAuth ) res.json({ error: 'no userID or Firebase Auth key' })
 		else {
 
+			console.log(`in else ${uid}`)
 			axios.get(`https://graph.facebook.com/v2.10/${uid}/ids_for_pages`, {
 				params: {
 					page: '1849513501943443', // DS page ID
