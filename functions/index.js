@@ -1,21 +1,22 @@
+
+const FB = require('fbgraph')
+const axios = require('axios')
+const param = require('jquery-param')
 const firebaseInit = require('./firebase-settings.js')
+
 const functions = firebaseInit.functions
 const admin = firebaseInit.admin
 const env = firebaseInit.env
+const db = admin.database()
+
+const messengerAPI = require('./API/messengerProfile.js')
+const userManagementAPI = require('./API/userManagement.js')
 
 const cors = require('cors')({
 	origin: ['http://localhost:3000', 'https://codelab-a8367.firebaseapp.com', 'https://chatchingchoke.club']
 })
 
-const db = admin.database()
-const FB = require('fbgraph')
-const param = require('jquery-param')
-const axios = require('axios')
-
 FB.setAccessToken(env.messenger.page_token)
-
-const messengerAPI = require('./API/messengerProfile.js')// (axios, env.messenger)
-const userManagementAPI = require('./API/userManagement.js')
 
 let util = {
 	'getFireQuizAt': _getFireQuizAt,
@@ -31,10 +32,7 @@ let messengerFunctions = {
 	'sendBatchMessage': sendBatchMessage
 }
 
-const httpsFunctions = require('./httpsTriggered.js')(
-	util,
-	messengerFunctions
-)
+const httpsFunctions = require('./httpsTriggered.js')(util, messengerFunctions)
 
 console.log('STARTING SERVICE')
 
@@ -96,125 +94,8 @@ function _getStatus () {
 }
 
 
-// ------------------------------------------------
 
-function sendBatchMessage (reqPack) {
-
-	// REQUEST FORMAT (reqPack must be array of data like this)
-	//
-	// let bodyData = {
-	// 	recipient: {
-	// 		id: user.fbid
-	// 	},
-	// 	message: {
-	// 		text: `สวัสดี ${user.firstName} ทดสอบอีกที`
-	// 	}
-	// }
-
-	// requests.push({
-	// 	method: 'POST',
-	// 	relative_url: 'me/messages?include_headers=false',
-	// 	body: param(bodyData)
-	// })
-
-	// batch allow 50 commands per request
-	let batchLimit = 50
-	for (let i = 0; i < reqPack.length; i += batchLimit) {
-
-		FB.batch(reqPack.slice(i, i + batchLimit), (error, res) => {
-
-			if (error) {
-				console.log(`\n batch [${i}] error : ${JSON.stringify(error)} \n`)
-			}
-			else {
-
-				console.log(`batch [${i}] / no error : `)
-				let time = new Date()
-				let date = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate()
-				let epochTime = time.getTime()
-
-				res.forEach(response => {
-					db.ref(`batchLogs/${date}/${epochTime}`).push().set(response['body'])
-					console.log(response['body'])
-				})
-					
-			}
-
-		})
-
-	}
-}
-
-exports.answerFromWeb = functions.https.onRequest((req, res) => {
-  cors(req, res, () => {
-
-    let PSID = req.body.PSID
-    let answer = req.body.answer
-
-    if (!PSID || ! answer) res.json({ error: 'no PSID, answer data found' })
-    else {
-
-		let participantInfo = null
-		let status = null
-
-    db.ref(`participants/${PSID}`).once('value')
-    .then(partSnap => {
-      participantInfo = partSnap.val()
-
-			if (participantInfo == null) throw `error getting info of participant id : ${PSID}`
-				else return _getStatus()
-      })
-      .then(fStatus => {
-		
-				status = fStatus
-		
-        if (!status.playing) throw { code: 1, message: 'quiz not started' }
-        else if (!status.canAnswer) throw { code: 1, message: 'quiz timeout' }
-        else if (participantInfo.answerPack[status.currentQuiz].ans.length > 0) throw { code: 2, message: 'already answered' }
-        else return db.ref(`quiz/${status.currentQuiz}`).once('value') // status.playing && status.canAnswer
-
-      })
-      .then(quizSnap => {
-        
-        let quiz = quizSnap.val()
-        
-        if (quiz.choices.indexOf(answer) == -1 ) throw { code: 2, message: 'answer not in choices scope ?!' }
-        else if (answer == quiz.a) {
-          participantInfo.answerPack[status.currentQuiz].correct = true
-					participantInfo.point++
-        }
-
-				participantInfo.answerPack[status.currentQuiz].at = (new Date()).getTime()
-				participantInfo.answerPack[status.currentQuiz].ans = answer
-				
-        db.ref(`participants/${PSID}/`).set(participantInfo)
-        .then(() => {
-
-          console.log(`update participant [${PSID}] answer for quiz no [${status.currentQuiz}] success`)
-          
-          res.json({
-            error: null,
-            message: 'update success'
-          })
-          
-        })
-
-      })
-      .catch(error => {
-
-				console.log(`Error found in [answerFromWeb]: ${error}`)
-				
-				if (error.code) res.json({ error: error.code, message: error.message })
-				else res.json({ error: 3, message: error })
-		
-      })
-
-    }
-    
-    
-  })
-})
-
+/*
 exports.addCoupon = functions.https.onRequest((req, res) => {
 	
 	db.ref('users').once('value')
@@ -237,137 +118,7 @@ exports.addCoupon = functions.https.onRequest((req, res) => {
 	})
 
 })
-
-exports.addNewUserFromWeb = functions.https.onRequest((req, res) => {
-	cors(req, res, ()  => {
-
-		let uid = req.body.userID // || req.query['xuid']
-		let firebaseAuth = req.body.firebaseKey
-		
-
-		if (!uid || !firebaseAuth ) res.json({ error: 'no userID or Firebase Auth key' })
-		else {
-
-			console.log(`in else ${uid}`)
-			axios.get(`https://graph.facebook.com/v2.10/${uid}/ids_for_pages`, {
-				params: {
-					page: '1849513501943443', // DS page ID
-					appsecret_proof: env.messenger.proof,
-					access_token: env.messenger.access_token,
-					include_headers: false
-				}
-			})
-			.then(response => {
-
-				if (response.status == 200) {
-
-					if (response.data.data.length < 1) throw { error: 'This user need to chat on page first', error_code: 5555 }
-
-					let data = response.data.data[0]
-					console.log(`data.id : ${data.id}`)
-					userManagementAPI.recordNewUserID_FBlogin(uid, data.id, firebaseAuth)
-					.then(userData => {
-						
-						res.json({
-							error: null,
-							PSID: userData.PSID,
-							firstName: userData.firstName,
-							lastName: userData.lastName,
-							coupon: userData.coupon
-						})
-
-					})
-
-				}
-				else res.json({
-					error: `response with status code ${response.status}`,
-					error_code: `HTTP status code ${response.status}`
-				})				
-
-			})
-			.catch(err => {
-
-				if (err.error_code == 5555) {
-
-					res.json({
-						error: err.error,
-						error_code: err.error_code
-					})
-
-				}
-				else res.json({
-					error: err.response.data.error.message,
-					error_code: err.response.data.error.code
-				})
-
-			})
-
-		}
-		
-
-	})
-})
-
-exports.readLog = functions.https.onRequest((req, res) => {
-	cors(req, res, () => {
-		
-		let date = req.query['date']
-
-		if (!date) res.json({ error: 'please specify date param' })
-		else {
-
-			db.ref(`/batchLogs/${date}`).once('value')
-			.then(batchSnapshot => {
-
-				let bat = {}
-				let rB = batchSnapshot.val()
-				Object.keys(rB).forEach(date => {
-					bat = Object.assign(bat, rB[date])
-				})
-					
-				let error = {
-					detail : [],
-					count : 0
-				}
-
-				let success = {
-					detail : [],
-					count : 0
-				}
-
-				let logCount = Object.keys(bat).length
-
-				Object.keys(bat).forEach(key => {
-
-					let tempLog = JSON.parse(bat[key])
-
-					if (tempLog.error) {
-						error.detail.push(tempLog)
-						error.count++
-					}
-					else if (tempLog.recipient_id) {
-						success.detail.push(tempLog)
-						success.count++
-					}
-
-				})
-
-				res.json({
-					total: logCount,
-					success: success,
-					error: error
-				})
-
-			})
-			.catch(error => {
-				console.error(error)
-			})
-
-		}
-
-
-	})
-})
+*/
 
 
 // ------------------------------
@@ -426,6 +177,23 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest( (req, res) =
 	}
 })
 
+// -------------------- WEB API
+
+
+exports.addNewUserFromWeb = functions.https.onRequest((req, res) => {
+	cors(req, res, ()  => {
+		httpsFunctions.addNewUserFromWeb(req, res, env.messenger)
+	})
+})
+
+exports.answerFromWeb = functions.https.onRequest((req, res) => {
+  cors(req, res, () => {
+    httpsFunctions.answerFromWeb(req, res)
+  })
+})
+
+// ---------------------------------------------------------------
+
 exports.getQuizStatus = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
 		httpsFunctions.getOverallStatus(req, res)
@@ -450,10 +218,45 @@ exports.getTopUsers = functions.https.onRequest((req, res) => {
 	})
 })
 
-
 exports.sendRequest = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
 		httpsFunctions.sendRequest(req, res)
+	})
+})
+
+exports.addQuiz = functions.https.onRequest((req, res) => {
+	cors(req, res, () => {
+		httpsFunctions.addQuiz(req, res)
+	})
+})
+
+exports.sendResult = functions.https.onRequest((req, res) => {
+	cors(req, res, () => {
+		httpsFunctions.sendResult(req, res)
+	})
+})
+
+exports.restart = functions.https.onRequest((req, res) => {
+	cors(req, res, () => {
+		httpsFunctions.restart(req, res)
+	})
+})
+
+exports.readLog = functions.https.onRequest((req, res) => {
+	cors(req, res, () => {
+		httpsFunctions.readLog(req ,res)
+	})
+})
+
+exports.sendCoupon = functions.https.onRequest((req, res) => {
+	cors(req, res, () => {
+		httpsFunctions.sendCoupon(req, res)
+	})
+})
+
+exports.sendCouponUpdate = functions.https.onRequest((req, res) => {
+	cors(req, res, () => {
+		httpsFunctions.updateCouponBalanceToUsers(req, res)
 	})
 })
 
@@ -601,25 +404,58 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
 	})
 })
 
-exports.addQuiz = functions.https.onRequest((req, res) => {
-	cors(req, res, () => {
-		httpsFunctions.addQuiz(req, res)
-	})
-})
 
-exports.sendResult = functions.https.onRequest((req, res) => {
-	cors(req, res, () => {
-		httpsFunctions.sendResult(req, res)
-	})
-})
+// ------------------- Messenger Function
 
-exports.restart = functions.https.onRequest((req, res) => {
-	cors(req, res, () => {
-		httpsFunctions.restart(req, res)
-	})
-})
 
-// //////////////////////////////////////////////////////////////////// f(x)
+function sendBatchMessage (reqPack) {
+
+	// REQUEST FORMAT (reqPack must be array of data like this)
+	/*
+		
+		let bodyData = {
+			recipient: {
+				id: user.fbid
+			},
+			message: {
+				text: `สวัสดี ${user.firstName} ทดสอบอีกที`
+			}
+		}
+
+		requests.push({
+			method: 'POST',
+			relative_url: 'me/messages?include_headers=false',
+			body: param(bodyData)
+		})
+	*/
+
+	// batch allow 50 commands per request, read this : https://developers.facebook.com/docs/graph-api/making-multiple-requests/
+	let batchLimit = 50
+	for (let i = 0; i < reqPack.length; i += batchLimit) {
+
+		FB.batch(reqPack.slice(i, i + batchLimit), (error, res) => {
+
+			if (error) {
+				console.log(`\n batch [${i}] error : ${JSON.stringify(error)} \n`)
+			}
+			else {
+
+				console.log(`batch [${i}] / no error : `)
+				let time = new Date()
+				let date = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate()
+				let epochTime = time.getTime()
+
+				res.forEach(response => {
+					db.ref(`batchLogs/${date}/${epochTime}`).push().set(response['body'])
+					console.log(response['body'])
+				})
+					
+			}
+
+		})
+
+	}
+}
 
 function sendQuickReplies (recipientId, quickReplies) {
 	let messageData = {
@@ -827,8 +663,8 @@ function receivedMessage (event) {
 			console.log('________________________________')
 			// ----------------------------------------------------------------------------------------
 			console.log('before if')
-			if (status.playing && quiz[status.currentQuiz].choices.indexOf(messageQRPayload) > -1  &&
-				participants && status.currentQuiz > -1 ) {
+			if (status.playing && status.currentQuiz > -1 && quiz[status.currentQuiz].choices.indexOf(messageQRPayload) > -1  &&
+				participants) {
 				
 				if (!status.canAnswer) {
 					sendTextMessage(senderID, 'หมดเวลาตอบข้อนี้แล้วจ้า')
