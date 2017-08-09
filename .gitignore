@@ -3,5 +3,4 @@ npm-debug.log
 .env
 functions/credential/facebookKey.json
 functions/credential/serviceAccountKey.json
-lab
-lab/quiz/rov.txt
+lab/
