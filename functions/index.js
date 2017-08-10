@@ -151,7 +151,7 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest( (req, res) =
 			data.entry.forEach(function (entry) {
 				let pageID = entry.id
 				let timeOfEvent = entry.time
-				// console.log(`page id [${pageID}] , TOE ${timeOfEvent}`)
+				console.log(`page id [${pageID}] , TOE ${timeOfEvent}`)
 
 				// Iterate over each messaging event
 				entry.messaging.forEach(function (event) {
@@ -311,20 +311,23 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
 						})
 					else {
 						
-						let answerTime = req.query.timer
-							? parseInt(req.query.timer) + 10
-							: 70
 						let quickReplyChoices = []
+						let answerTime = req.query.timer ? parseInt(req.query.timer) + 10 : 70
 
 						db.ref('answerWindow').set(answerTime)
 
-						quickReplyChoices = quiz[status.currentQuiz].choices.map(choice => {
-							return {
-								content_type: 'text',
-								title: choice,
-								payload: choice
-							}
-						})
+						// check if this quiz has choices
+						if (quiz[status.currentQuiz].choices) {
+
+							quickReplyChoices = quiz[status.currentQuiz].choices.map(choice => {
+								return {
+									content_type: 'text',
+									title: choice,
+									payload: choice
+								}
+							})
+
+						}
 
 						// ---------- start preparing batch request
 
@@ -337,9 +340,13 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
 								id: id
 								},
 								message: {
-									text: quiz[status.currentQuiz].q,
-									quick_replies: quickReplyChoices
+									text: quiz[status.currentQuiz].q
 								}
+							}
+
+							// if chocies prepared, add choices to quick replies button
+							if (quickReplyChoices.length > 0) {
+								quizBodyData.message.quick_replies = quickReplyChoices
 							}
 
 							sendQuizBatch.push({
@@ -349,6 +356,7 @@ exports.sendQuiz = functions.https.onRequest((req, res) => {
 							})
 
 						})
+						
 
 						if (!fireQuizAt) fireQuizAt = Array(quiz.length).fill(0)
 
@@ -604,13 +612,12 @@ function receivedMessage (event) {
 
 	console.log('Received message for user %d and page %d at %d with message:',
 	senderID, recipientID, timeOfMessage)
-	// console.log(JSON.stringify(message))
+	console.log(JSON.stringify(message))
 
 	// let messageId = message.mid
 	let messageText = message.text
-	let messageQRPayload = message.quick_reply
-		? message.quick_reply.payload
-		: 'noValue'
+	let messageQRPayload = message.quick_reply ? message.quick_reply.payload : 'noValue'
+	// let getStartedPayload = 
 	let messageAttachments = message.attachments
 
 	// ------- USER ANSWER
@@ -630,7 +637,7 @@ function receivedMessage (event) {
 					adminAvaiability = true
 			}
 			
-			console.log(`admin : ${JSON.stringify(admins)}`)
+			// console.log(`admin : ${JSON.stringify(admins)}`)
 			return _getStatus()
 		})
 		.then(fetchedStatus => {
@@ -662,35 +669,97 @@ function receivedMessage (event) {
 			console.log(`_______ ${JSON.stringify(status)} ______`)
 			console.log('________________________________')
 			// ----------------------------------------------------------------------------------------
-			console.log('before if')
-			if (status.playing && status.currentQuiz > -1 && quiz[status.currentQuiz].choices.indexOf(messageQRPayload) > -1  &&
-				participants) {
-				
-				if (!status.canAnswer) {
-					sendTextMessage(senderID, 'หมดเวลาตอบข้อนี้แล้วจ้า')
-				}
+			
+			// console.log(`USER PAYLOAD = ${messageQRPayload}`)
+
+			if (status.playing && status.currentQuiz > -1 && participants) {
+
+				console.log('in answer validation process')
+
+				// idea is : if stringAnswer is true => use messageText else check payload
+				if (!participants[senderID]) addNewUser()
 				else {
 
-					sendTextMessage(senderID, 'ได้คำตอบแล้วจ้า~')
+					let player = participants[senderID] // to shorten code
 
-					if (participants[senderID] && !participants[senderID].answerPack[status.currentQuiz].ans) {
+					// current quiz need to be answered with text
+					if (quiz[status.currentQuiz].stringAnswer) {
 
-						participants[senderID].answerPack[status.currentQuiz].ans = messageQRPayload
-						participants[senderID].answerPack[status.currentQuiz].at = new Date().getTime()
+						console.log('hello from inside string answer')
 
-						if (messageQRPayload == quiz[status.currentQuiz].a) {
-							participants[senderID].answerPack[status.currentQuiz].correct = true
-							participants[senderID].point++
+						if (!status.canAnswer)
+							sendTextMessage(senderID, 'หมดเวลาตอบข้อนี้แล้วจ้า')
+						else if (player.answerPack[status.currentQuiz].ans)
+							sendTextMessage(senderID, 'คุณได้ตอบคำถามข้อนี้ไปแล้วนะ')
+
+						else if (messageQRPayload == 'noValue') {
+
+							let lowerCasedAnswer = messageText.toLowerCase()
+
+							let confirmAns = {
+								text: `ยืนยันคำตอบเป็น "${messageText}" ?
+								
+								หากต้องการเปลี่ยนคำตอบให้พิมพ์ใหม่ได้เลย`,
+								quick_replies: [
+									{
+										content_type: 'text',
+										title: 'ยืนยัน',
+										payload: lowerCasedAnswer
+									}
+								]
+							}
+
+							sendQuickReplies(senderID, confirmAns)
+
+						}
+						else {
+
+							sendTextMessage(senderID, 'ได้คำตอบแล้วจ้า~')
+
+							player.answerPack[status.currentQuiz].ans = messageQRPayload
+							player.answerPack[status.currentQuiz].at = new Date().getTime()
+
+							if (quiz[status.currentQuiz].a.indexOf(messageQRPayload) > -1) {
+								player.answerPack[status.currentQuiz].correct = true
+								player.point++
+							}
+
+							db.ref(`participants/${senderID}`).set(player)
+
 						}
 
-						db.ref(`participants/${senderID}`).set(participants[senderID])
-
-					} else if (participants[senderID].answerPack[status.currentQuiz].ans) {
-						sendTextMessage(senderID, 'คุณได้ตอบคำถามข้อนี้ไปแล้วนะ')
 					}
+					// current quiz use choices
+					else if (quiz[status.currentQuiz].choices.indexOf(messageQRPayload) > -1) {
+
+						console.log('hello from inside CHOICE answer')
+
+						if (!status.canAnswer)
+							sendTextMessage(senderID, 'หมดเวลาตอบข้อนี้แล้วจ้า')
+						else if (player.answerPack[status.currentQuiz].ans)
+							sendTextMessage(senderID, 'คุณได้ตอบคำถามข้อนี้ไปแล้วนะ')
+						else {
+							
+							sendTextMessage(senderID, 'ได้คำตอบแล้วจ้า~')
+
+							player.answerPack[status.currentQuiz].ans = messageQRPayload
+							player.answerPack[status.currentQuiz].at = new Date().getTime()
+
+							if (messageQRPayload == quiz[status.currentQuiz].a) {
+								player.answerPack[status.currentQuiz].correct = true
+								player.point++
+							}
+
+							db.ref(`participants/${senderID}`).set(player)
+
+						}
+
+					}
+
 				}
 
-			} else if ( messageQRPayload == 'เข้าร่วม' && ((participants && !participants[senderID]) || !participants) && status.canEnter ) {
+			}
+			else if ( messageQRPayload == 'เข้าร่วม' && ((participants && !participants[senderID]) || !participants) && status.canEnter ) {
 
 				// ------- USER ENTER
 				// console.log(`in the khaoruam // id : ${senderID}`)
