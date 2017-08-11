@@ -160,7 +160,13 @@ exports.hookerYOLOitsMeMessengerChatYO = functions.https.onRequest( (req, res) =
 					// } else if (event.delivery) {
 					//	console.log(`Message delivered to ${event.sender.id}`)
 					} else {
-						console.log(`Webhook Unknown Event: ${JSON.stringify(event)}`)
+						
+						if (event.postback && event.postback.payload == 'userPressedGetStartedButton') {
+							console.log(`receive get started action from ${event.sender.id}`)
+							addNewUser(event.sender.id)
+						}
+						else console.log(`Webhook Unknown Event: ${JSON.stringify(event)}`)
+
 					}
 				})
 
@@ -191,6 +197,7 @@ exports.answerFromWeb = functions.https.onRequest((req, res) => {
     httpsFunctions.answerFromWeb(req, res)
   })
 })
+
 
 // ---------------------------------------------------------------
 
@@ -259,6 +266,24 @@ exports.sendCouponUpdate = functions.https.onRequest((req, res) => {
 		httpsFunctions.updateCouponBalanceToUsers(req, res)
 	})
 })
+/*
+exports.findMe = functions.https.onRequest((req, res) => {
+	cors(req, res, () => {
+		
+		db.ref('users').orderByChild('fbid').equalTo('1432315113461939').once('value')
+		.then(obj => {
+			res.json(obj.val())
+		})
+		.catch(error => {
+			console.log(`error: ${error}`)
+			res.json({
+				error: error
+			})
+		})
+
+	})
+})
+*/
 
 exports.sendQuiz = functions.https.onRequest((req, res) => {
 	cors(req, res, () => {
@@ -697,9 +722,7 @@ function receivedMessage (event) {
 							let lowerCasedAnswer = messageText.toLowerCase()
 
 							let confirmAns = {
-								text: `ยืนยันคำตอบเป็น "${messageText}" ?
-								
-								หากต้องการเปลี่ยนคำตอบให้พิมพ์ใหม่ได้เลย`,
+								text: `ยืนยันคำตอบเป็น "${messageText}" ?\r\nหากต้องการเปลี่ยนคำตอบให้พิมพ์ใหม่ได้เลย`,
 								quick_replies: [
 									{
 										content_type: 'text',

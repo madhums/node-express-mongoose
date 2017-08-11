@@ -827,6 +827,7 @@ module.exports = function (util, messengerFunctions) {
 
 		let PSID = req.body.PSID
     let answer = req.body.answer
+		let normalizedAnswer = answer.trim().toLowerCase() // for string answer
 
     if (!PSID || ! answer) res.json({ error: 'no PSID, answer data found' })
     else {
@@ -853,10 +854,16 @@ module.exports = function (util, messengerFunctions) {
       })
       .then(quizSnap => {
         
-        let quiz = quizSnap.val()
-        
-        if (quiz.choices.indexOf(answer) == -1 ) throw { code: 2, message: 'answer not in choices scope ?!' }
-        else if (answer == quiz.a) {
+				let quiz = quizSnap.val()
+				let isCorrect = false
+				
+				if (!quiz.stringAnswer && !quiz.choices) throw { code: 2, message: 'what the f with this quiz, it has no choices and not support string answer' }
+					// if (quiz.choices.indexOf(answer) == -1 ) throw { code: 2, message: 'answer not in choices scope ?!' }
+					// else if (answer == quiz.a) isCorrect = true
+				else if (quiz.choices && answer == quiz.a) isCorrect = true
+				else if (quiz.stringAnswer && quiz.a.indexOf(normalizedAnswer) > -1) isCorrect = true
+					
+        if (isCorrect) {
           participantInfo.answerPack[status.currentQuiz].correct = true
 					participantInfo.point++
         }
@@ -889,6 +896,8 @@ module.exports = function (util, messengerFunctions) {
     }
 
 	}
+
+
 
   // --------- END HERE
 
