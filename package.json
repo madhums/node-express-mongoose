@@ -27,7 +27,7 @@
     "express": "4.15.3",
     "express-session": "~1.15.1",
     "forever": "~0.15.1",
-    "method-override": "~2.3.5",
+    "method-override": "~3.0.0",
     "mongoose": "~4.11.0",
     "mongoose-user": "~0.0.1",
     "morgan": "~1.8.1",
