@@ -1,10 +1,8 @@
-
 /*!
  * Module dependencies
  */
 
 var mongoose = require('mongoose');
-var userPlugin = require('mongoose-user');
 var Schema = mongoose.Schema;
 
 /**
@@ -19,12 +17,6 @@ var UserSchema = new Schema({
 });
 
 /**
- * User plugin
- */
-
-UserSchema.plugin(userPlugin, {});
-
-/**
  * Add your
  * - pre-save hooks
  * - validations
@@ -35,17 +27,13 @@ UserSchema.plugin(userPlugin, {});
  * Methods
  */
 
-UserSchema.method({
-
-});
+UserSchema.method({});
 
 /**
  * Statics
  */
 
-UserSchema.static({
-
-});
+UserSchema.static({});
 
 /**
  * Register

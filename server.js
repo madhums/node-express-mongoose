@@ -49,14 +49,14 @@ connection
   .on('disconnected', connect)
   .once('open', listen);
 
-function listen () {
+function listen() {
   if (app.get('env') === 'test') return;
   app.listen(port);
   console.log('Express app started on port ' + port);
 }
 
-function connect () {
-  var options = { server: { socketOptions: { keepAlive: 1 } } };
-  var connection = mongoose.connect(config.db, options).connection;
-  return connection;
+function connect() {
+  var options = { keepAlive: 1, useNewUrlParser: true };
+  mongoose.connect(config.db, options);
+  return mongoose.connection;
 }
