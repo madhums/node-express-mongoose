@@ -2,11 +2,11 @@
  * Module dependencies.
  */
 
-var path = require('path');
-var development = require('./env/development');
-var test = require('./env/test');
-var production = require('./env/production');
-var defaults = {
+const path = require('path');
+const development = require('./env/development');
+const test = require('./env/test');
+const production = require('./env/production');
+const defaults = {
   root: path.normalize(__dirname + '/..')
 };
 

@@ -2,9 +2,9 @@
  * Module dependencies.
  */
 
-var mongoose = require('mongoose');
-var LocalStrategy = require('passport-local').Strategy;
-var User = mongoose.model('User');
+const mongoose = require('mongoose');
+const LocalStrategy = require('passport-local').Strategy;
+const User = mongoose.model('User');
 
 /**
  * Expose
@@ -16,7 +16,7 @@ module.exports = new LocalStrategy(
     passwordField: 'password'
   },
   function(email, password, done) {
-    var options = {
+    const options = {
       criteria: { email: email }
     };
     User.load(options, function(err, user) {

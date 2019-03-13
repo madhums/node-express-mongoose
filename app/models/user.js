@@ -2,14 +2,14 @@
  * Module dependencies
  */
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 /**
  * User schema
  */
 
-var UserSchema = new Schema({
+const UserSchema = new Schema({
   name: { type: String, default: '' },
   email: { type: String, default: '' },
   hashed_password: { type: String, default: '' },
