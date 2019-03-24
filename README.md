@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/travis/madhums/node-express-mongoose.svg?style=flat)](https://travis-ci.org/madhums/node-express-mongoose)
+[![Build Status](https://img.shields.io/travis/madhums/node-express-mongoose/master.svg?style=flat)](https://travis-ci.org/madhums/node-express-mongoose)
 [![Dependencies](https://img.shields.io/david/madhums/node-express-mongoose.svg?style=flat)](https://david-dm.org/madhums/node-express-mongoose)
 [![Code Climate](https://codeclimate.com/github/codeclimate/codeclimate/badges/gpa.svg)](https://codeclimate.com/github/madhums/node-express-mongoose)
 [![Greenkeeper badge](https://badges.greenkeeper.io/madhums/node-express-mongoose.svg)](https://greenkeeper.io/)
