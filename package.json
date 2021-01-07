@@ -33,19 +33,19 @@
     "morgan": "~1.9.1",
     "passport": "~0.4.1",
     "passport-local": "~1.0.0",
-    "pm2": "~4.2.1",
+    "pm2": "^4.5.1",
     "pug": "~2.0.4",
     "view-helpers": "~0.2.0",
     "winston": "~3.2.1"
   },
   "devDependencies": {
+    "acorn": "^7.4.1",
     "babel-eslint": "~10.0.3",
     "babel-tape-runner": "~3.0.0",
     "eslint": "~6.8.0",
     "eslint-config-prettier": "~6.9.0",
     "eslint-plugin-prettier": "~3.1.2",
     "nodemon": "2.0.2",
-    "npm-check-updates": "~4.0.1",
     "prettier": "~1.19.1",
     "supertest": "*",
     "tape": "~4.12.1"
