@@ -31,7 +31,7 @@
     "method-override": "~3.0.0",
     "mongoose": "~5.8.4",
     "morgan": "~1.9.1",
-    "passport": "~0.4.1",
+    "passport": "~0.6.0",
     "passport-local": "~1.0.0",
     "pm2": "~5.2.0",
     "pug": "~2.0.4",
