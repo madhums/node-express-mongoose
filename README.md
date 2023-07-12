@@ -56,6 +56,10 @@ Note that we are overriding the environment variable set in `.env` file because 
 
 Note: The difference between exec and run is that, exec executes the command within the running container and run will spin up a new container to run that command. So if you want to run only the tests without docker-compose up, you may do so by running `docker-compose run -e MONGODB_URL=mongodb://mongo:27017/my_app_test node npm test`
 
+## Deployment
+
+If you want to deploy to heroku, you can follow [this article](https://devcenter.heroku.com/articles/deploying-nodejs)
+
 ## License
 
 MIT
