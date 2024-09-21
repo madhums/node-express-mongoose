@@ -34,7 +34,7 @@
     "passport": "~0.6.0",
     "passport-local": "~1.0.0",
     "pm2": "~5.3.1",
-    "pug": "~3.0.1",
+    "pug": "~3.0.3",
     "view-helpers": "~0.2.0",
     "winston": "~3.2.1"
   },
