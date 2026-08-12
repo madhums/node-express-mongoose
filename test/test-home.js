@@ -6,7 +6,7 @@
 
 const test = require('tape');
 const request = require('supertest');
-const { app } = require('../server');
+const { app, connection } = require('../server');
 
 test('Home page', t => {
   request(app)
@@ -15,4 +15,12 @@ test('Home page', t => {
     .end(t.end);
 });
 
-test.onFinish(() => process.exit(0));
+// test.onFinish(async () => {
+//   await connection.close();
+// });
+// test.onFinish(() => process.exit(0));
+
+test.onFinish(async () => {
+  connection.removeAllListeners('disconnected');
+  await connection.close();
+});
